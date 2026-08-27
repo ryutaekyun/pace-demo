@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PACE 브리핑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EDF2F3; --surface:#FFFFFF; --surface-2:#F5F9FA; --surface-3:#E7EFF0;
+  --ink:#0B1719; --ink-2:#3B5054; --ink-3:#6B8085; --ink-4:#93A7AB;
+  --line:#D2DDDF; --line-2:#E4ECED;
+  --accent:#0E5866; --accent-2:#0A414C; --accent-soft:#DBEAED; --accent-on:#FFFFFF;
+  --ok:#1A6B44; --ok-soft:#DCF0E5; --ok-line:#8FCFAF;
+  --hold:#8A5806; --hold-soft:#F9EDD5; --hold-line:#DFBC74;
+  --bad:#A02218; --bad-soft:#F9E2E0; --bad-line:#E09B93;
+  --r:8px;
+  --fs:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --fm:"IBM Plex Mono","Consolas",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326; --surface-3:#1D2F33;
+    --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+    --line:#22383C; --line-2:#1A2B2E;
+    --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+    --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+    --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+    --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--fs); font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0; font-weight:600; letter-spacing:-.015em; text-wrap:balance}
+p{margin:0}
+a{color:var(--accent)}
+.mono{font-family:var(--fm); font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{position:sticky; top:0; z-index:20; background:var(--surface); border-bottom:1px solid var(--line)}
+.topin{max-width:760px; margin:0 auto; padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.brand{display:flex; align-items:baseline; gap:9px}
+.brand b{font-size:16px; letter-spacing:-.02em}
+.brand span{font-size:11.5px; color:var(--ink-3)}
+.toplinks{display:flex; gap:14px; font-size:12px}
+.toplinks a{color:var(--ink-2); text-decoration:none; font-family:var(--fm)}
+.toplinks a:hover{color:var(--accent)}
+
+.wrap{max-width:760px; margin:0 auto; padding:40px 24px 90px}
+
+/* hero */
+.eyebrow{font-family:var(--fm); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; font-weight:500}
+h1.title{font-size:30px}
+.deck{margin-top:12px; color:var(--ink-2); font-size:15.5px; max-width:60ch; line-height:1.7}
+
+/* tldr box */
+.tldr{
+  margin-top:24px; padding:16px 18px; background:var(--accent-soft); border:1px solid var(--accent);
+  border-radius:var(--r); display:flex; flex-direction:column; gap:8px;
+}
+.tldr .tt{font-family:var(--fm); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-2); font-weight:600}
+.tldr p{color:var(--accent-2); font-size:14px; line-height:1.65}
+
+/* sections */
+section{margin-top:52px}
+.snum{font-family:var(--fm); font-size:11px; color:var(--accent); letter-spacing:.08em; margin-bottom:6px}
+h2.h{font-size:21px; margin-bottom:14px}
+.lead{color:var(--ink-2); font-size:14.5px; line-height:1.75; margin-bottom:16px}
+.lead+.lead{margin-top:-6px}
+
+/* quote / cite */
+.cite{
+  margin:16px 0; padding:12px 16px; border-left:3px solid var(--accent); background:var(--surface-2);
+  font-size:13px; color:var(--ink-2); line-height:1.7;
+}
+.cite b{font-family:var(--fm); font-size:11px; letter-spacing:.04em; color:var(--accent); font-weight:600; display:block; margin-bottom:4px}
+
+/* origin quote block */
+.origin{
+  margin:16px 0; padding:16px 18px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  font-size:13.5px; color:var(--ink-2); line-height:1.75; font-style:normal;
+}
+.origin .who{font-family:var(--fm); font-size:10.5px; color:var(--ink-4); letter-spacing:.06em; margin-top:10px; display:block}
+
+/* product cards */
+.pgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px}
+@media (max-width:660px){ .pgrid{grid-template-columns:1fr} }
+.pcard{border:1px solid var(--line); border-radius:var(--r); padding:16px 17px; background:var(--surface); display:flex; flex-direction:column; gap:8px}
+.pcard .pk{font-family:var(--fm); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.pcard .pt{font-size:15.5px; font-weight:600; letter-spacing:-.01em}
+.pcard .pd{font-size:12.5px; color:var(--ink-3); line-height:1.6}
+.pcard a.pl{margin-top:auto; padding-top:9px; border-top:1px dashed var(--line-2); font-family:var(--fm); font-size:11px; text-decoration:none; color:var(--accent)}
+
+/* pipeline flow */
+.flow{display:flex; gap:0; flex-wrap:wrap; margin-top:16px}
+.fnode{
+  flex:1 1 150px; min-width:140px; border:1px solid var(--line); border-radius:var(--r);
+  padding:12px 13px; background:var(--surface); position:relative; margin-right:20px; margin-bottom:12px;
+}
+.fnode:last-child{margin-right:0}
+.fnode::after{content:"→"; position:absolute; right:-17px; top:50%; transform:translateY(-50%); color:var(--ink-4); font-size:14px; font-family:var(--fm)}
+.fnode:last-child::after{content:""}
+@media (max-width:660px){ .fnode{margin-right:0} .fnode::after{content:"↓"; right:auto; left:16px; top:auto; bottom:-19px; transform:none} }
+.fnode .fn{font-family:var(--fm); font-size:9px; color:var(--accent); letter-spacing:.1em; margin-bottom:5px}
+.fnode .ft{font-size:12.5px; font-weight:600; margin-bottom:3px}
+.fnode .fd{font-size:10.5px; color:var(--ink-3); line-height:1.5}
+
+/* feature block per screen */
+.sblock{border:1px solid var(--line); border-radius:var(--r); background:var(--surface); overflow:hidden; margin-top:16px}
+.sblock>.sh{padding:14px 18px; border-bottom:1px solid var(--line-2); background:var(--surface-2); display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.sblock>.sh .st{font-size:16px; font-weight:600}
+.sblock>.sh .su{font-family:var(--fm); font-size:11px; color:var(--ink-3)}
+.sblock>.sb{padding:16px 18px}
+.flist{display:flex; flex-direction:column; gap:11px}
+.fitem{display:grid; grid-template-columns:20px 1fr; gap:10px; font-size:13.5px; line-height:1.6}
+.fitem .ic{font-family:var(--fm); color:var(--accent); font-weight:700}
+.fitem b{font-weight:600}
+.fitem .sub{color:var(--ink-3); font-size:12px; display:block; margin-top:2px}
+
+/* data honesty */
+.badge{display:inline-flex; align-items:center; font-family:var(--fm); font-size:10px; letter-spacing:.06em; padding:2px 7px; border-radius:2px; border:1px solid; font-weight:500}
+.badge.real{color:var(--ok); border-color:var(--ok-line); background:var(--ok-soft)}
+.badge.sim{color:var(--ink-3); border-color:var(--line); background:var(--surface-2)}
+.datarow{display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line-2)}
+.datarow:last-child{border-bottom:0}
+.datarow .dd{font-size:13px; color:var(--ink-2); line-height:1.65}
+
+/* table */
+.tw{overflow-x:auto; margin-top:14px}
+table{border-collapse:collapse; width:100%; font-size:12.5px}
+th{text-align:left; font-family:var(--fm); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500; padding:8px 10px; background:var(--surface-2); border-bottom:1px solid var(--line)}
+td{padding:9px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; line-height:1.5}
+td.num{font-family:var(--fm); text-align:right; white-space:nowrap}
+tfoot td{border-bottom:0; border-top:1px solid var(--line); font-weight:600; background:var(--surface-2)}
+
+/* limits */
+.limit{display:flex; gap:10px; padding:12px 0; border-bottom:1px dashed var(--line-2)}
+.limit:last-child{border-bottom:0}
+.limit .li{font-family:var(--fm); font-size:11px; color:var(--hold); flex:none; padding-top:2px}
+.limit .lb{font-size:13.5px; line-height:1.65; color:var(--ink-2)}
+.limit .lb b{color:var(--ink)}
+
+/* footer */
+.foot{margin-top:60px; padding-top:20px; border-top:1px solid var(--line); font-size:11.5px; color:var(--ink-4); line-height:1.8}
+.linklist{display:flex; flex-direction:column; gap:4px; margin-top:10px; font-family:var(--fm); font-size:12px}
+.hr{height:1px; background:var(--line-2); margin:24px 0}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="topin">
+  <div class="brand"><b>PACE</b><span>브리핑</span></div>
+  <div class="toplinks">
+    <a href="index.html">← 전체 화면</a>
+    <a href="console.html">콘솔</a>
+    <a href="report.html">리포트</a>
+    <a href="field.html">필드</a>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="eyebrow">TENOPA · 2026년 중소기업기술개발사업 성과조사·분석 제안 준비</div>
+  <h1 class="title">이게 뭐고, 왜 만들었는가</h1>
+  <p class="deck">이 문서는 PACE가 무엇이고 왜 만들었는지, 화면별로 무슨 기능이 있는지를 팀 내 설명용으로 정리한 것입니다. 데모 자체를 만지려면 콘솔·리포트·필드 링크로 바로 들어가시면 됩니다.</p>
+
+  <div class="tldr">
+    <div class="tt">30초 요약</div>
+    <p>
+      TIPA 중소기업기술개발사업 성과조사·분석 입찰 제안서를 준비하며, "방법론은 3~4장으로 줄이고 나머지는 실제 작동하는 AI 자동화 시스템으로 보여주자"는 팀장님 지시에서 시작했습니다.
+      경쟁사들은 비슷한 방법론 문서를 제출할 것이므로, 우리는 실제로 동작하는 소프트웨어 3종 — 관리자 콘솔, 응답기업 포털, 현장조사 앱 — 을 자체 개발해 발표에서 시연합니다.
+    </p>
+  </div>
+
+  <!-- ===== 왜 ===== -->
+  <section id="why">
+    <div class="snum">01</div>
+    <h2 class="h">왜 만들었는가</h2>
+    <p class="lead">발주처가 낸 제안요청서(RFP)를 실제로 읽어보면, 이건 단순히 "AI 좀 써서 있어 보이게 하자"는 게 아니라 RFP가 이미 요구하고 있는 내용이었습니다.</p>
+
+    <div class="origin">
+      "우리 TNP는 제안을 할 때 방법론은 한 3~4장으로만 보여주고, 나머지는 진짜 AI 자동화 툴을 이용해서 조사원이 외부에서 조사한 데이터가 실시간 플랫폼으로 자동 수집되고,
+      해당 내용이 자동으로 검증(근거자료를 읽어서 일치·불일치를 파악)되는 시스템을 개발하고 싶다."
+      <span class="who">— 팀장님 제안, 사업 착수 전 논의</span>
+    </div>
+
+    <p class="lead">RFP를 뜯어보니 이 아이디어를 뒷받침하는 문구가 실제로 들어 있었습니다. 세 군데를 그대로 인용합니다.</p>
+
+    <div class="cite"><b>RFP Ⅲ-4 성과조사 운영</b>"발주기관의 성과조사시스템 또는 <b>제안사 자체 플랫폼을 활용하여</b> 온라인 성과조사를 운영하고…"</div>
+    <div class="cite"><b>RFP Ⅲ-1 성과 검증</b>"(1차) 증빙자료 검토를 통해 제출된 기업 성과의 사실 여부 확인 / (2차) <b>공신력 있는 외부 데이터와 대조하여 논리적 일관성 검증</b>"</div>
+    <div class="cite"><b>RFP Ⅲ-4 성과조사 운영</b>"최근 <b>6년간 성과조사 응답 이력</b>을 시스템에 탑재하여, 수행기관이 과거 응답 내용을 참고하면서 성과자료를 입력할 수 있는 환경 제공"</div>
+
+    <p class="lead">즉 "AI가 근거자료 읽어서 일치·불일치 파악"은 팀장님의 아이디어이자 동시에 RFP의 명시적 요구사항입니다.
+    기술능력평가 배점표를 항목별로 대조해보면, 정성평가 90점 중 <b>60점</b>이 이 플랫폼으로 직접 답하는 항목이었습니다 — 그래서 방법론 서술 대신 실물을 만드는 쪽으로 방향을 잡았습니다.</p>
+  </section>
+
+  <!-- ===== 무엇을 ===== -->
+  <section id="what">
+    <div class="snum">02</div>
+    <h2 class="h">무엇을 만들었는가</h2>
+    <p class="lead">
+      <b>PACE</b> — Performance Audit · Collection · Evaluation. 성과조사의 수집·검증·분석·선정 네 단계를 하나로 잇는 플랫폼입니다.
+      전부 외주 없이 자체 개발했고(본 용역은 하도급 불허), 지금 인터넷에 실제로 배포되어 있어 로그인 없이 누구나 열어볼 수 있습니다.
+    </p>
+
+    <div class="pgrid">
+      <div class="pcard">
+        <span class="pk">PC · 관리자</span>
+        <span class="pt">PACE 콘솔</span>
+        <span class="pd">발주처·사업단이 쓰는 관제 화면. 수집 현황, AI 성과검증, 정량분석, 우수사례 선정을 한 곳에서 봅니다.</span>
+        <a class="pl" href="console.html">콘솔 열기 →</a>
+      </div>
+      <div class="pcard">
+        <span class="pk">PC · 모바일</span>
+        <span class="pt">PACE 리포트</span>
+        <span class="pd">응답기업 30,309곳이 성과를 입력하는 포털. 금액을 직접 타이핑하지 않고 근거 자료에서 자동 계산합니다.</span>
+        <a class="pl" href="report.html">리포트 열기 →</a>
+      </div>
+      <div class="pcard">
+        <span class="pk">모바일 앱</span>
+        <span class="pt">PACE 필드</span>
+        <span class="pd">현장조사원용. 증빙을 촬영하면 즉시 대조하고, 불일치를 방문 중에 그 자리에서 종결합니다.</span>
+        <a class="pl" href="field.html">필드 열기 →</a>
+      </div>
+    </div>
+
+    <p class="lead" style="margin-top:20px">세 화면은 독립된 웹사이트이자 동시에 하나의 파이프라인입니다. 응답기업이 낸 성과가 검증을 거쳐 분석과 선정까지 이어지는 흐름을 그대로 화면으로 나눈 것입니다.</p>
+    <div class="flow">
+      <div class="fnode"><div class="fn">T0 COLLECT</div><div class="ft">수집</div><div class="fd">리포트에서 응답, 필드에서 현장조사. 과제단계별 동적 설문.</div></div>
+      <div class="fnode"><div class="fn">T1 AUDIT</div><div class="ft">검증</div><div class="fd">증빙 추출 → 응답값 대조 → 외부DB 교차검증. 자동 판정.</div></div>
+      <div class="fnode"><div class="fn">T2 ANALYZE</div><div class="ft">분석</div><div class="fd">검증된 데이터로 기초통계·시계열·질적지표 자동 산출.</div></div>
+      <div class="fnode"><div class="fn">T3 EVALUATE</div><div class="ft">선정</div><div class="fd">가중치 조정형 스코어링으로 우수사례 후보 랭킹.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== 화면별 기능 ===== -->
+  <section id="features">
+    <div class="snum">03</div>
+    <h2 class="h">화면별로 뭘 할 수 있는가</h2>
+
+    <div class="sblock">
+      <div class="sh"><span class="st">PACE 콘솔</span><span class="su">console.html · PC</span></div>
+      <div class="sb flist">
+        <div class="fitem"><span class="ic">01</span><div><b>AI 성과검증</b> — 경제적 성과(15개 표본기업)와 기술적 성과(IRIS 실데이터 32건) 두 트랙. 세금계산서·수출신고필증·4대보험 명부·논문·특허를 룰 23종으로 자동 대조해 일치·보류·불일치 판정.
+          <span class="sub">판정을 미리 정해둔 게 아니라, 버튼을 누르면 그 자리에서 계산합니다.</span></div></div>
+        <div class="fitem"><span class="ic">02</span><div><b>정량분석 · mrnIF</b> — 논문 질적지표 산식(Σ100×(N−rank)/(N−1) ÷ SCI 논문 건수)을 그대로 구현. 저널 순위를 바꾸면 값이 실시간 재계산됩니다.</div></div>
+        <div class="fitem"><span class="ic">03</span><div><b>우수사례 스코어링</b> — 매출·수출·고용·논문·특허 가중치를 슬라이더로 조정하면 후보 랭킹이 그 자리에서 다시 정렬됩니다.</div></div>
+        <div class="fitem"><span class="ic">04</span><div><b>실시간 수집 현황</b> — 사업별 응답 진척률, 90% 응답률 목표 대비 조기경보, 현장조사 대상 자동 분류(RFP 5개 그룹기준).</div></div>
+      </div>
+    </div>
+
+    <div class="sblock">
+      <div class="sh"><span class="st">PACE 리포트</span><span class="su">report.html · PC + 모바일</span></div>
+      <div class="sb flist">
+        <div class="fitem"><span class="ic">01</span><div><b>금액을 직접 입력하지 않음</b> — 국세청·관세청·건보공단 연동(시뮬레이션)으로 발행 내역을 불러와 해당 건만 체크하면 금액이 자동 계산됩니다. 부가세 포함 신고, 환율 오적용, 퇴사자 미반영 같은 착오를 입력 단계에서 원천 차단.</div></div>
+        <div class="fitem"><span class="ic">02</span><div><b>DOI·특허번호 자동 조회</b> — 번호만 넣으면 서지정보가 채워지고, 공동 참여기관 기여율 합계가 100%인지 그 자리에서 확인합니다.</div></div>
+        <div class="fitem"><span class="ic">03</span><div><b>6년 응답 이력</b> — 직전 조사값을 나란히 보여주고, 전년 대비 ±50% 이상 변동이면 사전에 안내합니다. (RFP 명시 요구사항)</div></div>
+      </div>
+    </div>
+
+    <div class="sblock">
+      <div class="sh"><span class="st">PACE 필드</span><span class="su">field.html · 모바일 앱</span></div>
+      <div class="sb flist">
+        <div class="fitem"><span class="ic">01</span><div><b>증빙 촬영 → 즉시 대조</b> — 후면 카메라로 세금계산서·필증·명부를 찍으면 판독 후 온라인 응답값과 그 자리에서 대조합니다.</div></div>
+        <div class="fitem"><span class="ic">02</span><div><b>현장 확인 기록</b> — 불일치가 뜨면 사유 선택, 보정값 입력, 담당자 확인 체크까지 마쳐야 저장됩니다. 재방문이 없어집니다.</div></div>
+        <div class="fitem"><span class="ic">03</span><div><b>오프라인 동작</b> — 신호가 끊겨도 조사를 계속하고, 단말에 저장했다가 연결되면 일괄 전송합니다.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 데이터 ===== -->
+  <section id="data">
+    <div class="snum">04</div>
+    <h2 class="h">여기 있는 데이터는 뭔가</h2>
+    <p class="lead">발표에서 반드시 나오는 질문이라 먼저 정리해둡니다. 두 종류가 섞여 있고, 화면에도 배지로 구분해뒀습니다.</p>
+
+    <div class="datarow">
+      <span class="badge real">실데이터</span>
+      <span class="dd"><b>IRIS 논문 27건·특허 5건</b> — 국가보건의료연구인프라구축(희귀질환연구인프라구축) 사업의 실제 공개 학술정보입니다. 원본 엑셀을 그대로 검증 엔진에 넣었더니, 기여율 합계가 100%가 안 맞는 논문 4건, 비SCI인데 임팩트팩터가 적힌 3건, 과제명이 결측된 24건 등 실제 오류가 그대로 잡혔습니다. 지어낸 사례가 아닙니다.</span>
+    </div>
+    <div class="datarow">
+      <span class="badge sim">시뮬레이션</span>
+      <span class="dd"><b>경제성과 표본 15개사</b> — 전부 가상의 기업·이름·금액입니다. 다만 아무렇게나 만든 게 아니라, 실제 성과조사에서 반복적으로 나오는 착오 유형(부가세 포함 신고, 연말 환율 일괄 적용, 퇴사자 미반영, 세금계산서 중복 제출)을 의도적으로 심어서, 검증 로직이 그 오류들을 실제로 잡아내는지 보여주도록 설계했습니다.</span>
+    </div>
+    <div class="datarow">
+      <span class="badge sim">시뮬레이션</span>
+      <span class="dd"><b>외부기관 연동(국세청·관세청·건보공단)</b> — 지금은 연동된 것처럼 동작하는 시뮬레이션입니다. 실제 연동은 각 기관의 API 이용 승인과 정보주체 동의 절차가 필요합니다. 발표에서 "이미 연동돼 있다"라고 말하면 안 되고, "이런 구조로 설계했고 승인 절차는 착수 후 진행한다"로 설명해야 합니다.</span>
+    </div>
+  </section>
+
+  <!-- ===== RFP 대응 ===== -->
+  <section id="rfp">
+    <div class="snum">05</div>
+    <h2 class="h">평가표에는 이렇게 대응합니다</h2>
+    <p class="lead">기술능력평가 정성 90점 중 이 플랫폼이 직접 답하는 배점입니다.</p>
+    <div class="tw"><table>
+      <thead><tr><th>평가항목</th><th class="num">배점</th><th>대응 화면</th></tr></thead>
+      <tbody>
+        <tr><td>본 용역 추진의 적합성 및 지원 역량</td><td class="num">10</td><td>세 화면 실물 시연</td></tr>
+        <tr><td>제안내용의 논리성 및 체계성</td><td class="num">10</td><td>수집–검증–분석–선정 파이프라인</td></tr>
+        <tr><td>연구결과의 정책 활용 가능성</td><td class="num">10</td><td>콘솔 정량분석·우수사례</td></tr>
+        <tr><td>성과목표 개발능력(조사지 개편)</td><td class="num">5</td><td>리포트 과제단계별 동적 설문</td></tr>
+        <tr><td>용역관련 정보·자료의 확보 용이성</td><td class="num">5</td><td>리포트 6년 응답 이력</td></tr>
+        <tr><td>심층분석 결과의 활용 가능성</td><td class="num">5</td><td>콘솔 mrnIF·스코어링</td></tr>
+        <tr><td>수행방법과 절차의 구체성</td><td class="num">5</td><td>콘솔 검증 룰 23종 명세</td></tr>
+        <tr><td>용역수행의 위험요소 해소 능력</td><td class="num">5</td><td>콘솔 응답률 조기경보</td></tr>
+        <tr><td>연구종료 후 사후지원 능력</td><td class="num">5</td><td>발주기관 DB 이관 체계</td></tr>
+      </tbody>
+      <tfoot><tr><td>합계</td><td class="num">60<span style="color:var(--ink-3); font-weight:400">/90</span></td><td></td></tr></tfoot>
+    </table></div>
+  </section>
+
+  <!-- ===== 한계 ===== -->
+  <section id="limits">
+    <div class="snum">06</div>
+    <h2 class="h">아직 아닌 것 — 발표 전 반드시 알아야 할 것</h2>
+    <div class="limit"><span class="li">!</span><div class="lb"><b>외부기관 연동은 실연동이 아닙니다.</b> 국세청·관세청·건보공단 API는 각 기관 승인 절차가 필요하고, 지금은 그 구조를 보여주는 시뮬레이션입니다.</div></div>
+    <div class="limit"><span class="li">!</span><div class="lb"><b>지금 사이트는 류태균 개인 GitHub 계정 소유입니다.</b> <span class="mono">github.com/ryutaekyun/pace-demo</span>에 있고, 회사 조직 계정이나 자체 도메인으로 옮기는 게 가능하지만 아직 안 했습니다.</div></div>
+    <div class="limit"><span class="li">!</span><div class="lb"><b>저장소가 공개(public) 상태입니다.</b> 코드가 누구나 볼 수 있습니다. 안에는 공개 학술정보와 가상 데이터만 있어 문제는 없지만, 제안 마감 전까지 비공개로 돌리고 싶으면 바로 전환 가능합니다.</div></div>
+    <div class="limit"><span class="li">!</span><div class="lb"><b>실제 서비스가 아니라 제안 시연용입니다.</b> 실사용자 인증, 진짜 30,309개 과제 데이터, 보안 심사, 발주기관 시스템 이관 같은 실서비스 요건은 수주 이후 별도 구축 범위입니다.</div></div>
+  </section>
+
+  <div class="foot">
+    <p>실물은 아래 주소에서 직접 눌러보실 수 있습니다. 로그인이 필요 없고, PC·모바일 어디서나 열립니다.</p>
+    <div class="linklist">
+      <a href="index.html">전체 화면 목록</a>
+      <a href="console.html">console.html — PACE 콘솔</a>
+      <a href="report.html">report.html — PACE 리포트</a>
+      <a href="field.html">field.html — PACE 필드</a>
+    </div>
+    <div class="hr"></div>
+    TENOPA 혁신2팀 · 2026년 중소기업기술개발사업 성과조사·분석 제안 준비 문서
+  </div>
+</div>
+</body>
+</html>
