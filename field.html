@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PACE 현장조사 앱</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,7 +63,7 @@ button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer; bo
   position:relative; display:flex; flex-direction:column; overflow:hidden;
   background:var(--ground); width:100%; min-height:100dvh;
 }
-.desknote{display:none}
+.desknote,.deskhead{display:none}
 @media (min-width:760px){
   body{display:flex; flex-direction:column; align-items:center; gap:14px; padding:26px 20px 40px; background:var(--desk)}
   .app{
@@ -289,7 +294,8 @@ input:focus,textarea:focus{border-color:var(--accent); outline:none}
 }
 .toast.on{display:block}
 </style>
-
+</head>
+<body>
 <div class="deskhead">
   <b style="font-size:13px; color:var(--ink)">PACE 필드</b>
   <span>현장조사원 앱 · TENOPA 제안 시연</span>
@@ -901,3 +907,5 @@ function renderOut() {
 /* ── 초기화 ── */
 go(S.tab || 'today');
 </script>
+</body>
+</html>
