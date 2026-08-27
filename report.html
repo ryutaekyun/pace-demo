@@ -1,0 +1,925 @@
+<title>PACE 성과입력 포털</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --ground:#EDF2F3; --surface:#FFFFFF; --surface-2:#F5F9FA; --surface-3:#E7EFF0;
+  --ink:#0B1719; --ink-2:#3B5054; --ink-3:#6B8085; --ink-4:#93A7AB;
+  --line:#D2DDDF; --line-2:#E4ECED;
+  --accent:#0E5866; --accent-2:#0A414C; --accent-soft:#DBEAED; --accent-on:#FFFFFF;
+  --ok:#1A6B44; --ok-soft:#DCF0E5; --ok-line:#8FCFAF;
+  --hold:#8A5806; --hold-soft:#F9EDD5; --hold-line:#DFBC74;
+  --bad:#A02218; --bad-soft:#F9E2E0; --bad-line:#E09B93;
+  --r:6px;
+  --fs:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --fm:"IBM Plex Mono","Consolas",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326; --surface-3:#1D2F33;
+    --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+    --line:#22383C; --line-2:#1A2B2E;
+    --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+    --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+    --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+    --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326; --surface-3:#1D2F33;
+  --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+  --line:#22383C; --line-2:#1A2B2E;
+  --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+  --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+  --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+  --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--fs); font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0; font-weight:600; letter-spacing:-.015em; text-wrap:balance}
+p{margin:0}
+button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer; border:0; background:none}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.mono{font-family:var(--fm); font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important; transition-duration:.01ms!important}}
+
+/* ── top bar ─────────────────────────────── */
+.top{
+  position:sticky; top:0; z-index:30; background:var(--surface);
+  border-bottom:1px solid var(--line);
+}
+.topin{
+  max-width:1120px; margin:0 auto; padding:11px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+}
+.brand{display:flex; align-items:baseline; gap:9px; min-width:0}
+.brand b{font-size:17px; letter-spacing:-.03em}
+.brand span{font-size:11.5px; color:var(--ink-3)}
+.who{display:flex; align-items:center; gap:12px; font-size:12px; color:var(--ink-2); flex-wrap:wrap}
+.dday{
+  font-family:var(--fm); font-size:11px; font-weight:600; padding:3px 9px; border-radius:11px;
+  background:var(--hold-soft); color:var(--hold); border:1px solid var(--hold-line);
+}
+.savedot{font-size:11px; color:var(--ink-4); font-family:var(--fm)}
+
+/* ── progress strip ──────────────────────── */
+.pstrip{background:var(--surface-2); border-bottom:1px solid var(--line)}
+.pin{max-width:1120px; margin:0 auto; padding:0 20px}
+.steps{display:flex; gap:0; overflow-x:auto; scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.step{
+  flex:1 0 auto; min-width:112px; padding:11px 12px; text-align:left;
+  border-bottom:2px solid transparent; color:var(--ink-3); white-space:nowrap;
+  display:flex; flex-direction:column; gap:1px;
+}
+.step .sn{font-family:var(--fm); font-size:9.5px; letter-spacing:.1em}
+.step .st{font-size:12.5px; font-weight:500}
+.step:hover{color:var(--ink)}
+.step[aria-current="true"]{border-bottom-color:var(--accent); color:var(--accent-2)}
+.step[aria-current="true"] .st{font-weight:600}
+.step[data-done="1"] .sn::after{content:" ✓"; color:var(--ok)}
+
+/* ── layout ──────────────────────────────── */
+.wrap{max-width:1120px; margin:0 auto; padding:22px 20px 90px; display:grid; grid-template-columns:1fr 300px; gap:22px; align-items:start}
+@media (max-width:900px){ .wrap{grid-template-columns:1fr; padding:16px 14px 100px} .side{order:-1} }
+.side{position:sticky; top:104px; display:flex; flex-direction:column; gap:12px}
+@media (max-width:900px){ .side{position:static} }
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+.card>.ch{padding:12px 16px; border-bottom:1px solid var(--line-2); display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.card>.ch h3{font-size:14px}
+.card>.ch .hint{font-size:11px; color:var(--ink-3)}
+.cb{padding:16px}
+.stack{display:flex; flex-direction:column; gap:14px}
+.sechead{font-family:var(--fm); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-4); margin-bottom:2px}
+.phead{margin-bottom:16px}
+.phead .eyebrow{font-family:var(--fm); font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); margin-bottom:6px}
+.phead h2{font-size:22px; line-height:1.3}
+.phead .sub{margin-top:7px; color:var(--ink-2); font-size:13px; max-width:64ch}
+.view{display:none}
+.view.on{display:block}
+
+/* ── connect (외부 연동) ─────────────────── */
+.conn{
+  border:1px solid var(--line); border-radius:var(--r); padding:14px 15px;
+  background:var(--surface-2); display:flex; flex-direction:column; gap:10px;
+}
+.conn .cr{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.conn .ct{font-size:13.5px; font-weight:600}
+.conn .cd{font-size:11.5px; color:var(--ink-3); line-height:1.55; margin-top:2px; max-width:52ch}
+.linkstate{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-family:var(--fm); color:var(--ok)}
+.linkstate i{width:6px; height:6px; border-radius:50%; background:var(--ok); display:block}
+.pulse{display:flex; flex-direction:column; gap:6px}
+.pbar{height:4px; background:var(--surface-3); border-radius:2px; overflow:hidden}
+.pbar>i{display:block; height:100%; width:0; background:var(--accent); transition:width .3s linear}
+.plog{font-family:var(--fm); font-size:10.5px; color:var(--ink-3); min-height:15px}
+
+/* ── evidence pick ───────────────────────── */
+.tw{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:12.5px}
+th{
+  text-align:left; font-family:var(--fm); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:500; padding:8px 10px; background:var(--surface-2);
+  border-bottom:1px solid var(--line); white-space:nowrap;
+}
+td{padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:middle}
+td.num{font-family:var(--fm); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+tbody tr.pick{cursor:pointer}
+tbody tr.pick:hover{background:var(--surface-2)}
+tbody tr.sel{background:var(--accent-soft)}
+tfoot td{border-bottom:0; border-top:1px solid var(--line); background:var(--surface-2); font-weight:600; font-family:var(--fm)}
+input[type=checkbox]{width:17px; height:17px; accent-color:var(--accent); cursor:pointer}
+.muted{color:var(--ink-4)}
+.strike{text-decoration:line-through; color:var(--ink-4)}
+
+/* ── computed field ──────────────────────── */
+.calc{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  padding:13px 15px; border:1px solid var(--accent); border-radius:var(--r); background:var(--accent-soft);
+}
+.calc .cl{font-size:12.5px; color:var(--accent-2)}
+.calc .cv{font-family:var(--fm); font-size:22px; font-weight:600; color:var(--accent-2); letter-spacing:-.02em}
+.calc .cn{font-size:10.5px; color:var(--accent); font-family:var(--fm)}
+.locked{
+  display:inline-flex; align-items:center; gap:5px; font-size:10px; font-family:var(--fm);
+  color:var(--accent); border:1px solid var(--accent); border-radius:2px; padding:1px 6px;
+}
+
+/* ── fields ──────────────────────────────── */
+.field{display:flex; flex-direction:column; gap:5px}
+.field>label{font-size:12.5px; font-weight:500}
+.field .fh{font-size:11px; color:var(--ink-3); line-height:1.5}
+input[type=text],input[type=number],select,textarea{
+  width:100%; font-family:var(--fm); font-size:14px; padding:9px 11px;
+  border:1px solid var(--line); border-radius:var(--r); background:var(--surface); color:var(--ink);
+}
+textarea{font-family:var(--fs); font-size:13px; min-height:70px; resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent); outline:none}
+input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allowed}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media (max-width:560px){ .row2{grid-template-columns:1fr} }
+
+/* ── inline validation ───────────────────── */
+.flag{
+  display:flex; gap:8px; padding:9px 12px; border-radius:var(--r); font-size:12px; line-height:1.55;
+  border:1px solid;
+}
+.flag .fi{font-family:var(--fm); font-weight:700; font-size:11px; line-height:1.6; flex:none}
+.f-ok{background:var(--ok-soft); border-color:var(--ok-line); color:var(--ok)}
+.f-hold{background:var(--hold-soft); border-color:var(--hold-line); color:var(--hold)}
+.f-bad{background:var(--bad-soft); border-color:var(--bad-line); color:var(--bad)}
+.f-info{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-2)}
+.flag b{font-weight:600}
+.flag .sub{color:var(--ink-2); display:block; margin-top:2px; font-weight:400}
+
+/* ── history ─────────────────────────────── */
+.hist{display:flex; flex-direction:column; gap:0}
+.hrow{display:grid; grid-template-columns:44px 1fr auto; gap:10px; align-items:baseline; padding:6px 0; border-bottom:1px dashed var(--line-2); font-size:12px}
+.hrow:last-child{border-bottom:0}
+.hrow .hy{font-family:var(--fm); font-size:11px; color:var(--ink-4)}
+.hrow .hb{height:5px; background:var(--surface-3); border-radius:3px; position:relative; top:-1px}
+.hrow .hb>i{display:block; height:100%; background:var(--accent); border-radius:3px; opacity:.55}
+.hrow .hv{font-family:var(--fm); font-size:11.5px; font-variant-numeric:tabular-nums}
+.hrow.now .hy{color:var(--accent); font-weight:600}
+.hrow.now .hb>i{opacity:1}
+.hrow.now .hv{font-weight:600; color:var(--accent-2)}
+
+/* ── side ────────────────────────────────── */
+.prog{display:flex; flex-direction:column; gap:9px}
+.pline{display:flex; align-items:center; justify-content:space-between; gap:9px; font-size:12.5px}
+.pline .pk{color:var(--ink-2)}
+.pline .pv{font-family:var(--fm); font-size:11.5px}
+.bar{height:6px; background:var(--surface-3); border-radius:3px; overflow:hidden}
+.bar>i{display:block; height:100%; background:var(--accent); border-radius:3px; transition:width .4s}
+.chk{display:flex; align-items:center; gap:8px; font-size:12.5px; padding:4px 0}
+.chk .ci{width:15px; font-family:var(--fm); font-size:11px; font-weight:700; flex:none}
+.chk.done{color:var(--ink-2)} .chk.done .ci{color:var(--ok)}
+.chk.todo{color:var(--ink-4)} .chk.todo .ci{color:var(--ink-4)}
+.chk.warn{color:var(--hold)} .chk.warn .ci{color:var(--hold)}
+
+/* ── buttons ─────────────────────────────── */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  background:var(--accent); color:var(--accent-on); border-radius:var(--r);
+  padding:10px 18px; font-size:13.5px; font-weight:600; transition:filter .12s;
+}
+.btn:hover{filter:brightness(1.1)}
+.btn.full{width:100%}
+.btn.ghost{background:transparent; color:var(--accent); border:1px solid var(--accent)}
+.btn.grey{background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line)}
+.btn.sm{padding:7px 13px; font-size:12.5px}
+.btn[disabled]{opacity:.45; filter:none; cursor:default}
+
+/* ── sticky footer nav ───────────────────── */
+.foot{
+  position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--surface);
+  border-top:1px solid var(--line);
+}
+.footin{
+  max-width:1120px; margin:0 auto; padding:11px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.footin .fs{font-size:11.5px; color:var(--ink-3)}
+
+/* ── misc ────────────────────────────────── */
+.note{font-size:11px; color:var(--ink-4); line-height:1.6}
+.pill{display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:11px; font-size:11px; font-weight:600; border:1px solid; white-space:nowrap}
+.pill::before{content:""; width:5px; height:5px; border-radius:50%; background:currentColor}
+.p-ok{color:var(--ok); background:var(--ok-soft); border-color:var(--ok-line)}
+.p-hold{color:var(--hold); background:var(--hold-soft); border-color:var(--hold-line)}
+.p-acc{color:var(--accent); background:var(--accent-soft); border-color:var(--accent)}
+.p-idle{color:var(--ink-3); background:var(--surface-2); border-color:var(--line)}
+.badge{display:inline-flex; align-items:center; font-family:var(--fm); font-size:9px; letter-spacing:.08em; padding:2px 6px; border-radius:2px; border:1px solid; font-weight:500}
+.badge.sim{color:var(--ink-3); border-color:var(--line); background:var(--surface-2)}
+.dl{display:grid; grid-template-columns:auto 1fr; gap:5px 14px; font-size:12.5px}
+.dl dt{color:var(--ink-3)}
+.dl dd{margin:0; font-family:var(--fm)}
+.hr{height:1px; background:var(--line-2); margin:16px 0}
+.toast{
+  position:fixed; left:50%; transform:translateX(-50%); bottom:74px; z-index:50;
+  background:var(--ink); color:var(--ground); padding:10px 16px; border-radius:var(--r);
+  font-size:12.5px; box-shadow:0 10px 30px -12px rgba(0,0,0,.5); display:none; max-width:90vw;
+}
+.toast.on{display:block}
+</style>
+
+<div class="top"><div class="topin">
+  <div class="brand"><b>PACE</b><span>2026년 중소기업기술개발사업 성과조사</span></div>
+  <div class="who">
+    <span><b>㈜퓨처센싱</b> · 사업자 <span class="mono">312-81-••••8</span></span>
+    <span class="dday" id="dday">제출마감 D-12</span>
+    <span class="savedot" id="savedot">자동저장 대기</span>
+  </div>
+</div></div>
+
+<div class="pstrip"><div class="pin"><div class="steps" id="steps"></div></div></div>
+
+<div class="wrap">
+  <main>
+    <!-- ══ 1 과제확인 ══ -->
+    <section class="view on" id="v-0">
+      <div class="phead">
+        <div class="eyebrow">Step 1 · 과제 확인</div>
+        <h2>응답 대상 과제를 확인해 주세요</h2>
+        <p class="sub">귀사가 수행한 과제 중 2026년 성과조사 대상은 아래 2건입니다. 과제 단계에 따라 묻는 항목이 달라집니다.</p>
+      </div>
+      <div class="stack" id="tasklist"></div>
+      <div class="hr"></div>
+      <div class="card">
+        <div class="ch"><h3>지난 6년간 귀사의 응답 이력</h3><span class="hint">RFP Ⅲ-4 · 과거 응답 참조 환경</span></div>
+        <div class="cb">
+          <p class="note" style="margin-bottom:12px">직전 조사에서 응답한 값을 나란히 보여드립니다. 올해 값을 입력하면 변화율이 자동으로 계산되고, 이례적인 변동은 제출 전에 안내해 드립니다.</p>
+          <div class="hist" id="histbox"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 2 경제적 성과 ══ -->
+    <section class="view" id="v-1">
+      <div class="phead">
+        <div class="eyebrow">Step 2 · 경제적 성과</div>
+        <h2>금액은 직접 입력하지 않습니다</h2>
+        <p class="sub">국세청·관세청·건강보험공단 자료를 불러와 해당 건만 고르시면 금액이 자동으로 계산됩니다. 공급가액과 합계금액을 혼동하거나 환율을 잘못 적용할 일이 없습니다.</p>
+      </div>
+
+      <div class="stack">
+        <!-- 매출 -->
+        <div class="card">
+          <div class="ch"><h3>과제매출액</h3><span class="hint">전자세금계산서 · 공급가액 기준</span></div>
+          <div class="cb stack">
+            <div class="conn">
+              <div class="cr">
+                <div>
+                  <div class="ct">국세청 전자세금계산서 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                  <div class="cd">2026.1.1~12.31 발행분을 불러옵니다. 과제로 개발한 제품·서비스의 매출 건만 선택하세요.</div>
+                </div>
+                <button class="btn sm" id="pull-tax">발행 내역 불러오기</button>
+              </div>
+              <div class="pulse" id="pulse-tax" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+            </div>
+            <div id="taxarea"></div>
+          </div>
+        </div>
+
+        <!-- 수출 -->
+        <div class="card">
+          <div class="ch"><h3>과제수출액</h3><span class="hint">수출신고필증 · 신고일 기준환율</span></div>
+          <div class="cb stack">
+            <div class="conn">
+              <div class="cr">
+                <div>
+                  <div class="ct">관세청 UNI-PASS 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                  <div class="cd">원화 환산은 각 필증의 <b>신고일 기준환율</b>로 건별 자동 계산됩니다.</div>
+                </div>
+                <button class="btn sm" id="pull-exp">필증 불러오기</button>
+              </div>
+              <div class="pulse" id="pulse-exp" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+            </div>
+            <div id="exparea"></div>
+          </div>
+        </div>
+
+        <!-- 고용 -->
+        <div class="card">
+          <div class="ch"><h3>신규고용</h3><span class="hint">4대 사회보험 가입자 명부 · 순증 기준</span></div>
+          <div class="cb stack">
+            <div class="conn">
+              <div class="cr">
+                <div>
+                  <div class="ct">국민건강보험공단 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                  <div class="cd">신규고용은 <b>순증(자격취득 − 자격상실)</b> 기준입니다. 퇴사자가 자동 반영됩니다.</div>
+                </div>
+                <button class="btn sm" id="pull-ins">가입자 명부 불러오기</button>
+              </div>
+              <div class="pulse" id="pulse-ins" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+            </div>
+            <div id="insarea"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 3 기술적 성과 ══ -->
+    <section class="view" id="v-2">
+      <div class="phead">
+        <div class="eyebrow">Step 3 · 기술적 성과</div>
+        <h2>논문·특허</h2>
+        <p class="sub">DOI 또는 출원번호만 넣으면 서지정보가 자동으로 채워집니다. 참여기관이 여럿이면 기여율 합계가 100%인지 그 자리에서 확인해 드립니다.</p>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <div class="ch"><h3>논문</h3><span class="hint">DOI 자동 조회 · 기여율 합계 검증</span></div>
+          <div class="cb stack">
+            <div class="field">
+              <label for="doi">DOI</label>
+              <div style="display:flex; gap:8px">
+                <input type="text" id="doi" placeholder="10.3390/children10101673" autocomplete="off">
+                <button class="btn sm" id="doilookup" style="flex:none">조회</button>
+              </div>
+              <span class="fh">Crossref에서 학술지명·ISSN·SCI(E) 구분·임팩트팩터를 가져옵니다. <span class="badge sim">시뮬레이션</span></span>
+            </div>
+            <div id="doiresult"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><h3>특허</h3><span class="hint">KIPRIS 대조 · 번호 형식 검증</span></div>
+          <div class="cb stack">
+            <div class="field">
+              <label for="pat">출원·등록번호</label>
+              <div style="display:flex; gap:8px">
+                <input type="text" id="pat" placeholder="10-2026-0197358" autocomplete="off">
+                <button class="btn sm" id="patlookup" style="flex:none">조회</button>
+              </div>
+              <span class="fh">출원번호는 <span class="mono">10-YYYY-NNNNNNN</span>, 등록번호는 <span class="mono">10-NNNNNNN-NNNN</span> 형식입니다.</span>
+            </div>
+            <div id="patresult"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4 검토·제출 ══ -->
+    <section class="view" id="v-3">
+      <div class="phead">
+        <div class="eyebrow">Step 4 · 검토 및 제출</div>
+        <h2>제출 전 마지막 확인</h2>
+        <p class="sub">입력값과 근거 자료를 나란히 놓고 확인하세요. 제출 후에는 조사원 현장방문 시에만 수정이 가능합니다.</p>
+      </div>
+      <div class="stack" id="reviewbox"></div>
+    </section>
+  </main>
+
+  <aside class="side">
+    <div class="card">
+      <div class="ch"><h3>작성 진행률</h3><span class="hint mono" id="pcnum">0%</span></div>
+      <div class="cb stack" style="gap:11px">
+        <div class="bar"><i id="pcbar" style="width:0%"></i></div>
+        <div id="checklist"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>입력 도움</h3></div>
+      <div class="cb"><div id="helpbox"></div></div>
+    </div>
+    <p class="note">
+      입력 중인 내용은 자동 저장됩니다. 브라우저를 닫아도 이어서 작성할 수 있습니다.
+      문의 <b class="mono">1357</b> · 성과조사 상담센터
+    </p>
+  </aside>
+</div>
+
+<div class="foot"><div class="footin">
+  <button class="btn grey sm" id="prev">이전</button>
+  <span class="fs" id="footnote">Step 1 / 4</span>
+  <button class="btn sm" id="next">다음</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const nf = n => Number(n).toLocaleString('ko-KR');
+const won = n => nf(Math.round(n)) + '원';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ══════════════════════════════════════════
+   응답 기업 · 과제 · 외부기관 원천자료 (가상)
+   ══════════════════════════════════════════ */
+const FIRM = {name:'㈜퓨처센싱', prod:'초음파 진단 프로브'};
+const TASKS = [
+  {id:'S2026-02351', nm:'초음파 진단 프로브 상용화 기술개발', biz:'중소기업기술혁신개발',
+   stage:'종료', period:'2024.05 ~ 2026.04', fund:300000000, target:true},
+  {id:'S2026-02902', nm:'초음파 트랜스듀서 어레이 고도화', biz:'창업성장기술개발',
+   stage:'계속', period:'2026.03 ~ 2028.02', fund:180000000, target:true},
+];
+
+// 국세청 전자세금계산서 (2026 발행분) — 과제 관련 2건 + 무관 2건
+const TAXDB = [
+  {no:'20260408-52011744', d:'2026-04-08', buyer:'서울대학교병원', item:'초음파 진단 프로브', sup:150000000},
+  {no:'20260822-52018092', d:'2026-08-22', buyer:'㈜메디칼그룹', item:'초음파 진단 프로브', sup:90000000},
+  {no:'20260612-52014208', d:'2026-06-12', buyer:'대전테크노파크', item:'기술자문 용역', sup:12000000},
+  {no:'20261105-52021663', d:'2026-11-05', buyer:'㈜오피스넥스', item:'사무용 비품 판매', sup:4200000},
+];
+// 관세청 수출신고필증
+const EXPDB = [
+  {no:'43102-26-0022417', d:'2026-05-19', dest:'베트남', item:'초음파 진단 프로브', usd:48000, fx:1296},
+  {no:'43102-26-0044style', d:'2026-10-07', dest:'인도네시아', item:'초음파 진단 프로브', usd:31000, fx:1309},
+];
+EXPDB[1].no = '43102-26-0044931';
+// 건강보험공단 가입자 명부
+const INSDB = [
+  {n:'서O영', i:'2026-03-16', o:null}, {n:'오O탁', i:'2026-05-04', o:null},
+  {n:'류O경', i:'2026-07-19', o:null}, {n:'문O아', i:'2026-09-01', o:'2026-12-20'},
+  {n:'배O훈', i:'2025-08-11', o:null},
+];
+// 직전 조사 응답 이력
+const HIST = {
+  sales: [{y:2022, v:0}, {y:2023, v:41000000}, {y:2024, v:88000000}, {y:2025, v:174000000}],
+  jobs:  [{y:2022, v:1}, {y:2023, v:2}, {y:2024, v:3}, {y:2025, v:4}],
+};
+// Crossref / KIPRIS 조회 결과 (시뮬레이션)
+const DOIDB = {
+  '10.3390/children10101673': {journal:'Children', issn:'2227-9067', sci:'SCI(E)', IF:2.4,
+    title:'Clinical Application of High-Frequency Ultrasound Probe in Neonatal Screening',
+    first:'Kim, D.H.', co:'Yang, M.; Jo, H.S.', vol:'10(10)', page:'1673', date:'2023-10-11', partners:2},
+  '10.1016/j.ultras.2026.107412': {journal:'Ultrasonics', issn:'0041-624X', sci:'SCI(E)', IF:3.9,
+    title:'Beamforming Optimization for Portable Diagnostic Ultrasound Probes',
+    first:'Oh, T.K.', co:'Ryu, K.', vol:'138', page:'107412', date:'2026-06-02', partners:1},
+};
+const PATDB = {
+  '10-2026-0197358': {kind:'출원', name:'초음파 진단용 트랜스듀서 어레이 및 그 제조방법',
+    date:'2026-03-14', applicant:'㈜퓨처센싱', tri:false, joint:false},
+  '10-2807673-0000': {kind:'등록', name:'휴대형 초음파 프로브의 신호처리 장치',
+    date:'2026-09-22', applicant:'㈜퓨처센싱', tri:false, joint:true},
+};
+
+const STEPS = [['01', '과제 확인'], ['02', '경제적 성과'], ['03', '기술적 성과'], ['04', '검토·제출']];
+
+/* ══════════ 상태 ══════════ */
+const KEY = 'pace-report-v1';
+let S = {step:0, tax:{pulled:false, sel:[]}, exp:{pulled:false, sel:[]}, ins:{pulled:false},
+         papers:[], patents:[], submitted:false};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch (e) {}
+let saveT;
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  $('#savedot').textContent = '저장 중…';
+  clearTimeout(saveT);
+  saveT = setTimeout(() => $('#savedot').textContent = '모든 변경사항 저장됨', 420);
+}
+function toast(m) {
+  const t = $('#toast'); t.textContent = m; t.classList.add('on');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+/* ══════════ 계산 ══════════ */
+const selTax = () => TAXDB.filter(t => S.tax.sel.includes(t.no));
+const selExp = () => EXPDB.filter(t => S.exp.sel.includes(t.no));
+const salesVal = () => selTax().reduce((a, t) => a + t.sup, 0);
+const exportVal = () => selExp().reduce((a, t) => a + Math.round(t.usd * t.fx), 0);
+const insCalc = () => {
+  const before = INSDB.filter(p => p.i < '2026-01-01');
+  const hired = INSDB.filter(p => p.i >= '2026-01-01' && p.i <= '2026-12-31');
+  const left = hired.filter(p => p.o);
+  return {before, hired: hired.length, left: left.length, net: hired.length - left.length};
+};
+function progress() {
+  const c = [
+    {k:'과제 확인', done:true},
+    {k:'과제매출액', done:S.tax.pulled && S.tax.sel.length > 0},
+    {k:'과제수출액', done:S.exp.pulled},
+    {k:'신규고용', done:S.ins.pulled},
+    {k:'기술적 성과', done:S.papers.length + S.patents.length > 0},
+  ];
+  return {items:c, pc: Math.round(c.filter(x => x.done).length / c.length * 100)};
+}
+
+/* ══════════ 스텝 네비 ══════════ */
+function renderSteps() {
+  $('#steps').innerHTML = STEPS.map(([n, t], i) => {
+    const done = i < S.step;
+    return `<button class="step" data-s="${i}" aria-current="${i === S.step}" data-done="${done ? 1 : 0}">
+      <span class="sn">STEP ${n}</span><span class="st">${esc(t)}</span></button>`;
+  }).join('');
+  $$('#steps .step').forEach(b => b.onclick = () => goStep(+b.dataset.s));
+}
+function goStep(i) {
+  S.step = Math.max(0, Math.min(STEPS.length - 1, i)); save();
+  $$('.view').forEach((v, j) => v.classList.toggle('on', j === S.step));
+  $('#footnote').textContent = `Step ${S.step + 1} / ${STEPS.length}`;
+  $('#prev').disabled = S.step === 0;
+  $('#next').textContent = S.step === STEPS.length - 1 ? '제출하기' : '다음';
+  renderSteps(); renderAll();
+  scrollTo({top:0, behavior:'smooth'});
+}
+$('#prev').onclick = () => goStep(S.step - 1);
+$('#next').onclick = () => {
+  if (S.step < STEPS.length - 1) return goStep(S.step + 1);
+  const p = progress();
+  if (p.pc < 100) return toast('아직 입력하지 않은 항목이 있습니다. 우측 진행률을 확인하세요.');
+  S.submitted = true; save(); renderAll();
+  toast('제출이 완료되었습니다. 접수번호가 발급되었습니다.');
+};
+
+/* ══════════ Step 1 ══════════ */
+function renderTasks() {
+  $('#tasklist').innerHTML = TASKS.map(t => `
+    <div class="card"><div class="cb">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap">
+        <div style="min-width:0">
+          <div style="font-size:15px; font-weight:600">${esc(t.nm)}</div>
+          <div class="mono" style="font-size:11px; color:var(--ink-3); margin-top:2px">${esc(t.id)} · ${esc(t.biz)}</div>
+        </div>
+        <span class="pill ${t.stage === '종료' ? 'p-acc' : 'p-idle'}">${t.stage}과제</span>
+      </div>
+      <div class="hr" style="margin:12px 0"></div>
+      <dl class="dl">
+        <dt>수행기간</dt><dd>${esc(t.period)}</dd>
+        <dt>정부지원금</dt><dd>${won(t.fund)}</dd>
+        <dt>응답 항목</dt><dd>${t.stage === '종료' ? '기술·경제 성과 전체 + 사업화 성공요인' : '기술 성과 + 당해 발생 경제성과'}</dd>
+      </dl>
+      ${t.stage === '종료' ? `<div class="flag f-info" style="margin-top:12px"><span class="fi">i</span>
+        <div>종료과제는 <b>과제 종료 후 5년간</b> 성과를 추적합니다.
+        <span class="sub">올해가 ${esc(t.id)}의 1차 추적 조사입니다. 매출이 아직 발생하지 않았다면 “미발생”으로 응답하셔도 불이익이 없습니다.</span></div></div>` : ''}
+    </div></div>`).join('');
+
+  const cur = {sales: salesVal(), jobs: insCalc().net};
+  $('#histbox').innerHTML = ['sales', 'jobs'].map(k => {
+    const rows = HIST[k].concat([{y:2026, v:cur[k], now:true}]);
+    const max = Math.max(...rows.map(r => r.v), 1);
+    const fmt = k === 'sales' ? won : (n => n + '명');
+    return `<div class="sechead" style="margin-top:10px">${k === 'sales' ? '과제매출액' : '신규고용'}</div>` +
+      rows.map(r => `<div class="hrow${r.now ? ' now' : ''}">
+        <span class="hy">${r.y}</span>
+        <span class="hb"><i style="width:${Math.max(2, r.v / max * 100)}%"></i></span>
+        <span class="hv">${r.v ? esc(fmt(r.v)) : (r.now ? '입력 전' : '미발생')}</span></div>`).join('');
+  }).join('');
+}
+
+/* ══════════ 외부 연동 애니메이션 ══════════ */
+async function pulse(id, steps) {
+  const box = $('#pulse-' + id);
+  box.style.display = 'flex';
+  const bar = box.querySelector('i'), log = box.querySelector('.plog');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (let i = 0; i < steps.length; i++) {
+    log.textContent = steps[i];
+    bar.style.width = ((i + 1) / steps.length * 100) + '%';
+    if (!reduced) await new Promise(r => setTimeout(r, 380));
+  }
+  log.innerHTML = `<span class="linkstate"><i></i>연동 완료</span>`;
+}
+
+/* ══════════ Step 2 — 매출 ══════════ */
+$('#pull-tax').onclick = async () => {
+  $('#pull-tax').disabled = true;
+  await pulse('tax', ['국세청 홈택스 인증', '2026.1.1~12.31 발행분 조회', `전자세금계산서 ${TAXDB.length}건 수신`, '공급가액·세액 분리']);
+  S.tax.pulled = true; save(); renderTax();
+  toast('발행 내역을 불러왔습니다. 과제 관련 건을 선택하세요.');
+};
+function renderTax() {
+  if (!S.tax.pulled) { $('#taxarea').innerHTML = ''; return; }
+  const sel = salesVal();
+  const gross = selTax().reduce((a, t) => a + Math.round(t.sup * 1.1), 0);
+  $('#taxarea').innerHTML = `
+    <div class="tw"><table>
+      <thead><tr><th style="width:34px"></th><th>거래처 · 품목</th><th>발행일</th><th class="num">공급가액</th><th class="num">합계금액</th></tr></thead>
+      <tbody>${TAXDB.map(t => {
+        const on = S.tax.sel.includes(t.no);
+        return `<tr class="pick${on ? ' sel' : ''}" data-tax="${t.no}">
+          <td><input type="checkbox" ${on ? 'checked' : ''} tabindex="-1"></td>
+          <td><b>${esc(t.buyer)}</b><br><span style="font-size:11px; color:var(--ink-3)">${esc(t.item)}</span></td>
+          <td class="mono" style="font-size:11px">${t.d}</td>
+          <td class="num">${nf(t.sup)}</td>
+          <td class="num muted">${nf(Math.round(t.sup * 1.1))}</td></tr>`;
+      }).join('')}</tbody>
+      <tfoot><tr><td colspan="3">선택 ${S.tax.sel.length}건 합계</td>
+        <td class="num">${nf(sel)}</td><td class="num muted">${nf(gross)}</td></tr></tfoot>
+    </table></div>
+    <div class="calc" style="margin-top:12px">
+      <div><div class="cl">과제매출액 <span class="locked">자동계산</span></div>
+        <div class="cn">공급가액 합계 기준 · 직접 입력 불가</div></div>
+      <div class="cv">${won(sel)}</div>
+    </div>
+    <div class="flag f-info" style="margin-top:10px"><span class="fi">i</span>
+      <div>합계금액(${won(gross)})이 아니라 <b>공급가액</b>을 성과로 계상합니다.
+      <span class="sub">부가가치세 ${won(gross - sel)}은 과제매출액에 포함되지 않습니다. 매년 가장 많이 발생하는 착오입니다.</span></div></div>
+    ${(() => {
+      const prev = HIST.sales[HIST.sales.length - 1].v;
+      if (!sel || !prev) return '';
+      const r = (sel - prev) / prev * 100;
+      return Math.abs(r) >= 50 ? `<div class="flag f-hold" style="margin-top:8px"><span class="fi">!</span>
+        <div>전년(${won(prev)}) 대비 <b>${r > 0 ? '+' : ''}${r.toFixed(0)}%</b> 변동
+        <span class="sub">이례적인 변동은 현장조사 대상으로 분류될 수 있습니다. 선택한 건이 모두 과제 관련 매출인지 확인해 주세요.</span></div></div>` : '';
+    })()}`;
+  $$('#taxarea [data-tax]').forEach(tr => tr.onclick = () => {
+    const no = tr.dataset.tax;
+    S.tax.sel = S.tax.sel.includes(no) ? S.tax.sel.filter(x => x !== no) : S.tax.sel.concat(no);
+    save(); renderTax(); renderSide(); renderReview();
+  });
+}
+
+/* ══════════ Step 2 — 수출 ══════════ */
+$('#pull-exp').onclick = async () => {
+  $('#pull-exp').disabled = true;
+  await pulse('exp', ['관세청 UNI-PASS 인증', '2026년 수출신고필증 조회', `필증 ${EXPDB.length}건 수신`, '신고일 기준환율 자동 적용']);
+  S.exp.pulled = true; S.exp.sel = EXPDB.map(e => e.no); save(); renderExp();
+  toast('필증을 불러왔습니다. 신고일 환율이 건별로 적용되었습니다.');
+};
+function renderExp() {
+  if (!S.exp.pulled) { $('#exparea').innerHTML = ''; return; }
+  const v = exportVal(), usd = selExp().reduce((a, e) => a + e.usd, 0);
+  const wrongFx = 1330, wrongTotal = Math.round(usd * wrongFx);
+  $('#exparea').innerHTML = `
+    <div class="tw"><table>
+      <thead><tr><th style="width:34px"></th><th>도착국 · 품목</th><th>신고일</th><th class="num">USD</th><th class="num">신고일 환율</th><th class="num">원화</th></tr></thead>
+      <tbody>${EXPDB.map(e => {
+        const on = S.exp.sel.includes(e.no);
+        return `<tr class="pick${on ? ' sel' : ''}" data-exp="${e.no}">
+          <td><input type="checkbox" ${on ? 'checked' : ''} tabindex="-1"></td>
+          <td><b>${esc(e.dest)}</b><br><span style="font-size:11px; color:var(--ink-3)">${esc(e.item)}</span></td>
+          <td class="mono" style="font-size:11px">${e.d}</td>
+          <td class="num">${nf(e.usd)}</td><td class="num">${nf(e.fx)}</td>
+          <td class="num">${nf(Math.round(e.usd * e.fx))}</td></tr>`;
+      }).join('')}</tbody>
+      <tfoot><tr><td colspan="3">선택 ${S.exp.sel.length}건 합계</td>
+        <td class="num">${nf(usd)}</td><td class="num"></td><td class="num">${nf(v)}</td></tr></tfoot>
+    </table></div>
+    <div class="calc" style="margin-top:12px">
+      <div><div class="cl">과제수출액 <span class="locked">자동계산</span></div>
+        <div class="cn">필증별 신고일 기준환율 적용 · 직접 입력 불가</div></div>
+      <div class="cv">${won(v)}</div>
+    </div>
+    <div class="flag f-ok" style="margin-top:10px"><span class="fi">✓</span>
+      <div>연말 환율(${nf(wrongFx)})을 일괄 적용했다면 <b>${won(wrongTotal)}</b>으로 신고되어
+      ${won(Math.abs(wrongTotal - v))}의 차이가 발생했을 값입니다.
+      <span class="sub">신고일 환율을 건별로 적용해 자동 계산했습니다.</span></div></div>`;
+  $$('#exparea [data-exp]').forEach(tr => tr.onclick = () => {
+    const no = tr.dataset.exp;
+    S.exp.sel = S.exp.sel.includes(no) ? S.exp.sel.filter(x => x !== no) : S.exp.sel.concat(no);
+    save(); renderExp(); renderSide(); renderReview();
+  });
+}
+
+/* ══════════ Step 2 — 고용 ══════════ */
+$('#pull-ins').onclick = async () => {
+  $('#pull-ins').disabled = true;
+  await pulse('ins', ['국민건강보험공단 인증', '사업장 가입자 명부 조회', `가입 이력 ${INSDB.length}건 수신`, '과제기간 내 취득·상실 판정']);
+  S.ins.pulled = true; save(); renderIns();
+  toast('명부를 불러왔습니다. 순증이 자동 계산되었습니다.');
+};
+function renderIns() {
+  if (!S.ins.pulled) { $('#insarea').innerHTML = ''; return; }
+  const c = insCalc();
+  $('#insarea').innerHTML = `
+    <div class="tw"><table>
+      <thead><tr><th>성명</th><th>자격취득일</th><th>자격상실일</th><th>순증 반영</th></tr></thead>
+      <tbody>${INSDB.map(p => {
+        const pre = p.i < '2026-01-01';
+        const tag = pre ? ['제외 · 기존 재직', 'p-idle'] : p.o ? ['상실 −1', 'p-hold'] : ['취득 +1', 'p-ok'];
+        return `<tr><td${pre ? ' class="strike"' : ''}>${esc(p.n)}</td>
+          <td class="mono" style="font-size:11px">${p.i}</td>
+          <td class="mono muted" style="font-size:11px">${p.o || '—'}</td>
+          <td><span class="pill ${tag[1]}">${tag[0]}</span></td></tr>`;
+      }).join('')}</tbody>
+      <tfoot><tr><td colspan="3">기간 내 취득 ${c.hired} − 상실 ${c.left}</td>
+        <td class="num">${c.net}명</td></tr></tfoot>
+    </table></div>
+    <div class="calc" style="margin-top:12px">
+      <div><div class="cl">신규고용 <span class="locked">자동계산</span></div>
+        <div class="cn">순증 기준 · 직접 입력 불가</div></div>
+      <div class="cv">${c.net}명</div>
+    </div>
+    ${c.left ? `<div class="flag f-info" style="margin-top:10px"><span class="fi">i</span>
+      <div>기간 중 퇴사 <b>${c.left}명</b>이 자동 차감되었습니다.
+      <span class="sub">입사자 수만 신고해 과대계상되는 사례가 많아, 명부에서 순증을 직접 계산합니다.</span></div></div>` : ''}
+    ${c.before.length ? `<div class="flag f-info" style="margin-top:8px"><span class="fi">i</span>
+      <div>과제기간 전 입사자 <b>${c.before.length}명</b>(${esc(c.before.map(p => p.n).join(', '))})은 신규고용에서 제외했습니다.</div></div>` : ''}`;
+}
+
+/* ══════════ Step 3 — 논문 ══════════ */
+$('#doilookup').onclick = () => {
+  const raw = $('#doi').value.trim();
+  if (!raw) return toast('DOI를 입력하세요.');
+  if (!/^10\.\d{4,9}\/\S+$/.test(raw)) {
+    $('#doiresult').innerHTML = `<div class="flag f-bad"><span class="fi">✕</span>
+      <div>DOI 형식이 올바르지 않습니다.
+      <span class="sub">DOI는 <span class="mono">10.</span>으로 시작하고 <span class="mono">/</span>를 포함합니다. 예: 10.3390/children10101673</span></div></div>`;
+    return;
+  }
+  const r = DOIDB[raw];
+  if (!r) {
+    $('#doiresult').innerHTML = `<div class="flag f-hold"><span class="fi">!</span>
+      <div>Crossref에서 찾을 수 없습니다.
+      <span class="sub">DOI를 다시 확인하시거나, 아래 예시로 시연해 보세요.<br>
+      <span class="mono">10.3390/children10101673</span> · <span class="mono">10.1016/j.ultras.2026.107412</span></span></div></div>`;
+    return;
+  }
+  if (S.papers.some(p => p.doi === raw)) return toast('이미 등록한 논문입니다.');
+  S.papers.push({doi:raw, ...r, contrib: r.partners > 1 ? Math.round(100 / r.partners) : 100});
+  $('#doi').value = ''; save(); renderPapers(); renderSide(); renderReview();
+  toast('서지정보를 자동으로 채웠습니다.');
+};
+function renderPapers() {
+  const box = $('#doiresult');
+  if (!S.papers.length) { box.innerHTML = ''; return; }
+  box.innerHTML = S.papers.map((p, i) => `
+    <div class="card" style="margin-bottom:10px"><div class="cb stack" style="gap:11px">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px">
+        <div><div style="font-size:13.5px; font-weight:600; line-height:1.45">${esc(p.title)}</div>
+          <div class="mono" style="font-size:11px; color:var(--ink-3); margin-top:3px">${esc(p.doi)}</div></div>
+        <button class="btn sm grey" data-delp="${i}" style="flex:none">삭제</button>
+      </div>
+      <dl class="dl">
+        <dt>학술지</dt><dd>${esc(p.journal)} · ISSN ${esc(p.issn)}</dd>
+        <dt>등재구분</dt><dd>${esc(p.sci)} · IF ${p.IF}</dd>
+        <dt>저자</dt><dd>${esc(p.first)}${p.co ? ' 외' : ''}</dd>
+        <dt>게재</dt><dd>${esc(p.vol)} · ${esc(p.page)} · ${esc(p.date)}</dd>
+      </dl>
+      <div class="field">
+        <label for="cb-${i}">귀사 기여율 (%)</label>
+        <input type="number" id="cb-${i}" data-contrib="${i}" value="${p.contrib}" min="0" max="100">
+        <span class="fh">${p.partners > 1
+          ? `공동 참여기관 <b>${p.partners}개</b>가 확인되었습니다. 기관별 기여율 합계가 100%가 되어야 합니다.`
+          : '단독 수행 과제입니다.'}</span>
+      </div>
+      ${(() => {
+        if (p.partners <= 1) return p.contrib === 100 ? '' :
+          `<div class="flag f-bad"><span class="fi">✕</span><div>단독 수행 과제는 기여율이 100%여야 합니다.</div></div>`;
+        if (p.contrib >= 100) return `<div class="flag f-bad"><span class="fi">✕</span>
+          <div>공동 참여기관이 ${p.partners - 1}곳 더 있는데 기여율을 <b>100%</b>로 입력하셨습니다.
+          <span class="sub">다른 기관도 같은 논문을 신고하면 하나의 성과가 두 번 계상됩니다. 귀사 몫만 입력해 주세요.</span></div></div>`;
+        if (p.contrib === 0) return `<div class="flag f-hold"><span class="fi">!</span>
+          <div>기여율이 <b>0%</b>입니다.
+          <span class="sub">귀사 기여분이 없다면 이 논문은 귀사 성과로 계상되지 않습니다.</span></div></div>`;
+        return `<div class="flag f-info"><span class="fi">i</span>
+          <div>나머지 <b>${100 - p.contrib}%</b>는 공동 참여기관이 입력해야 합니다.
+          <span class="sub">합계가 100%에 미달하면 그만큼의 성과가 어느 기관에도 계상되지 않습니다. 참여기관 담당자에게 안내 메일이 자동 발송됩니다.</span></div></div>`;
+      })()}
+    </div></div>`).join('');
+  $$('#doiresult [data-delp]').forEach(b => b.onclick = () => {
+    S.papers.splice(+b.dataset.delp, 1); save(); renderPapers(); renderSide(); renderReview();
+  });
+  $$('#doiresult [data-contrib]').forEach(inp => inp.oninput = () => {
+    S.papers[+inp.dataset.contrib].contrib = Math.max(0, Math.min(100, +inp.value || 0));
+    save(); renderPapers(); renderReview();
+    const el = $(`[data-contrib="${inp.dataset.contrib}"]`); if (el) { el.focus(); }
+  });
+}
+
+/* ══════════ Step 3 — 특허 ══════════ */
+$('#patlookup').onclick = () => {
+  const raw = $('#pat').value.trim();
+  if (!raw) return toast('출원·등록번호를 입력하세요.');
+  const okApp = /^10-\d{4}-\d{7}$/.test(raw), okReg = /^10-\d{7}-\d{4}$/.test(raw);
+  if (!okApp && !okReg) {
+    $('#patresult').innerHTML = `<div class="flag f-bad"><span class="fi">✕</span>
+      <div>번호 형식이 올바르지 않습니다.
+      <span class="sub">출원번호 <span class="mono">10-YYYY-NNNNNNN</span> · 등록번호 <span class="mono">10-NNNNNNN-NNNN</span><br>
+      예시: <span class="mono">10-2026-0197358</span> · <span class="mono">10-2807673-0000</span></span></div></div>`;
+    return;
+  }
+  const r = PATDB[raw];
+  if (!r) {
+    $('#patresult').innerHTML = `<div class="flag f-hold"><span class="fi">!</span>
+      <div>KIPRIS에서 조회되지 않습니다.
+      <span class="sub">번호를 확인하시거나 아래 예시로 시연해 보세요.<br>
+      <span class="mono">10-2026-0197358</span> · <span class="mono">10-2807673-0000</span></span></div></div>`;
+    return;
+  }
+  if (S.patents.some(p => p.no === raw)) return toast('이미 등록한 특허입니다.');
+  S.patents.push({no:raw, ...r});
+  $('#pat').value = ''; save(); renderPatents(); renderSide(); renderReview();
+  toast('KIPRIS 서지정보를 가져왔습니다.');
+};
+function renderPatents() {
+  const box = $('#patresult');
+  if (!S.patents.length) { box.innerHTML = ''; return; }
+  box.innerHTML = S.patents.map((p, i) => `
+    <div class="card" style="margin-bottom:10px"><div class="cb stack" style="gap:11px">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px">
+        <div><div style="font-size:13.5px; font-weight:600; line-height:1.45">${esc(p.name)}</div>
+          <div class="mono" style="font-size:11px; color:var(--ink-3); margin-top:3px">${esc(p.no)} · ${esc(p.kind)}</div></div>
+        <button class="btn sm grey" data-delt="${i}" style="flex:none">삭제</button>
+      </div>
+      <dl class="dl">
+        <dt>출원·등록일</dt><dd>${esc(p.date)}</dd>
+        <dt>출원인</dt><dd>${esc(p.applicant)}</dd>
+        <dt>삼극특허</dt><dd>${p.tri ? '해당' : '비해당'}</dd>
+        <dt>공동특허</dt><dd>${p.joint ? '해당' : '비해당'}</dd>
+      </dl>
+      ${p.joint ? `<div class="flag f-info"><span class="fi">i</span>
+        <div>공동특허로 확인되었습니다.
+        <span class="sub">공동 출원인과의 지분에 따라 성과가 배분됩니다. 참여기관 중복 계상을 막기 위해 출원번호 기준으로 자동 대조합니다.</span></div></div>` : ''}
+    </div></div>`).join('');
+  $$('#patresult [data-delt]').forEach(b => b.onclick = () => {
+    S.patents.splice(+b.dataset.delt, 1); save(); renderPatents(); renderSide(); renderReview();
+  });
+}
+
+/* ══════════ Step 4 — 검토 ══════════ */
+function renderReview() {
+  const c = insCalc();
+  const rows = [
+    ['과제매출액', S.tax.pulled && S.tax.sel.length ? won(salesVal()) : '미입력', `전자세금계산서 ${S.tax.sel.length}건 · 공급가액`, S.tax.sel.length > 0],
+    ['과제수출액', S.exp.pulled ? won(exportVal()) : '미입력', `수출신고필증 ${S.exp.sel.length}건 · 신고일 환율`, S.exp.pulled],
+    ['신규고용', S.ins.pulled ? c.net + '명' : '미입력', `취득 ${c.hired} − 상실 ${c.left}`, S.ins.pulled],
+    ['논문', S.papers.length + '건', S.papers.map(p => p.journal).join(', ') || '—', true],
+    ['특허', S.patents.length + '건', S.patents.map(p => p.kind).join(', ') || '—', true],
+  ];
+  const warn = S.papers.filter(p => p.partners > 1 && p.contrib === 100);
+  $('#reviewbox').innerHTML = `
+    ${S.submitted ? `<div class="flag f-ok"><span class="fi">✓</span>
+      <div><b>제출 완료</b> · 접수번호 <span class="mono">2026-PF-0231-8841</span>
+      <span class="sub">제출 내역은 마이페이지에서 확인하실 수 있습니다. 현장조사 대상으로 선정되면 별도 안내드립니다.</span></div></div>` : ''}
+    <div class="card">
+      <div class="ch"><h3>응답 요약</h3><span class="hint">${esc(TASKS[0].id)} · ${esc(TASKS[0].nm)}</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>성과 항목</th><th class="num">값</th><th>근거</th><th>상태</th></tr></thead>
+        <tbody>${rows.map(([k, v, ev, ok]) => `<tr>
+          <td><b>${esc(k)}</b></td><td class="num">${esc(v)}</td>
+          <td style="font-size:11.5px; color:var(--ink-3)">${esc(ev)}</td>
+          <td><span class="pill ${ok ? 'p-ok' : 'p-idle'}">${ok ? '확인' : '미입력'}</span></td></tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>
+    ${warn.length ? `<div class="flag f-hold"><span class="fi">!</span>
+      <div>공동 참여기관이 있는 논문 ${warn.length}건의 기여율이 100%로 입력되어 있습니다.
+      <span class="sub">다른 참여기관도 100%로 신고하면 동일 성과가 중복 계상됩니다. Step 3에서 확인해 주세요.</span></div></div>` : ''}
+    <div class="card">
+      <div class="ch"><h3>제출 후 절차</h3></div>
+      <div class="cb stack" style="gap:9px">
+        <div class="chk done"><span class="ci">1</span>온라인 응답 접수 (~2027.2)</div>
+        <div class="chk todo"><span class="ci">2</span>증빙 자동 대조 및 1차 검증</div>
+        <div class="chk todo"><span class="ci">3</span>현장방문조사 — 응답기업의 약 1/3 (2027.3~4)</div>
+        <div class="chk todo"><span class="ci">4</span>최종 성과 확정 및 IRIS 등록</div>
+        <p class="note" style="margin-top:6px">외부기관 연동으로 입력하신 항목은 이미 근거가 확보되어 있어, 현장조사에서 별도 증빙을 다시 요청드리지 않습니다.</p>
+      </div>
+    </div>`;
+}
+
+/* ══════════ 사이드 ══════════ */
+function renderSide() {
+  const p = progress();
+  $('#pcnum').textContent = p.pc + '%';
+  $('#pcbar').style.width = p.pc + '%';
+  $('#checklist').innerHTML = p.items.map(i =>
+    `<div class="chk ${i.done ? 'done' : 'todo'}"><span class="ci">${i.done ? '✓' : '○'}</span>${esc(i.k)}</div>`).join('');
+
+  const help = [
+    ['과제매출액', '과제로 개발한 제품·서비스의 <b>공급가액</b>입니다. 부가세는 포함하지 않습니다.'],
+    ['과제수출액', '수출신고필증의 <b>신고일 기준환율</b>로 환산합니다. 연말 환율 일괄 적용은 오류입니다.'],
+    ['신규고용', '입사자 수가 아니라 <b>순증(입사 − 퇴사)</b>입니다.'],
+    ['기여율', '공동 참여기관의 기여율 <b>합계가 100%</b>여야 합니다.'],
+  ];
+  $('#helpbox').innerHTML = help.map(([k, v]) =>
+    `<div style="padding:7px 0; border-bottom:1px dashed var(--line-2)">
+      <div style="font-size:12px; font-weight:600">${esc(k)}</div>
+      <div style="font-size:11.5px; color:var(--ink-3); line-height:1.5; margin-top:2px">${v}</div></div>`).join('');
+}
+
+/* ══════════ 렌더 전체 ══════════ */
+function renderAll() {
+  renderTasks(); renderTax(); renderExp(); renderIns();
+  renderPapers(); renderPatents(); renderReview(); renderSide();
+  if (S.tax.pulled) { $('#pull-tax').disabled = true; $('#pulse-tax').style.display = 'flex';
+    $('#pulse-tax').querySelector('i').style.width = '100%';
+    $('#pulse-tax').querySelector('.plog').innerHTML = '<span class="linkstate"><i></i>연동 완료</span>'; }
+  if (S.exp.pulled) { $('#pull-exp').disabled = true; $('#pulse-exp').style.display = 'flex';
+    $('#pulse-exp').querySelector('i').style.width = '100%';
+    $('#pulse-exp').querySelector('.plog').innerHTML = '<span class="linkstate"><i></i>연동 완료</span>'; }
+  if (S.ins.pulled) { $('#pull-ins').disabled = true; $('#pulse-ins').style.display = 'flex';
+    $('#pulse-ins').querySelector('i').style.width = '100%';
+    $('#pulse-ins').querySelector('.plog').innerHTML = '<span class="linkstate"><i></i>연동 완료</span>'; }
+}
+
+goStep(S.step || 0);
+$('#savedot').textContent = '모든 변경사항 저장됨';
+</script>

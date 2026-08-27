@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PACE — 성과조사·분석 플랫폼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EDF2F3; --surface:#FFFFFF; --surface-2:#F5F9FA;
+  --ink:#0B1719; --ink-2:#3B5054; --ink-3:#6B8085; --ink-4:#93A7AB;
+  --line:#D2DDDF; --line-2:#E4ECED;
+  --accent:#0E5866; --accent-2:#0A414C; --accent-soft:#DBEAED; --accent-on:#FFFFFF;
+  --fs:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --fm:"IBM Plex Mono","Consolas",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326;
+    --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+    --line:#22383C; --line-2:#1A2B2E;
+    --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--fs); line-height:1.6; -webkit-font-smoothing:antialiased}
+.wrap{max-width:880px; margin:0 auto; padding:64px 24px 80px}
+.eyebrow{font-family:var(--fm); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:10px}
+h1{font-size:32px; letter-spacing:-.03em; margin:0 0 10px; text-wrap:balance}
+.sub{color:var(--ink-2); font-size:15px; max-width:60ch; line-height:1.65; margin:0}
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:40px}
+@media (max-width:760px){ .grid{grid-template-columns:1fr} }
+a.card{
+  display:flex; flex-direction:column; gap:10px; text-decoration:none; color:inherit;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:22px;
+  transition:border-color .15s, transform .15s;
+}
+a.card:hover{border-color:var(--accent); transform:translateY(-2px)}
+.tag{font-family:var(--fm); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.ct{font-size:17px; font-weight:600; letter-spacing:-.01em}
+.cd{font-size:12.5px; color:var(--ink-3); line-height:1.6}
+.go{margin-top:auto; font-family:var(--fm); font-size:11.5px; color:var(--accent); padding-top:6px}
+.foot{margin-top:56px; padding-top:20px; border-top:1px solid var(--line-2); font-size:11.5px; color:var(--ink-4); line-height:1.7}
+.foot b{color:var(--ink-3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">TENOPA · 2026년 중소기업기술개발사업 성과조사·분석</div>
+  <h1>PACE 성과조사·분석 플랫폼</h1>
+  <p class="sub">Performance Audit · Collection · Evaluation — 수집부터 검증, 분석, 우수사례 선정까지 하나로 잇는 자체 개발 플랫폼입니다. PC와 모바일에서 각각 열어보세요.</p>
+
+  <div class="grid">
+    <a class="card" href="console.html">
+      <span class="tag">PC · 관리자</span>
+      <span class="ct">PACE 콘솔</span>
+      <span class="cd">발주처·사업단용. 수집 현황, AI 성과검증, 정량분석(mrnIF), 우수사례 스코어링.</span>
+      <span class="go">열기 →</span>
+    </a>
+    <a class="card" href="report.html">
+      <span class="tag">PC · 모바일</span>
+      <span class="ct">PACE 리포트</span>
+      <span class="cd">응답기업 성과입력 포털. 외부기관 연동으로 금액을 직접 입력하지 않고 근거 자료에서 자동 계산합니다.</span>
+      <span class="go">열기 →</span>
+    </a>
+    <a class="card" href="field.html">
+      <span class="tag">모바일 앱</span>
+      <span class="ct">PACE 필드</span>
+      <span class="cd">현장조사원용. 증빙을 촬영하면 즉시 대조하고, 불일치를 방문 중에 현장에서 종결합니다.</span>
+      <span class="go">열기 →</span>
+    </a>
+  </div>
+
+  <div class="foot">
+    이 페이지의 데이터는 제안 시연을 위한 표본입니다.
+    <b>경제적 성과</b> 항목은 가상 표본, <b>기술적 성과(논문·특허)</b> 항목은 IRIS 실데이터를 사용했습니다.
+  </div>
+</div>
+</body>
+</html>

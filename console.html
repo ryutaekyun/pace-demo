@@ -1,0 +1,2072 @@
+<title>PACE 성과검증 콘솔</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+
+<style>
+:root{
+  --ground:#EDF2F3; --surface:#FFFFFF; --surface-2:#F6FAFA; --surface-3:#E9F0F1;
+  --ink:#0B1719; --ink-2:#3B5054; --ink-3:#6B8085; --ink-4:#93A7AB;
+  --line:#D2DDDF; --line-2:#E4ECED;
+  --accent:#0E5866; --accent-2:#0A414C; --accent-soft:#DBEAED; --accent-on:#FFFFFF;
+  --ok:#1A6B44; --ok-soft:#DCF0E5; --ok-line:#8FCFAF;
+  --hold:#8A5806; --hold-soft:#F9EDD5; --hold-line:#DFBC74;
+  --bad:#A02218; --bad-soft:#F9E2E0; --bad-line:#E09B93;
+  --shadow:0 1px 2px rgba(11,23,25,.06), 0 8px 24px -16px rgba(11,23,25,.28);
+  --r:4px;
+  --fs:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --fm:"IBM Plex Mono","Consolas",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326; --surface-3:#1B2C30;
+    --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+    --line:#22383C; --line-2:#1A2B2E;
+    --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+    --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+    --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+    --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326; --surface-3:#1B2C30;
+  --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+  --line:#22383C; --line-2:#1A2B2E;
+  --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+  --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+  --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+  --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--fs); font-size:14px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:var(--fm); font-variant-numeric:tabular-nums}
+h1,h2,h3,h4{margin:0; text-wrap:balance; letter-spacing:-.015em; font-weight:600}
+p{margin:0}
+button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important; transition-duration:.01ms!important}}
+
+/* ── shell ───────────────────────────────── */
+.shell{display:grid; grid-template-columns:230px 1fr; min-height:100vh}
+.rail{
+  background:var(--surface); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{padding:20px 18px 16px; border-bottom:1px solid var(--line-2)}
+.brand .vendor{
+  font-family:var(--fm); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-4); margin-bottom:8px;
+}
+.brand .mark{display:flex; align-items:baseline; gap:8px}
+.brand .mark b{font-size:21px; font-weight:700; letter-spacing:-.03em}
+.brand .mark span{font-size:12px; color:var(--ink-3)}
+.brand .expand{
+  margin-top:8px; font-size:10.5px; line-height:1.5; color:var(--ink-4);
+  font-family:var(--fm);
+}
+.navgroup{padding:14px 10px 6px}
+.navgroup>h4{
+  font-family:var(--fm); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-4); padding:0 8px 8px; font-weight:500;
+}
+.nav{display:flex; flex-direction:column; gap:1px}
+.nav button{
+  display:grid; grid-template-columns:30px 1fr; align-items:center; gap:2px;
+  background:none; border:0; text-align:left; padding:8px 8px; border-radius:var(--r);
+  color:var(--ink-2); transition:background .12s, color .12s;
+}
+.nav button .tag{font-family:var(--fm); font-size:10px; color:var(--ink-4); letter-spacing:.04em}
+.nav button .nm{font-size:13.5px; font-weight:500}
+.nav button:hover{background:var(--surface-2); color:var(--ink)}
+.nav button[aria-selected="true"]{background:var(--accent-soft); color:var(--accent-2)}
+.nav button[aria-selected="true"] .tag{color:var(--accent)}
+.nav button[aria-selected="true"] .nm{font-weight:600}
+.railfoot{margin-top:auto; padding:14px 18px; border-top:1px solid var(--line-2)}
+.themebtn{
+  width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r);
+  padding:7px; font-size:11.5px; color:var(--ink-2);
+}
+.themebtn:hover{border-color:var(--accent); color:var(--accent)}
+
+.main{min-width:0; display:flex; flex-direction:column}
+
+/* ── provenance strip ────────────────────── */
+.prov{
+  display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center;
+  padding:9px 30px; background:var(--surface-2); border-bottom:1px solid var(--line);
+  font-size:11px; color:var(--ink-3);
+}
+.badge{
+  display:inline-flex; align-items:center; gap:5px; font-family:var(--fm);
+  font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
+  padding:2px 6px; border-radius:2px; border:1px solid; font-weight:500;
+}
+.badge.real{color:var(--ok); border-color:var(--ok-line); background:var(--ok-soft)}
+.badge.ref{color:var(--hold); border-color:var(--hold-line); background:var(--hold-soft)}
+.badge.sim{color:var(--ink-3); border-color:var(--line); background:var(--surface-3)}
+
+/* ── panels ──────────────────────────────── */
+.panel{display:none; padding:28px 30px 60px; max-width:1180px}
+.panel.on{display:block}
+.phead{margin-bottom:22px}
+.eyebrow{
+  font-family:var(--fm); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:7px; font-weight:500;
+}
+.phead h2{font-size:25px; line-height:1.25}
+.phead .sub{margin-top:8px; color:var(--ink-2); font-size:13.5px; max-width:66ch}
+.cite{
+  margin-top:14px; padding:9px 13px; border-left:2px solid var(--accent);
+  background:var(--accent-soft); font-size:12px; color:var(--accent-2); max-width:74ch;
+}
+.cite b{font-family:var(--fm); font-size:10.5px; letter-spacing:.05em; font-weight:600}
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.card>header{
+  padding:12px 16px; border-bottom:1px solid var(--line-2);
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.card>header h3{font-size:14px}
+.card>header .hint{font-size:11px; color:var(--ink-3)}
+.cbody{padding:16px}
+.grid{display:grid; gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stack{display:flex; flex-direction:column; gap:14px}
+
+/* ── stat tiles ──────────────────────────── */
+.tile{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  padding:14px 15px; display:flex; flex-direction:column; gap:3px; position:relative;
+}
+.tile .lab{font-size:11px; color:var(--ink-3); letter-spacing:.01em}
+.tile .val{font-family:var(--fm); font-size:27px; font-weight:600; letter-spacing:-.03em; line-height:1.15}
+.tile .val small{font-size:13px; font-weight:400; color:var(--ink-3); margin-left:3px}
+.tile .note{font-size:10.5px; color:var(--ink-4); font-family:var(--fm)}
+.tile.ok .val{color:var(--ok)} .tile.hold .val{color:var(--hold)} .tile.bad .val{color:var(--bad)}
+.tile.acc .val{color:var(--accent)}
+
+/* ── verdict pills / stripes ─────────────── */
+.pill{
+  display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:11px;
+  font-size:11px; font-weight:600; border:1px solid; white-space:nowrap;
+}
+.pill::before{content:""; width:5px; height:5px; border-radius:50%; background:currentColor}
+.v-ok{color:var(--ok); background:var(--ok-soft); border-color:var(--ok-line)}
+.v-hold{color:var(--hold); background:var(--hold-soft); border-color:var(--hold-line)}
+.v-bad{color:var(--bad); background:var(--bad-soft); border-color:var(--bad-line)}
+
+/* ── tables ──────────────────────────────── */
+.tw{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:12.5px}
+th{
+  text-align:left; font-family:var(--fm); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); font-weight:500;
+  padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap; background:var(--surface-2);
+  position:sticky; top:0; z-index:1;
+}
+td{padding:9px 10px; border-bottom:1px solid var(--line-2); vertical-align:top}
+tbody tr{cursor:pointer; transition:background .1s}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr.sel{background:var(--accent-soft)}
+td.num{font-family:var(--fm); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+td.strip{border-left:3px solid transparent; padding-left:9px}
+tr.r-ok td.strip{border-left-color:var(--ok-line)}
+tr.r-hold td.strip{border-left-color:var(--hold-line)}
+tr.r-bad td.strip{border-left-color:var(--bad)}
+.tid{font-family:var(--fm); font-size:11px; color:var(--ink-3)}
+.jname{font-weight:500}
+.tsub{font-size:11px; color:var(--ink-3); display:block; margin-top:1px}
+
+/* ── controls ────────────────────────────── */
+.btn{
+  background:var(--accent); color:var(--accent-on); border:1px solid var(--accent);
+  border-radius:var(--r); padding:8px 15px; font-weight:600; font-size:13px;
+  display:inline-flex; align-items:center; gap:7px; transition:filter .12s;
+}
+.btn:hover{filter:brightness(1.12)}
+.btn[disabled]{opacity:.5; cursor:default; filter:none}
+.btn.ghost{background:transparent; color:var(--ink-2); border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent); color:var(--accent); filter:none}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{
+  border:1px solid var(--line); background:var(--surface); border-radius:13px;
+  padding:4px 11px; font-size:11.5px; color:var(--ink-2); transition:.12s;
+}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent); color:var(--accent-on); border-color:var(--accent)}
+input[type=range]{width:100%; accent-color:var(--accent)}
+input[type=number]{
+  font-family:var(--fm); width:64px; padding:4px 7px; font-size:12px;
+  border:1px solid var(--line); border-radius:2px; background:var(--surface); color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+input[type=number]:focus{border-color:var(--accent)}
+
+/* ── progress / meters ───────────────────── */
+.bar{height:6px; background:var(--surface-3); border-radius:3px; overflow:hidden}
+.bar>i{display:block; height:100%; background:var(--accent); border-radius:3px; transition:width .6s cubic-bezier(.2,.7,.3,1)}
+.bar>i.ok{background:var(--ok)} .bar>i.hold{background:var(--hold)} .bar>i.bad{background:var(--bad)}
+.rowmeter{display:grid; grid-template-columns:1fr 46px; gap:10px; align-items:center}
+.rowmeter .nm{font-size:12.5px}
+.rowmeter .pc{font-family:var(--fm); font-size:11.5px; text-align:right; color:var(--ink-2)}
+
+/* ── console log ─────────────────────────── */
+.log{
+  background:var(--ink); color:#B9CFD2; font-family:var(--fm); font-size:11px; line-height:1.85;
+  padding:12px 14px; height:200px; overflow-y:auto; border-radius:var(--r);
+  word-break:keep-all; overflow-wrap:anywhere;
+}
+:root[data-theme="dark"] .log{background:#050D0E}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .log{background:#050D0E}}
+.log div{display:grid; grid-template-columns:54px 40px minmax(0,1fr); gap:7px; margin-bottom:1px}
+.log .t{color:#5E7A7E}
+.log .k{font-weight:600}
+.log .k.OK{color:#5FD79B} .log .k.HOLD{color:#E8BC6A} .log .k.FAIL{color:#F09A90}
+.log .k.SYS{color:#6FC3D4} .log .k.RECV{color:#8FA8AC}
+
+/* ── formula ─────────────────────────────── */
+.formula{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r);
+  padding:14px 16px; font-family:var(--fm); font-size:12.5px; overflow-x:auto;
+  color:var(--ink-2); line-height:2;
+}
+.formula b{color:var(--accent); font-weight:600}
+.fsteps{display:flex; flex-direction:column; gap:0}
+.fstep{
+  display:grid; grid-template-columns:1fr auto; gap:12px; padding:6px 0;
+  border-bottom:1px dashed var(--line-2); font-family:var(--fm); font-size:11.5px;
+}
+.fstep:last-child{border-bottom:0}
+.fstep .ex{color:var(--ink-3)}
+.fstep .rs{font-weight:600; color:var(--ink)}
+.ftotal{
+  margin-top:10px; padding-top:11px; border-top:2px solid var(--accent);
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+}
+.ftotal .lb{font-size:12px; color:var(--ink-2)}
+.ftotal .vl{font-family:var(--fm); font-size:26px; font-weight:600; color:var(--accent); letter-spacing:-.02em}
+
+/* ── detail drawer ───────────────────────── */
+.drawer{
+  border:1px solid var(--line); border-radius:var(--r); background:var(--surface);
+  padding:0; overflow:hidden;
+}
+.drawer .dh{padding:13px 16px; border-bottom:1px solid var(--line-2); background:var(--surface-2)}
+.drawer .dh .t{font-size:13.5px; font-weight:600; line-height:1.4}
+.drawer .dh .m{font-size:11px; color:var(--ink-3); font-family:var(--fm); margin-top:3px}
+.cmp{display:grid; grid-template-columns:118px 1fr 1fr 84px; gap:0; font-size:12px}
+.cmp>div{padding:7px 12px; border-bottom:1px solid var(--line-2)}
+.cmp .hd{
+  font-family:var(--fm); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-3); background:var(--surface-2); font-weight:500;
+}
+.cmp .fl{color:var(--ink-3); font-size:11.5px}
+.cmp .vv{font-family:var(--fm); font-size:11.5px; word-break:break-all}
+.cmp .jd{text-align:right}
+.findings{padding:13px 16px; display:flex; flex-direction:column; gap:9px}
+.finding{display:grid; grid-template-columns:16px 1fr; gap:9px; font-size:12px; line-height:1.55}
+.finding .ic{font-family:var(--fm); font-weight:700; font-size:11px; line-height:1.7}
+.finding.f-bad .ic{color:var(--bad)} .finding.f-hold .ic{color:var(--hold)} .finding.f-ok .ic{color:var(--ok)}
+.finding .rule{font-family:var(--fm); font-size:10px; color:var(--ink-4); letter-spacing:.04em}
+.finding .act{color:var(--ink-3); font-size:11.5px; margin-top:2px}
+
+/* ── product surfaces ────────────────────── */
+.surf{
+  border:1px solid var(--line); border-radius:var(--r); padding:13px 14px;
+  background:var(--surface); display:flex; flex-direction:column; gap:6px;
+}
+.surf .sh{display:flex; flex-direction:column; gap:3px}
+.surf .sk{
+  font-family:var(--fm); font-size:9px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--accent); font-weight:500;
+}
+.surf .sh b{font-size:14px; letter-spacing:-.02em}
+.surf .sd{font-size:11.5px; color:var(--ink-3); line-height:1.55}
+.surf .su{
+  margin-top:auto; padding-top:7px; border-top:1px dashed var(--line-2);
+  font-family:var(--fm); font-size:10px; color:var(--ink-4);
+}
+
+/* ── track switch ────────────────────────── */
+.tracks{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+.track{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  padding:12px 15px; text-align:left; display:flex; flex-direction:column; gap:3px;
+  transition:border-color .15s, background .15s;
+}
+.track:hover{border-color:var(--accent)}
+.track .tt{font-size:14px; font-weight:600}
+.track .td{font-size:11px; color:var(--ink-3)}
+.track[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
+.track[aria-pressed="true"] .tt{color:var(--accent-2)}
+.track[aria-pressed="true"] .td{color:var(--accent)}
+
+/* ── field-survey groups ─────────────────── */
+.grp{
+  display:inline-block; font-family:var(--fm); font-size:10px; font-weight:600;
+  padding:2px 7px; border-radius:2px; border:1px solid; white-space:nowrap;
+}
+.grp.g1{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
+.grp.g2{color:var(--hold); border-color:var(--hold-line); background:var(--hold-soft)}
+.grp.g3{color:var(--ok); border-color:var(--ok-line); background:var(--ok-soft)}
+.grp.g4{color:var(--ink-3); border-color:var(--line); background:var(--surface-2)}
+.grp.g5{color:var(--ink-4); border-color:var(--line-2); background:var(--surface-2)}
+.gcard{border:1px solid var(--line); border-radius:var(--r); padding:11px 12px; background:var(--surface)}
+.gcard .gh{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px}
+.gcard .gn{font-size:12px; font-weight:600; color:var(--ink-2)}
+.gcard .gt{font-size:12px; font-weight:500; margin-bottom:4px}
+.gcard .gm{font-size:10.5px; color:var(--ink-3); line-height:1.5}
+
+/* ── gap table ───────────────────────────── */
+.gaphead,.gaprow{display:grid; grid-template-columns:96px 1fr 18px 1fr 150px; gap:10px; align-items:baseline}
+.gaphead{
+  font-family:var(--fm); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-3); padding-bottom:7px; border-bottom:1px solid var(--line);
+}
+.gaprow{padding:9px 0; border-bottom:1px solid var(--line-2); font-size:12.5px}
+.gaprow:last-of-type{border-bottom:0}
+.gaprow .gl{color:var(--ink-2)}
+.gaprow .gv{font-variant-numeric:tabular-nums}
+.gaprow .ga{color:var(--ink-4); text-align:center}
+.gaprow .gd{font-size:11.5px; text-align:right}
+
+/* ── evidence tables ─────────────────────── */
+.evidence{padding:4px 16px 12px; border-top:1px solid var(--line-2); background:var(--surface-2)}
+.evh{
+  display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;
+  padding:13px 0 7px; font-size:12.5px; font-weight:600;
+}
+.evh .mono{font-weight:500; color:var(--accent)}
+.evh .evs{font-size:10.5px; color:var(--ink-4); font-weight:400; font-family:var(--fm)}
+table.ev{font-size:11.5px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r)}
+table.ev th{background:var(--surface-3); position:static}
+table.ev td{padding:6px 9px}
+table.ev tfoot td{
+  border-bottom:0; border-top:1px solid var(--line); background:var(--surface-2);
+  font-weight:600; font-family:var(--fm);
+}
+table.ev .tf{font-size:11px}
+
+/* ── charts ──────────────────────────────── */
+.chart{width:100%; height:auto; display:block; overflow:visible}
+.chart text{font-family:var(--fm); font-size:9.5px; fill:var(--ink-3)}
+.chart .lbl{font-family:var(--fs); font-size:10.5px; fill:var(--ink-2)}
+.chart .grid line{stroke:var(--line-2); stroke-width:1}
+.chart .axis{stroke:var(--line); stroke-width:1}
+.chart .vlab{font-family:var(--fm); font-size:10px; fill:var(--ink); font-weight:600}
+
+/* ── scoring ─────────────────────────────── */
+.weights{display:flex; flex-direction:column; gap:13px}
+.wrow{display:grid; grid-template-columns:1fr 52px; gap:11px; align-items:center}
+.wrow .wl{font-size:12.5px}
+.wrow .wl small{display:block; color:var(--ink-4); font-size:10.5px; font-family:var(--fm)}
+.wrow .wv{font-family:var(--fm); font-size:12.5px; text-align:right; color:var(--accent); font-weight:600}
+.rank{display:flex; flex-direction:column; gap:7px}
+.rk{
+  display:grid; grid-template-columns:30px 1fr 66px; gap:11px; align-items:center;
+  padding:9px 12px; border:1px solid var(--line); border-radius:var(--r); background:var(--surface);
+  transition:transform .35s cubic-bezier(.2,.7,.3,1), border-color .2s;
+}
+.rk.top{border-color:var(--accent); background:var(--accent-soft)}
+.rk .no{
+  font-family:var(--fm); font-size:15px; font-weight:600; color:var(--ink-4); text-align:center;
+}
+.rk.top .no{color:var(--accent)}
+.rk .nm{font-size:12.5px; font-weight:500; line-height:1.4}
+.rk .nm small{display:block; font-weight:400; color:var(--ink-3); font-size:10.5px; font-family:var(--fm); margin-top:2px}
+.rk .sc{font-family:var(--fm); font-size:17px; font-weight:600; text-align:right; letter-spacing:-.02em}
+.rk .sc small{font-size:10px; color:var(--ink-4); display:block; font-weight:400}
+
+/* ── phone mock ──────────────────────────── */
+.phones{display:flex; gap:22px; flex-wrap:wrap; justify-content:center}
+.phone{
+  width:274px; border:9px solid var(--ink); border-radius:28px; background:var(--surface);
+  overflow:hidden; box-shadow:var(--shadow); flex-shrink:0;
+}
+:root[data-theme="dark"] .phone{border-color:#26383B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .phone{border-color:#26383B}}
+.phone .st{
+  background:var(--accent); color:var(--accent-on); padding:7px 13px;
+  font-size:10px; font-family:var(--fm); display:flex; justify-content:space-between;
+}
+.phone .ph{padding:12px 13px 9px; border-bottom:1px solid var(--line-2)}
+.phone .ph .h1{font-size:13.5px; font-weight:600}
+.phone .ph .h2{font-size:10.5px; color:var(--ink-3); font-family:var(--fm); margin-top:2px}
+.phone .pb{padding:12px 13px; display:flex; flex-direction:column; gap:10px; min-height:322px}
+.pcard{border:1px solid var(--line); border-radius:var(--r); padding:10px 11px; font-size:11.5px}
+.pcard .pt{font-size:10px; font-family:var(--fm); color:var(--ink-3); letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px}
+.pcard .pv{font-family:var(--fm); font-size:12.5px}
+.shot{
+  border:1px dashed var(--line); border-radius:var(--r); padding:16px 11px; text-align:center;
+  color:var(--ink-3); font-size:11px; background:var(--surface-2);
+}
+.shot .ico{font-size:20px; display:block; margin-bottom:5px}
+.pbtn{
+  background:var(--accent); color:var(--accent-on); text-align:center; padding:9px;
+  border-radius:var(--r); font-size:12px; font-weight:600;
+}
+.pmatch{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:11px; padding:5px 0}
+.pmatch .pk{color:var(--ink-3)}
+
+/* ── misc ────────────────────────────────── */
+.kv{display:grid; grid-template-columns:auto 1fr; gap:5px 14px; font-size:12.5px}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0; font-family:var(--fm); font-variant-numeric:tabular-nums}
+.ovh{
+  display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600;
+  padding-bottom:9px; margin-bottom:10px; border-bottom:1px solid var(--line);
+}
+.ovt{
+  margin-top:12px; padding-top:10px; border-top:1px dashed var(--line);
+  font-size:12px; color:var(--ink-2);
+}
+.ovt b{font-family:var(--fm); color:var(--bad); font-size:14px; letter-spacing:-.01em}
+.ovt span{color:var(--ink-4); font-size:10.5px; margin-left:4px}
+.note{font-size:11px; color:var(--ink-4); line-height:1.6}
+.hr{height:1px; background:var(--line-2); margin:22px 0}
+.flow{display:flex; align-items:stretch; gap:0; flex-wrap:wrap}
+.fnode{
+  flex:1 1 150px; min-width:150px; border:1px solid var(--line); border-radius:var(--r);
+  padding:12px 13px; background:var(--surface); position:relative; margin-right:22px; margin-bottom:12px;
+}
+.fnode:last-child{margin-right:0}
+.fnode::after{
+  content:"→"; position:absolute; right:-19px; top:50%; transform:translateY(-50%);
+  color:var(--ink-4); font-size:15px; font-family:var(--fm);
+}
+.fnode:last-child::after{content:""}
+.fnode .fn{font-family:var(--fm); font-size:9.5px; color:var(--accent); letter-spacing:.1em; margin-bottom:5px}
+.fnode .ft{font-size:12.5px; font-weight:600; margin-bottom:4px}
+.fnode .fd{font-size:11px; color:var(--ink-3); line-height:1.5}
+
+@media (max-width:1220px){
+  .log div{grid-template-columns:40px minmax(0,1fr)}
+  .log .t{display:none}
+}
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static; height:auto; border-right:0; border-bottom:1px solid var(--line)}
+  .nav{flex-direction:row; overflow-x:auto; gap:4px}
+  .nav button{grid-template-columns:1fr; min-width:104px}
+  .railfoot{display:none}
+  .panel{padding:20px 16px 48px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .prov{padding:9px 16px}
+  .cmp{grid-template-columns:96px 1fr; }
+  .cmp .jd{grid-column:1/-1; text-align:left}
+}
+</style>
+
+<div class="shell">
+  <aside class="rail">
+    <div class="brand">
+      <div class="vendor">TENOPA · 제안 시연</div>
+      <div class="mark"><b>PACE</b><span>성과검증 콘솔</span></div>
+      <div class="expand">Performance<br>Audit · Collection<br>Evaluation</div>
+    </div>
+    <div class="navgroup">
+      <h4>모듈</h4>
+      <div class="nav" role="tablist">
+        <button role="tab" data-p="ov" aria-selected="true"><span class="tag">—</span><span class="nm">개요</span></button>
+        <button role="tab" data-p="t0"><span class="tag">T0</span><span class="nm">실시간 수집</span></button>
+        <button role="tab" data-p="t1"><span class="tag">T1</span><span class="nm">AI 성과검증</span></button>
+        <button role="tab" data-p="t2"><span class="tag">T2</span><span class="nm">정량분석 · mrnIF</span></button>
+        <button role="tab" data-p="t3"><span class="tag">T3</span><span class="nm">우수사례 스코어링</span></button>
+        <button role="tab" data-p="t4"><span class="tag">T4</span><span class="nm">현장조사 앱</span></button>
+      </div>
+    </div>
+    <div class="railfoot">
+      <button class="themebtn" id="themebtn">테마 전환</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="prov">
+      <span class="badge real">실데이터</span>
+      <span>2023–2025 IRIS 성과(희귀질환연구인프라구축) · 논문 27건 · 특허 5건</span>
+      <span class="badge ref">참조값</span><span>JCR 분야·순위</span>
+      <span class="badge sim">시뮬레이션</span><span>경제성과 15개사(가상) · 수집 진척</span>
+    </div>
+
+    <!-- ══ 개요 ══ -->
+    <section class="panel on" id="p-ov">
+      <div class="phead">
+        <div class="eyebrow">제안 시연 · 2026년 중소기업기술개발사업 성과조사·분석</div>
+        <h2>방법론이 아니라 작동하는 시스템을 제출합니다</h2>
+        <p class="sub">
+          PACE는 성과조사의 수집–검증–분석–선정 네 단계를 하나의 파이프라인으로 잇는 플랫폼입니다.
+          이 화면은 목업이 아닙니다. 경제적 성과 15개사(가상 표본)와 실제 IRIS 성과 32건, 합계 47건을
+          이 브라우저에서 그대로 연산한 결과입니다.
+        </p>
+        <div class="cite"><b>RFP Ⅲ-4</b> — “발주기관의 성과조사시스템 <b>또는 제안사 자체 플랫폼을 활용하여</b> 온라인 성과조사를 운영하고 수집된 성과데이터를 체계적으로 관리”</div>
+      </div>
+
+      <div class="grid g4" style="margin-bottom:16px">
+        <div class="tile acc"><span class="lab">조사 대상 과제</span><span class="val">30,309</span><span class="note">51개 사업 · ’26.4 기준</span></div>
+        <div class="tile"><span class="lab">응답률 목표</span><span class="val">90<small>%</small></span><span class="note">RFP 명시 목표</span></div>
+        <div class="tile"><span class="lab">현장검증 대상</span><span class="val">33<small>%</small></span><span class="note">온라인 응답기업 1/3</span></div>
+        <div class="tile"><span class="lab">검증 룰</span><span class="val">23<small>종</small></span><span class="note">증빙 5종 · 경제14 + 기술9</span></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <header><h3>세 개의 화면, 하나의 파이프라인</h3><span class="hint">전부 자체 개발 · 하도급 없음</span></header>
+        <div class="cbody">
+          <div class="grid g3" style="gap:12px">
+            <div class="surf">
+              <div class="sh"><span class="sk">PC</span><b>PACE 콘솔</b></div>
+              <div class="sd">발주처·사업단 관리자용. 수집 현황, AI 검증, 정량분석, 우수사례 선정.</div>
+              <div class="su">지금 보고 계신 화면</div>
+            </div>
+            <div class="surf">
+              <div class="sh"><span class="sk">PC · 모바일</span><b>PACE 리포트</b></div>
+              <div class="sd">응답기업 30,309곳이 성과를 입력하는 포털. 외부기관 연동으로 금액을 직접 타이핑하지 않게 만듭니다.</div>
+              <div class="su">별도 화면 · 반응형</div>
+            </div>
+            <div class="surf">
+              <div class="sh"><span class="sk">모바일 앱</span><b>PACE 필드</b></div>
+              <div class="sd">현장조사원용. 증빙 촬영 → 즉시 대조 → 불일치를 방문 중에 종결. 오프라인 동작.</div>
+              <div class="su">별도 화면 · 앱</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <header><h3>파이프라인</h3><span class="hint">RFP 6개 과업을 4개 모듈로 재편</span></header>
+        <div class="cbody">
+          <div class="flow">
+            <div class="fnode"><div class="fn">T0 COLLECT</div><div class="ft">수집</div><div class="fd">온라인 전수조사 + 현장조사 앱. 과제단계별 동적 설문, 6년 응답이력 자동 제시.</div></div>
+            <div class="fnode"><div class="fn">T1 AUDIT</div><div class="ft">검증</div><div class="fd">증빙 필드 추출 → 응답값 대조 → 외부DB 교차검증. 일치·보류·불일치 자동 판정.</div></div>
+            <div class="fnode"><div class="fn">T2 ANALYZE</div><div class="ft">분석</div><div class="fd">IRIS 항목 스키마 그대로 기초통계·시계열·질적지표(mrnIF·특허SMART) 자동 산출.</div></div>
+            <div class="fnode"><div class="fn">T3 EVALUATE</div><div class="ft">선정</div><div class="fd">가중치 조정형 스코어링. 우수사례 후보 랭킹을 회의 자리에서 실시간 재산출.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <header><h3>이 데모가 실제로 잡아낸 것</h3><span class="hint">47건 자동 검증 · 경제성과 15개사 + IRIS 성과 32건</span></header>
+        <div class="cbody">
+          <div class="grid g2" id="ovfind"></div>
+          <p class="note" style="margin-top:14px">어느 쪽도 원본 자료에는 이상 표시가 없습니다. 육안 검토로는 걸러지지 않고, 상위평가 단계에서 지적사항으로 돌아옵니다.</p>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr">
+        <div class="card">
+          <header><h3>평가표 대응</h3><span class="hint">정성 90점 중 사정권</span></header>
+          <div class="cbody">
+            <div class="stack" style="gap:10px">
+              <div class="rowmeter"><span class="nm">본 용역 추진의 적합성 및 지원 역량 <b class="mono">10</b></span><span class="pc">T0–T3</span></div>
+              <div class="rowmeter"><span class="nm">제안내용의 논리성 및 체계성 <b class="mono">10</b></span><span class="pc">파이프라인</span></div>
+              <div class="rowmeter"><span class="nm">연구결과의 정책 활용 가능성 <b class="mono">10</b></span><span class="pc">T2·T3</span></div>
+              <div class="rowmeter"><span class="nm">성과목표 개발능력(조사지 개편) <b class="mono">5</b></span><span class="pc">T0</span></div>
+              <div class="rowmeter"><span class="nm">정보·자료의 확보 용이성 <b class="mono">5</b></span><span class="pc">T0</span></div>
+              <div class="rowmeter"><span class="nm">심층분석 결과의 활용 가능성 <b class="mono">5</b></span><span class="pc">T2</span></div>
+              <div class="rowmeter"><span class="nm">수행방법과 절차의 구체성 <b class="mono">5</b></span><span class="pc">T1</span></div>
+              <div class="rowmeter"><span class="nm">위험요소 해소 능력 <b class="mono">5</b></span><span class="pc">T0</span></div>
+              <div class="rowmeter"><span class="nm">연구종료 후 사후지원 능력 <b class="mono">5</b></span><span class="pc">DB 이관</span></div>
+            </div>
+            <div class="hr" style="margin:14px 0"></div>
+            <div class="ftotal" style="margin:0; border-top:0; padding:0">
+              <span class="lb">플랫폼으로 직접 답하는 배점</span><span class="vl">60<small style="font-size:13px">점</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ T0 수집 ══ -->
+    <section class="panel" id="p-t0">
+      <div class="phead">
+        <div class="eyebrow">T0 · Collect</div>
+        <h2>실시간 수집</h2>
+        <p class="sub">온라인 전수조사와 현장방문조사가 같은 파이프라인으로 들어옵니다. 조사원이 현장에서 올린 증빙은 업로드 즉시 T1 검증 큐에 걸립니다.</p>
+        <div class="cite"><b>RFP Ⅲ-1</b> — “조사 데이터의 신뢰성 확보를 위해 <b>응답률 90% 이상 확보</b>” · <b>Ⅲ-4</b> — “최근 6년간 성과조사 응답 이력을 시스템에 탑재”</div>
+      </div>
+
+      <div class="grid g4" style="margin-bottom:14px">
+        <div class="tile acc"><span class="lab">누적 응답</span><span class="val" id="c-resp">0</span><span class="note">/ 30,309 과제</span></div>
+        <div class="tile ok"><span class="lab">응답률</span><span class="val" id="c-rate">0<small>%</small></span><span class="note">목표 90%</span></div>
+        <div class="tile hold"><span class="lab">검증 대기</span><span class="val" id="c-queue">0</span><span class="note">T1 큐</span></div>
+        <div class="tile"><span class="lab">현장조사 완료</span><span class="val" id="c-field">0</span><span class="note">앱 실시간 전송</span></div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <header><h3>사업별 응답 진척</h3><button class="btn ghost" id="simbtn" style="padding:5px 11px; font-size:12px">수집 시뮬레이션 실행</button></header>
+          <div class="cbody stack" id="bizbars"></div>
+        </div>
+        <div class="card">
+          <header><h3>수집 스트림</h3><span class="hint">온라인 · 현장 앱 통합 로그</span></header>
+          <div class="cbody"><div class="log" id="c-log"><div><span class="t">--:--:--</span><span class="k SYS">SYS</span><span>‘수집 시뮬레이션 실행’을 누르면 스트림이 시작됩니다.</span></div></div></div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="card">
+        <header><h3>응답률 90% 미달 조기경보</h3><span class="hint">위험요소 해소 능력 · 5점</span></header>
+        <div class="cbody">
+          <p class="note" style="margin-bottom:12px">주차별 응답 곡선을 목표선과 대조해, 미달이 확정되기 전에 사업 단위로 독려 대상을 뽑아냅니다. 조사 종료 후 대응하면 이미 늦습니다.</p>
+          <div id="alertchart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ T1 검증 ══ -->
+    <section class="panel" id="p-t1">
+      <div class="phead">
+        <div class="eyebrow">T1 · Audit — 핵심 차별화</div>
+        <h2>AI 성과검증</h2>
+        <p class="sub">응답값·증빙 추출값·외부 참조DB 세 축을 대조해 항목 단위로 일치·보류·불일치를 판정합니다. 판정을 미리 적어둔 것이 아니라, 세금계산서·수출신고필증·4대보험 명부에서 값을 직접 계산해 신고값과 맞춰봅니다.</p>
+        <div class="cite"><b>RFP Ⅲ-1</b> — “(1차) 증빙자료 검토를 통해 제출된 기업 성과의 <b>사실 여부 확인</b> / (2차) <b>공신력 있는 외부 데이터와 대조하여 논리적 일관성 검증</b>”</div>
+      </div>
+
+      <div class="tracks">
+        <button class="track" data-t="econ" aria-pressed="true">
+          <span class="tt">경제적 성과</span>
+          <span class="td">과제매출 · 수출 · 신규고용 · 투자유치 — 15개사</span>
+        </button>
+        <button class="track" data-t="tech" aria-pressed="false">
+          <span class="tt">기술적 성과</span>
+          <span class="td">논문 · 특허 — IRIS 실데이터 32건</span>
+        </button>
+      </div>
+
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:16px 0 14px">
+        <button class="btn" id="runbtn">▶ 검증 실행</button>
+        <span class="note" id="runstat">15개사 대기 중 · 검증 룰 14종</span>
+      </div>
+
+      <div class="grid g4" style="margin-bottom:14px">
+        <div class="tile"><span class="lab">검증 완료</span><span class="val" id="v-total">0<small>/15</small></span><span class="note" id="v-scope">과제매출·수출·고용·투자</span></div>
+        <div class="tile ok"><span class="lab">일치</span><span class="val" id="v-ok">0</span><span class="note">확정 가능</span></div>
+        <div class="tile hold"><span class="lab">보류</span><span class="val" id="v-hold">0</span><span class="note">검토자 확인 필요</span></div>
+        <div class="tile bad"><span class="lab">불일치</span><span class="val" id="v-bad">0</span><span class="note">기관 재확인 요청</span></div>
+      </div>
+
+      <div class="card" id="gapcard" style="margin-bottom:14px">
+        <header><h3>검증 전후 성과 총액</h3><span class="hint">신고값 그대로 집계했을 때와의 차이</span></header>
+        <div class="cbody" id="gapbody"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <header>
+          <h3>검증 결과</h3>
+          <div class="chips">
+            <button class="chip" data-f="all" aria-pressed="true">전체</button>
+            <button class="chip" data-f="bad" aria-pressed="false">불일치</button>
+            <button class="chip" data-f="hold" aria-pressed="false">보류</button>
+            <button class="chip" data-f="ok" aria-pressed="false">일치</button>
+          </div>
+        </header>
+        <div class="tw" style="max-height:420px; overflow-y:auto"><table id="vtable">
+          <thead id="vhead"></thead>
+          <tbody id="vbody"><tr><td colspan="7" style="padding:26px; text-align:center; color:var(--ink-4)">검증을 실행하면 결과가 표시됩니다.</td></tr></tbody>
+        </table></div>
+      </div>
+
+      <div id="detail"></div>
+
+      <div class="hr"></div>
+      <div class="card" id="fieldcard" style="margin-bottom:14px">
+        <header><h3>현장조사 대상 자동 분류</h3><span class="hint">RFP Ⅲ-1 분류기준 5개 그룹</span></header>
+        <div class="cbody" id="fieldbody"></div>
+      </div>
+
+      <div class="card">
+        <header><h3>적용 검증 룰</h3><span class="hint" id="rulehint">경제적 성과 14종</span></header>
+        <div class="tw"><table>
+          <thead><tr><th>룰</th><th>검증 내용</th><th>대조 축</th><th>판정</th></tr></thead>
+          <tbody id="rulebody"></tbody>
+        </table></div>
+        <div class="cbody" style="border-top:1px solid var(--line-2)">
+          <p class="note"><b>AI는 1차 스크리닝, 확정은 사람이 합니다.</b> 자동 판정은 검토 우선순위를 매기는 장치이지 최종 확정이 아닙니다. 불일치·보류로 분류된 건은 검토자 확인 → 기관 재확인 → 이중검수를 거쳐야 확정됩니다. 증빙 원본은 폐쇄망 내에서만 처리하며 외부 모델로 전송하지 않습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ T2 분석 ══ -->
+    <section class="panel" id="p-t2">
+      <div class="phead">
+        <div class="eyebrow">T2 · Analyze</div>
+        <h2>정량분석 · mrnIF</h2>
+        <p class="sub">검증이 끝난 데이터가 그래프와 지표로 바로 떨어집니다. 논문 질적지표(mrnIF)는 산식 전개까지 화면에서 확인할 수 있습니다.</p>
+        <div class="cite"><b>RFP Ⅲ-2</b> — “사업별 기술적 성과(논문, 특허) <b>질적 분석</b> — (논문) IF 평균점수, <b>MrnIF 평균점수</b> / (특허) 특허 SMART 평가점수”</div>
+      </div>
+
+      <div class="grid g4" style="margin-bottom:14px">
+        <div class="tile acc"><span class="lab">평균 mrnIF</span><span class="val" id="m-avg">—</span><span class="note">고유논문 기준</span></div>
+        <div class="tile"><span class="lab">평균 IF</span><span class="val" id="m-if">—</span><span class="note">SCI(E) 등재분</span></div>
+        <div class="tile"><span class="lab">SCI 논문</span><span class="val" id="m-sci">—</span><span class="note">고유 DOI 기준</span></div>
+        <div class="tile"><span class="lab">중복 계상 행</span><span class="val" id="m-dup">—</span><span class="note">기여율 분할 입력</span></div>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:14px">
+        <div class="card">
+          <header><h3>연도별 성과 건수</h3><span class="hint">고유 성과 기준</span></header>
+          <div class="cbody"><div id="chart-year"></div></div>
+        </div>
+        <div class="card">
+          <header><h3>연도별 평균 mrnIF · IF</h3><span class="hint">질적 수준 추이</span></header>
+          <div class="cbody"><div id="chart-trend"></div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <header><h3>mrnIF 산식 엔진</h3><span class="hint">순위를 바꾸면 즉시 재계산됩니다</span></header>
+        <div class="cbody stack">
+          <div class="formula">
+            mrnIF = Σ { 100 × ( <b>N</b> − <b>rank</b> ) ÷ ( <b>N</b> − 1 ) } ÷ Σ ( SCI 논문 건수 )<br>
+            <span style="color:var(--ink-4); font-size:11px">N = 해당분야 SCI 저널 총 수 · rank = 해당 논문이 게재된 저널의 분야 내 IF 순위</span>
+          </div>
+          <p class="note">
+            <span class="badge ref" style="margin-right:6px">참조값</span>
+            아래 <b>N</b>과 <b>rank</b>는 JCR 미연동 상태의 데모 참조값입니다. 실제 운영 시 Clarivate JCR 연동으로 자동 채워집니다.
+            산식 연산 자체는 실제 로직 그대로이며, 값을 바꾸면 하단 평균이 즉시 갱신됩니다.
+          </p>
+          <div class="tw"><table>
+            <thead><tr><th>저널</th><th>JCR 분야</th><th class="num">IF</th><th class="num">N</th><th class="num">rank</th><th class="num">mrnIF</th><th class="num">건수</th></tr></thead>
+            <tbody id="jcrbody"></tbody>
+          </table></div>
+          <div>
+            <div class="fsteps" id="fsteps"></div>
+            <div class="ftotal"><span class="lb">Σ mrnIF ÷ Σ SCI 논문 건수</span><span class="vl" id="mrnif-out">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <header><h3>저널별 mrnIF 분포</h3><span class="hint">분야 내 상위일수록 100에 근접</span></header>
+        <div class="cbody"><div id="chart-mrnif"></div></div>
+      </div>
+    </section>
+
+    <!-- ══ T3 스코어링 ══ -->
+    <section class="panel" id="p-t3">
+      <div class="phead">
+        <div class="eyebrow">T3 · Evaluate</div>
+        <h2>우수사례 스코어링</h2>
+        <p class="sub">가중치를 옮기면 랭킹이 그 자리에서 다시 정렬됩니다. 우수사례 선정 회의에서 “왜 이 과제가 1순위인가”를 화면으로 설명할 수 있습니다.</p>
+        <div class="cite"><b>RFP Ⅲ-2</b> — “성과 확산 및 파급효과가 높은 <b>사업화 성공 사례 발굴</b> 및 정부 R&D투자 필요성 제시 — 매출·수출·고용 등 사업화 성과가 우수한 사례를 발굴하고 R&D지원 전후 변화와 성공 요인을 중심으로 정리”</div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:290px 1fr; gap:14px" id="scoregrid">
+        <div class="card">
+          <header><h3>가중치</h3><button class="btn ghost" id="wreset" style="padding:4px 9px; font-size:11px">초기화</button></header>
+          <div class="cbody">
+            <div class="weights" id="weights"></div>
+            <div class="hr" style="margin:16px 0 12px"></div>
+            <div class="ftotal" style="margin:0; border-top:0; padding:0">
+              <span class="lb">합계</span><span class="vl" id="wsum" style="font-size:20px">100</span>
+            </div>
+            <p class="note" style="margin-top:12px">
+              <span class="badge real" style="margin-right:5px">실</span>기술성과(논문·특허) 축은 IRIS 실데이터의 <b>실제 과제명 기준</b>으로 집계<br>
+              <span class="badge sim" style="margin-right:5px; margin-top:4px">모의</span>경제성과 축은 TIPA 지표체계 기준 시뮬레이션 값
+            </p>
+          </div>
+        </div>
+        <div class="card">
+          <header><h3>후보 랭킹</h3><span class="hint">가중합 100점 만점</span></header>
+          <div class="cbody"><div class="rank" id="ranklist"></div></div>
+          <div class="cbody" style="border-top:1px solid var(--line-2)" id="candnote"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ T4 현장 앱 ══ -->
+    <section class="panel" id="p-t4">
+      <div class="phead">
+        <div class="eyebrow">T4 · Field</div>
+        <h2>현장조사 앱</h2>
+        <p class="sub">온라인 응답기업의 33%, 약 1만 과제를 조사원이 직접 방문합니다. 증빙을 현장에서 촬영해 올리면 그 자리에서 응답값과 대조되고, 불일치가 뜨면 조사원이 현장을 떠나기 전에 재확인합니다.</p>
+        <div class="cite"><b>RFP Ⅲ-1</b> — “온라인조사와 현장방문조사의 특성을 반영한 맞춤형 매뉴얼을 작성하고… <b>조사원 교육 진행</b>” · “응답자 편의 중심의 성과조사 프로세스 제안 및 적용”</div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px">
+        <header><h3>재접촉 비용을 없애는 지점</h3></header>
+        <div class="cbody">
+          <div class="flow">
+            <div class="fnode"><div class="fn">현행</div><div class="ft">현장 수기 기록</div><div class="fd">조사원이 증빙을 보고 수기로 옮겨 적음</div></div>
+            <div class="fnode"><div class="fn">현행</div><div class="ft">복귀 후 대사</div><div class="fd">사무실에서 온라인 응답값과 수작업 대조</div></div>
+            <div class="fnode"><div class="fn">현행</div><div class="ft">재연락</div><div class="fd">불일치 발견 시 기업에 다시 연락·재방문</div></div>
+          </div>
+          <div class="hr" style="margin:6px 0 16px"></div>
+          <div class="flow">
+            <div class="fnode" style="border-color:var(--accent)"><div class="fn">PACE</div><div class="ft">현장 촬영·업로드</div><div class="fd">앱으로 증빙 촬영, 필드 자동 추출</div></div>
+            <div class="fnode" style="border-color:var(--accent)"><div class="fn">PACE</div><div class="ft">즉시 대조</div><div class="fd">온라인 응답값과 그 자리에서 대조</div></div>
+            <div class="fnode" style="border-color:var(--accent)"><div class="fn">PACE</div><div class="ft">현장에서 종결</div><div class="fd">불일치 건을 방문 중에 확인·보정</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px">
+        <header><h3>실제 동작하는 앱</h3><span class="hint">아래는 앱 화면 구성 · 실물은 별도 시연</span></header>
+        <div class="cbody">
+          <div class="grid g2" style="gap:14px">
+            <div>
+              <div class="eyebrow" style="margin-bottom:8px">구현된 기능</div>
+              <dl class="kv">
+                <dt>증빙 촬영</dt><dd>후면 카메라 직접 호출 · 연속 촬영</dd>
+                <dt>서식 판독</dt><dd>세금계산서 · 필증 · 4대보험 명부</dd>
+                <dt>즉시 대조</dt><dd>온라인 응답값과 현장에서 대조</dd>
+                <dt>현장 종결</dt><dd>사유·보정값·담당자 확인 기록</dd>
+                <dt>오프라인</dt><dd>단말 저장 후 복구 시 일괄 전송</dd>
+                <dt>본부 연동</dt><dd>전송 즉시 T1 검증 큐 반영</dd>
+              </dl>
+            </div>
+            <div>
+              <div class="eyebrow" style="margin-bottom:8px">오늘의 방문 6건 · 조사원 1인 기준</div>
+              <p class="note" style="margin-bottom:10px">앱은 실제로 판정을 계산합니다. 6개 기업 중 3건에서 불일치가 검출되고, 조사원은 그 자리에서 사유를 기록해 종결합니다.</p>
+              <div class="stack" style="gap:7px">
+                <div class="rowmeter"><span class="nm">㈜퓨처센싱 <span class="mono" style="font-size:11px; color:var(--ink-4)">과제매출액</span></span><span class="pc" style="color:var(--bad)">불일치</span></div>
+                <div class="rowmeter"><span class="nm">아이씨티랩㈜ <span class="mono" style="font-size:11px; color:var(--ink-4)">신규고용</span></span><span class="pc" style="color:var(--bad)">불일치</span></div>
+                <div class="rowmeter"><span class="nm">㈜그린셀 <span class="mono" style="font-size:11px; color:var(--ink-4)">과제수출액</span></span><span class="pc" style="color:var(--bad)">불일치</span></div>
+                <div class="rowmeter"><span class="nm">㈜바이오코어 <span class="mono" style="font-size:11px; color:var(--ink-4)">과제매출액</span></span><span class="pc" style="color:var(--hold)">보류</span></div>
+                <div class="rowmeter"><span class="nm">㈜나노메딕스 · ㈜하이드로젠텍</span><span class="pc" style="color:var(--ok)">일치</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phones">
+        <div class="phone">
+          <div class="st"><span>PACE FIELD</span><span>09:41</span></div>
+          <div class="ph"><div class="h1">증빙 수집</div><div class="h2">S2024-01173 · 주식회사 —</div></div>
+          <div class="pb">
+            <div class="pcard">
+              <div class="pt">온라인 응답값</div>
+              <div class="pv">과제매출액 <b>482,000,000</b></div>
+              <div class="pv" style="color:var(--ink-3)">신규고용 <b>7</b>명</div>
+            </div>
+            <div class="shot"><span class="ico">▣</span>세금계산서 · 매출원장<br>촬영하여 업로드</div>
+            <div class="pbtn">촬영 시작</div>
+            <p class="note" style="text-align:center">업로드 즉시 필드 추출 → 대조</p>
+          </div>
+        </div>
+
+        <div class="phone">
+          <div class="st"><span>PACE FIELD</span><span>09:43</span></div>
+          <div class="ph"><div class="h1">대조 결과</div><div class="h2">추출 4개 항목 · 1건 불일치</div></div>
+          <div class="pb">
+            <div class="pcard" style="border-color:var(--ok-line); background:var(--ok-soft)">
+              <div class="pt" style="color:var(--ok)">일치</div>
+              <div class="pmatch"><span class="pk">과제매출액</span><span class="mono">482,000,000</span></div>
+              <div class="pmatch"><span class="pk">공급가액 합계</span><span class="mono">482,000,000</span></div>
+            </div>
+            <div class="pcard" style="border-color:var(--bad-line); background:var(--bad-soft)">
+              <div class="pt" style="color:var(--bad)">불일치</div>
+              <div class="pmatch"><span class="pk">신규고용 응답</span><span class="mono">7명</span></div>
+              <div class="pmatch"><span class="pk">4대보험 명부</span><span class="mono">5명</span></div>
+              <p class="note" style="margin-top:6px; color:var(--bad)">2명 차이 — 현장에서 사유 확인 필요</p>
+            </div>
+            <div class="pbtn" style="background:var(--bad)">현장 확인 기록</div>
+          </div>
+        </div>
+
+        <div class="phone">
+          <div class="st"><span>PACE FIELD</span><span>09:47</span></div>
+          <div class="ph"><div class="h1">전송 완료</div><div class="h2">본부 T1 검증 큐 반영</div></div>
+          <div class="pb">
+            <div class="pcard">
+              <div class="pt">현장 확인 결과</div>
+              <div class="pv" style="line-height:1.6">퇴사자 2명 반영 누락.<br>기업 확인 후 <b>5명</b>으로 보정.</div>
+            </div>
+            <div class="pcard" style="border-color:var(--accent)">
+              <div class="pt" style="color:var(--accent)">동기화</div>
+              <div class="pmatch"><span class="pk">본부 반영</span><span class="mono" style="color:var(--ok)">완료</span></div>
+              <div class="pmatch"><span class="pk">재방문 필요</span><span class="mono" style="color:var(--ok)">없음</span></div>
+              <div class="pmatch"><span class="pk">소요</span><span class="mono">6분</span></div>
+            </div>
+            <div class="pcard">
+              <div class="pt">오늘 진척</div>
+              <div class="pv">방문 <b>4</b> / 6 · 불일치 <b>2</b>건 현장 종결</div>
+              <div class="bar" style="margin-top:8px"><i style="width:67%"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="grid g2">
+        <div class="card">
+          <header><h3>보안</h3><span class="hint">RFP Ⅳ-2</span></header>
+          <div class="cbody">
+            <p class="note">조사원 단말은 폐쇄망 VPN을 경유하며, 촬영된 증빙 원본은 단말에 잔류하지 않고 서버로만 전송됩니다.
+            판독은 폐쇄망 내부에서 수행하며 외부 모델로 데이터를 보내지 않습니다.
+            “별도 시스템 활용 시 DB를 발주기관 시스템에 이관” 조항에 맞춰, 조사 종료 시 전체 DB를 발주기관으로 이관합니다.</p>
+          </div>
+        </div>
+        <div class="card">
+          <header><h3>자체 개발</h3><span class="hint">RFP Ⅵ-2 하도급 불허</span></header>
+          <div class="cbody">
+            <p class="note">본 용역은 하도급이 불허됩니다. 세 화면 모두 당사가 직접 설계·개발하며, 외주 개발사를 두지 않습니다.
+            그래서 조사 운영 중 발생하는 설문지 개편·검증룰 변경·긴급 오류 대응이 협의 없이 당일 반영됩니다.
+            검증 룰셋은 코드와 분리되어 있어, TIPA 51개 사업의 특화 문항이 추가되어도 룰 교체만으로 대응합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const PAPERS=[{"id":"P01","row":5,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"선천성기형 예방관리를 위한 임상 및 유전체정보 수집","pi":"박원순","ntis":"1776000056","instno":"2021-ER0706-00","perfno":"NIH-PAPER-0009","ptype":"01","journal":"Children","title":"A Preterm Infant with Feeding Aspiration Diagnosed with BOR Syndrome, Confirmed Case by Whole-Genome Sequencing and Structural Variant Calling","issn":"2227-9067","doi":"10.3390/children10010076","contrib":100.0,"first":"Da Hyeon Kim","co":"Misun Yang; Heui Seung Jo; JongHo Park; JaHyun Jang; Sunghwan Shin; SeHyung Son","vol":"10(1)","sci":"01","ps":"76","pe":null,"IF":2.4,"pub":"20230101","regno":""},{"id":"P02","row":6,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH-PAPER-0197","ptype":"01","journal":"Human genetics","title":"Frequency of actionable secondary findings in 7472 Korean genomes derived from the National Project of Bio Big Data pilot study","issn":"0340-6717","doi":"10.1007/s00439-023-02592-8","contrib":100.0,"first":"Youngjun Kim","co":"Jeong-Min Kim;Hye-Won Cho;Hyun-Young Park;Mi-Hyun Park","vol":"142(11)","sci":"01","ps":"1561","pe":"1569","IF":5.3,"pub":"20231101","regno":""},{"id":"P03","row":7,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"선천성기형 임상 및 유전체정보 수집을 통한 진단연구 기반 구축","pi":"장윤실","ntis":"1776000307","instno":"2023-ER0703-00","perfno":"NIH-PAPER-0305","ptype":"01","journal":"Children","title":"Optimal Protocols and Management of Clinical and Genomic Data Collection to Assist in the Early Diagnosis and Treatment of Multiple Congenital Anomalies","issn":"2227-9067","doi":"10.3390/children10101673","contrib":50.0,"first":"Heui Seung Jo","co":"Misun Yang; So Yoon Ahn; Se In Sung; Won Soon Park; Ja-Hyun Jang; Yun Sil Chang","vol":"10(10)","sci":"01","ps":"1673","pe":null,"IF":2.4,"pub":"20231010","regno":""},{"id":"P04","row":8,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","pi":"조진환","ntis":"1776000139","instno":"2020-ER6904-02","perfno":"NIH-PAPER-0374","ptype":"01","journal":"ANNALS OF LABORATORY MEDICINE","title":"The First Korean Case of VEXAS Syndrome Caused by a UBA1 Somatic Variant","issn":"2234-3806","doi":"10.3343/alm.2023.43.2.217","contrib":50.0,"first":"Jihoon G Youn","co":"Seungbok Lee; Sheehyun Kim; Man Jin Kim; Yoon Hwan Chang; Jin Kyun Park; Dong-Yeop Shin; Jangsup Moon","vol":"43(2)","sci":"01","ps":"217","pe":"220","IF":4.9,"pub":"20230301","regno":""},{"id":"P05","row":9,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"선천성기형 예방관리를 위한 임상 및 유전체정보 수집","pi":"박원순","ntis":"1776000056","instno":"2021-ER0706-00","perfno":"NIH-PAPER-0458","ptype":"01","journal":"Children","title":"Optimal Protocols and Management of Clinical and Genomic Data Collection to Assist in the Early Diagnosis and Treatment of Multiple Congenital Anomalies","issn":"2227-9067","doi":"10.3390/children10101673","contrib":50.0,"first":"Heui Seung Jo","co":"Misun Yang; So Yoon Ahn; Se In Sung; Won Soon Park; Ja-Hyun Jang; Yun Sil Chang","vol":"10(10)","sci":"01","ps":"1673","pe":null,"IF":2.4,"pub":"20231010","regno":""},{"id":"P06","row":10,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","task":"유전체연구기술개발과","pi":"조진환","ntis":"1776000030","instno":"2020-ER6904-01","perfno":"NIH-PAPER-366","ptype":"01","journal":"NEUROLOGY-GENETICS","title":"Late-Onset Ataxia-Telangiectasia Presenting With Dystonia and Tremor","issn":"2376-7839","doi":"10.1212/NXG.0000000000200141","contrib":100.0,"first":"Bora Jin","co":"Aryun Kim; Han-Joon Kim; Jangsup Moon; Jihoon G Yoon","vol":"10(2)","sci":"01","ps":"0","pe":null,"IF":3.6,"pub":"20240401","regno":null},{"id":"P07","row":11,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환자 진단 프로그램 운영 및 연구기반 구축","task":"유전체연구기술개발과","pi":"채종희","ntis":"1776000135","instno":"2021-ER0701-01","perfno":"NIH-PAPER-337","ptype":"01","journal":"NPJ GENOMIC MEDICINE","title":"Implementing genomic medicine in clinical practice for adults with undiagnosed rare diseases","issn":"2056-7944","doi":"10.1038/s41525-024-00449-1","contrib":50.0,"first":"Jong Hyeon Ahn","co":"Han-Joon Kim; Ja-Hyun Jang; Jaeso Cho; Jangsup Moon; Jihoon G Yoon; Jin Whan Cho; Jinyoung Youn; Jong-Hee Chae; Kon Chu; Man Jin Kim; Sang Kun Lee; Seungbok Lee; Sheehyun Kim; Soo Yeon Kim; Soon-Tae Lee","vol":"9(1)","sci":"01","ps":"0","pe":null,"IF":4.7,"pub":"20241128","regno":null},{"id":"P08","row":12,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","task":"유전체연구기술개발과","pi":"조진환","ntis":"1776000030","instno":"2020-ER6904-01","perfno":"NIH-PAPER-336","ptype":"01","journal":"NPJ GENOMIC MEDICINE","title":"Implementing genomic medicine in clinical practice for adults with undiagnosed rare diseases","issn":"2056-7944","doi":"10.1038/s41525-024-00449-1","contrib":50.0,"first":"Jong Hyeon Ahn","co":"Han-Joon Kim; Ja-Hyun Jang; Jaeso Cho; Jangsup Moon; Jihoon G Yoon; Jin Whan Cho; Jinyoung Youn; Jong-Hee Chae; Kon Chu; Man Jin Kim; Sang Kun Lee; Seungbok Lee; Sheehyun Kim; Soo Yeon Kim; Soon-Tae Lee","vol":"9(1)","sci":"01","ps":"0","pe":null,"IF":4.7,"pub":"20241128","regno":null},{"id":"P09","row":13,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH-PAPER-257","ptype":"01","journal":"BMC MEDICAL GENOMICS","title":"Exploring novel MYH7 gene variants using in silico analyses in Korean patients with cardiomyopathy","issn":"1755-8794","doi":"10.1186/s12920-024-02000-8","contrib":100.0,"first":"Oc-Hee Kim","co":"Beom Hee Lee; Bong-Jo Kim; Hyun-Young Park; Jihyun Kim; Mi-Hyun Park; Soyoung Lee; Youngjun Kim","vol":"17(1)","sci":"01","ps":"225","pe":null,"IF":2.1,"pub":"20240905","regno":null},{"id":"P10","row":14,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH-PAPER-168","ptype":"03","journal":"Journal of Korean Medical Science","title":"Diagnostic Utility of Whole Genome Sequencing After Negative Karyotyping/Chromosomal Microarray in Infants Born With Multiple Congenital Anomalies","issn":"1011-8934","doi":"10.3346/jkms.2024.39.e250","contrib":10.0,"first":"Misun Yang","co":"Heui Seung Jo; Hye-Won Cho; Hyun-Young Park; Ja-Hyun Jang; Jee Ah Kim; Jeong-Min Kim; Jong-Ho Park; Mi-Hyun Park; Se In Sung; So Yoon Ahn; Won Soon Park; Yun Sil Chang","vol":"39(36)","sci":"01","ps":"e250","pe":null,"IF":3.0,"pub":"20240923","regno":null},{"id":"P11","row":15,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000156","instno":"2022-NI-060-00","perfno":"NIH-PAPER-167","ptype":"03","journal":"Journal of Korean Medical Science","title":"Diagnostic Utility of Whole Genome Sequencing After Negative Karyotyping/Chromosomal Microarray in Infants Born With Multiple Congenital Anomalies","issn":"1011-8934","doi":"10.3346/jkms.2024.39.e250","contrib":10.0,"first":"Misun Yang","co":"Heui Seung Jo; Hye-Won Cho; Hyun-Young Park; Ja-Hyun Jang; Jee Ah Kim; Jeong-Min Kim; Jong-Ho Park; Mi-Hyun Park; Se In Sung; So Yoon Ahn; Won Soon Park; Yun Sil Chang","vol":"39(36)","sci":"01","ps":"e250","pe":null,"IF":3.0,"pub":"20240923","regno":null},{"id":"P12","row":16,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"선천성기형 예방관리를 위한 임상 및 유전체정보 수집","task":"유전체연구기술개발과","pi":"박원순","ntis":"1776000056","instno":"2021-ER0706-00","perfno":"NIH-PAPER-164","ptype":"03","journal":"Journal of Korean Medical Science","title":"Diagnostic Utility of Whole Genome Sequencing After Negative Karyotyping/Chromosomal Microarray in Infants Born With Multiple Congenital Anomalies","issn":"1011-8934","doi":"10.3346/jkms.2024.39.e250","contrib":40.0,"first":"Misun Yang","co":"Heui Seung Jo; Hye-Won Cho; Hyun-Young Park; Ja-Hyun Jang; Jee Ah Kim; Jeong-Min Kim; Jong-Ho Park; Mi-Hyun Park; Se In Sung; So Yoon Ahn; Won Soon Park; Yun Sil Chang","vol":"39(36)","sci":"01","ps":"e250","pe":null,"IF":3.0,"pub":"20240923","regno":null},{"id":"P13","row":17,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"한국인 유전성망막질환의 돌연변이 영향지도 구축 연구","task":"유전체연구기술개발과","pi":"한진우","ntis":"1465030653","instno":"2018-ER6902-02","perfno":"NIH-PAPER-119","ptype":"01","journal":"JAMA NETWORK OPEN","title":"Clinician-Driven Reanalysis of Exome Sequencing Data From Patients With Inherited Retinal Diseases","issn":"2574-3805","doi":"10.1001/jamanetworkopen.2024.14198","contrib":100.0,"first":"Dongheon Surl","co":"Christopher Seungkyu Lee; Dongju Won; Hyun Taek Lim; Jinu Han; Jong Rak Choi; Junwon Lee; Kinga M Bujakowska; Min Kim; Riccardo Sangermano; Saeam Shin; Seung Ah Chung; Seung-Tae Lee; Suk Ho Byeon; Sung Soo Kim; Won Kyung Song","vol":"7(5)","sci":"01","ps":"0","pe":null,"IF":10.5,"pub":"20240531","regno":null},{"id":"P14","row":18,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","task":"유전체연구기술개발과","pi":"조진환","ntis":"1776000030","instno":"2020-ER6904-01","perfno":"NIH-PAPER-079","ptype":"01","journal":"EPILEPSIA OPEN","title":"Broadening the scope of multigene panel analysis for adult epilepsy patients","issn":"2470-9239","doi":"10.1002/epi4.12993","contrib":100.0,"first":"Seungbok Lee","co":"Byung Chan Lim; Jangsup Moon; Jihoon G. Yoon; Ki Hurn So; Ki Joong Kim; Kon Chu; Manjin Kim; Mi-Kyoung Kang; Riyul Jang; Sang Kun Lee; Se Song Jang; Seung Tae Baek; Sheehyun Kim; Yong Woo Shin","vol":"9(4)","sci":"01","ps":"1538","pe":"1549","IF":2.8,"pub":"20240801","regno":null},{"id":"P15","row":19,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"2770000508","instno":"2025-ER0701-00","perfno":"NIH2025-PAPER-024","ptype":"01","journal":"FRONTIERS IN GENETICS","title":"Advancing artificial intelligence ethics in health and genomics: lessons from a public survey in South Korea","issn":"1664-8021","doi":"10.3389/fgene.2025.1563544","contrib":100.0,"first":"Jungim Lee","co":"Hannah Kim; Wonhoo Yoo","vol":"16","sci":"01","ps":"1","pe":null,"IF":2.8,"pub":"20250709","regno":null},{"id":"P16","row":20,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000511","instno":"2025-NI-003-00","perfno":"NIH2025-PAPER-117","ptype":"01","journal":"CLINICAL AND TRANSLATIONAL MEDICINE","title":"Clinical implementation of a multidisciplinary pipeline for genome sequencing in rare diseases: A prospective, multicenter, observational cohort study","issn":"2001-1326","doi":"10.1002/ctm2.70401","contrib":50.0,"first":"Soojin Hwang","co":"Baik-Lin Eun; Beom Hee Lee; Dohyung Kim; Dongseok Moon; Eugu Kang; Go Hun Seo; Gu-Hwan Kim; Han Wool Kim; Hoon Seok Kim; Hyun-Young Park; In Hee Choi; Ji Young Oh; Jihye Kim; Jun Hong Park; Jung Hye Byeon; Kyoung Bo Kim; Mi-Hyun Park; Myungshin Kim; Oc-Hee Kim; Rin Khang; Seo Yeon Yang; Seokhui Jang; Seung-Woo Ryue; Soyoung Lee; Su Min Ji; Yongjun Song; Yoo Kyoung Choi; Yoo-Mi Kim","vol":"15(7)","sci":"01","ps":"1","pe":null,"IF":6.8,"pub":"20250710","regno":null},{"id":"P17","row":21,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"1776000548","instno":"2023-ER0705-00","perfno":"NIH2025-PAPER-118","ptype":"01","journal":"CLINICAL AND TRANSLATIONAL MEDICINE","title":"Clinical implementation of a multidisciplinary pipeline for genome sequencing in rare diseases: A prospective, multicenter, observational cohort study","issn":"2001-1326","doi":"10.1002/ctm2.70401","contrib":50.0,"first":"Soojin Hwang","co":"Baik-Lin Eun; Beom Hee Lee; Dohyung Kim; Dongseok Moon; Eugu Kang; Go Hun Seo; Gu-Hwan Kim; Han Wool Kim; Hoon Seok Kim; Hyun-Young Park; In Hee Choi; Ji Young Oh; Jihye Kim; Jun Hong Park; Jung Hye Byeon; Kyoung Bo Kim; Mi-Hyun Park; Myungshin Kim; Oc-Hee Kim; Rin Khang; Seo Yeon Yang; Seokhui Jang; Seung-Woo Ryue; Soyoung Lee; Su Min Ji; Yongjun Song; Yoo Kyoung Choi; Yoo-Mi Kim","vol":"15(7)","sci":"01","ps":"1","pe":null,"IF":6.8,"pub":"20250710","regno":null},{"id":"P18","row":22,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000214","instno":"2022-NI-060-02","perfno":"NIH2025-PAPER-401","ptype":"01","journal":"ORPHANET JOURNAL OF RARE DISEASES","title":"Identification of novel MYO19 variants in neonatal hypertrophic cardiomyopathy: a familial analysis revealing oligogenic contributors to disease severity","issn":"1750-1172","doi":"10.1186/s13023-025-03871-5","contrib":60.0,"first":"Hye？Won Cho","co":"Dong Mun Shin; Heui \nSeung Jo; Hyeseon Kim†; Hyun？Young Park; Ja？Hyun Jang; Jeong？Min Kim; Misun Yang; Mi？Ae Jang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"20(1)","sci":"01","ps":"1","pe":null,"IF":3.5,"pub":"20250709","regno":null},{"id":"P19","row":23,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000511","instno":"2025-NI-003-00","perfno":"NIH2025-PAPER-402","ptype":"01","journal":"ORPHANET JOURNAL OF RARE DISEASES","title":"Identification of novel MYO19 variants in neonatal hypertrophic cardiomyopathy: a familial analysis revealing oligogenic contributors to disease severity","issn":"1750-1172","doi":"10.1186/s13023-025-03871-5","contrib":20.0,"first":"Hye？Won Cho","co":"Dong Mun Shin; Heui \nSeung Jo; Hyeseon Kim†; Hyun？Young Park; Ja？Hyun Jang; Jeong？Min Kim; Misun Yang; Mi？Ae Jang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"20(1)","sci":"01","ps":"1","pe":null,"IF":3.5,"pub":"20250709","regno":null},{"id":"P20","row":24,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"장윤실","ntis":"2770000510","instno":"2025-ER0705-00","perfno":"NIH2025-PAPER-764","ptype":"03","journal":"Neonatal Medicine","title":"Timely Diagnosis of PAX2-Related Disorder by Rapid Whole-Genome Sequencing in a Critically Ill Neonate with Bilateral Renal Hypoplasia: A Three-Generation Case Report","issn":"2287-9803","doi":"10.5385/nm.2025.32.2.97","contrib":100.0,"first":"Jinhee Kim","co":"Go Hun Seo; Hyeseon Kim; Mi-Ae Jang; Misun Yang; Se In Sung; So Yoon Ahn; Sohyun Lee; Yun Sil Chang","vol":"32(2)","sci":"02","ps":"97","pe":"101","IF":null,"pub":"20251130","regno":null},{"id":"P21","row":25,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000214","instno":"2022-NI-060-02","perfno":"NIH2025-PAPER-774","ptype":"01","journal":"RESPIRATORY RESEARCH","title":"Two novel genetic variants in the WFDC2 gene from patients with bronchiectasis","issn":"1465-9921","doi":"10.1186/s12931-025-03183-z","contrib":40.0,"first":"Jeong-Min Kim","co":"Beom Hee Lee; Cheonghwa Lee; Dong Mun Shin; Eun Lee; Hye-Won Cho; Hyun-Young Park; Jong-Won Kim; Mi-Hyun Park; Myungshin Kim; Soojin Hwang; Youngjun Kim","vol":"26(1)","sci":"01","ps":"1","pe":null,"IF":5.0,"pub":"20250320","regno":null},{"id":"P22","row":26,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000511","instno":"2025-NI-003-00","perfno":"NIH2025-PAPER-775","ptype":"01","journal":"RESPIRATORY RESEARCH","title":"Two novel genetic variants in the WFDC2 gene from patients with bronchiectasis","issn":"1465-9921","doi":"10.1186/s12931-025-03183-z","contrib":50.0,"first":"Jeong-Min Kim","co":"Beom Hee Lee; Cheonghwa Lee; Dong Mun Shin; Eun Lee; Hye-Won Cho; Hyun-Young Park; Jong-Won Kim; Mi-Hyun Park; Myungshin Kim; Soojin Hwang; Youngjun Kim","vol":"26(1)","sci":"01","ps":"1","pe":null,"IF":5.0,"pub":"20250320","regno":null},{"id":"P23","row":27,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000156","instno":"2022-NI-060-00","perfno":"NIH2025-PAPER-776","ptype":"01","journal":"HUMAN GENOMICS","title":"Uncovering potential causal genes for undiagnosed congenital anomalies using an in-house pipeline for trio-based whole-genome sequencing","issn":"1473-9542","doi":"10.1186/s40246-024-00709-2","contrib":50.0,"first":"Jeong？Min Kim","co":"Dong Mun Shin; Gang？Hee Lee; Heui Seung Jo; Hyeji Lee; Hye？Won Cho; Hyun？Young Park; Ja？Hyun Jang; Jihyun Kim; Joon？Yong An; Misun Yang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"19(1)","sci":"01","ps":"1","pe":null,"IF":3.8,"pub":"20250106","regno":null},{"id":"P24","row":28,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH2025-PAPER-777","ptype":"01","journal":"HUMAN GENOMICS","title":"Uncovering potential causal genes for undiagnosed congenital anomalies using an in-house pipeline for trio-based whole-genome sequencing","issn":"1473-9542","doi":"10.1186/s40246-024-00709-2","contrib":50.0,"first":"Jeong？Min Kim","co":"Dong Mun Shin; Gang？Hee Lee; Heui Seung Jo; Hyeji Lee; Hye？Won Cho; Hyun？Young Park; Ja？Hyun Jang; Jihyun Kim; Joon？Yong An; Misun Yang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"19(1)","sci":"01","ps":"1","pe":null,"IF":3.8,"pub":"20250106","regno":null},{"id":"P25","row":29,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"서을주","ntis":"2770000027","instno":"2024-ER0701-00","perfno":"NIH2025-PAPER-812","ptype":"03","journal":"한국의료법학회지","title":"임상 전장유전체 분석 이차발견 결과 반환: 법·윤리적 제언","issn":"1598-9178","doi":"10.17215/kaml.2025.6.33.1.265","contrib":50.0,"first":"Lee Junghyun","co":"Cha Hyunjae; Kim Hannah; Seo Eul Ju","vol":"33(1)","sci":"02","ps":"265","pe":"290","IF":1.27,"pub":"20250601","regno":null},{"id":"P26","row":30,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"2770000508","instno":"2025-ER0701-00","perfno":"NIH2025-PAPER-813","ptype":"03","journal":"한국의료법학회지","title":"임상 전장유전체 분석 이차발견 결과 반환: 법·윤리적 제언","issn":"1598-9178","doi":"10.17215/kaml.2025.6.33.1.265","contrib":50.0,"first":"Lee Junghyun","co":"Cha Hyunjae; Kim Hannah; Seo Eul Ju","vol":"33(1)","sci":"02","ps":"265","pe":"290","IF":1.27,"pub":"20250601","regno":null},{"id":"P27","row":31,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"2770000508","instno":"2025-ER0701-00","perfno":"NIH2025-PAPER-814","ptype":"03","journal":"Korean J Med Ethics","title":"전장유전체 분석(Whole Genome Sequencing, WGS) 기반 신생아 선별검사 동의 체계 개발을 위한 체계적 문헌고찰","issn":"2005-8284","doi":"10.35301/ksme.2025.28.3.207","contrib":100.0,"first":"박현정","co":"김소윤; 김준혁; 김한나; 유원후; 차현재","vol":"28(3)","sci":"02","ps":"207","pe":"228","IF":1.15,"pub":"20250930","regno":null}];
+const PATENTS=[{"id":"T01","year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"성인의 미진단 희귀질환 진단 연구를 위한 임상협력연구 체계 구축 및 운영","pi":"조진환","kind":"01","no":"10-2023-0197358","name":"운동실조증의 진단을 위한 정보 제공 방법","date":"20231229","note":null},{"id":"T02","year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"미진단 희귀질환 기능연구 코어 구축 및 운영","pi":null,"kind":"02","no":"10-2548371-0000","name":"제브라피쉬 치어 행동실험 및 라이브 이미징용 베드 툴","date":20230622,"note":"IRIS 미등록"},{"id":"T03","year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"미진단 희귀질환 기능연구 코어 구축 및 운영","pi":null,"kind":"02","no":"10-2580852-0000","name":"발리다마이신 A를 포함하는 뇌전증 완화 및 치료용 조성물","date":20230915,"note":"IRIS 미등록"},{"id":"T04","year":2024,"biz":"국가보건의료연구인프라구축","sub":"유전질환 임상-유전체 연구자원 수집 및 분석을 통한 진단기술 고도화","task":null,"pi":"이범희","kind":"01","no":"10-2024-0054665","name":"대규모 언어 모델과 자기 지도 학습을 이용한 증상 유사도 측정 시스템","date":"20240424","note":null},{"id":"T05","year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":null,"pi":"이범희","kind":"02","no":"10-2807673","name":"대규모 언어 모델과 자기 지도 학습을 이용한 증상 유사도 측정 시스템","date":"20250509","note":"IRIS 미등록"}];
+const JCR={"Children":["PEDIATRICS",130,48],"Human genetics":["GENETICS & HEREDITY",191,28],"ANNALS OF LABORATORY MEDICINE":["MEDICAL LABORATORY TECHNOLOGY",30,4],"NEUROLOGY-GENETICS":["CLINICAL NEUROLOGY",279,74],"NPJ GENOMIC MEDICINE":["GENETICS & HEREDITY",191,32],"BMC MEDICAL GENOMICS":["GENETICS & HEREDITY",191,96],"Journal of Korean Medical Science":["MEDICINE, GENERAL & INTERNAL",325,92],"JAMA NETWORK OPEN":["MEDICINE, GENERAL & INTERNAL",325,9],"EPILEPSIA OPEN":["CLINICAL NEUROLOGY",279,104],"FRONTIERS IN GENETICS":["GENETICS & HEREDITY",191,66],"CLINICAL AND TRANSLATIONAL MEDICINE":["MEDICINE, RESEARCH & EXPERIMENTAL",182,11],"ORPHANET JOURNAL OF RARE DISEASES":["MEDICINE, RESEARCH & EXPERIMENTAL",182,48],"RESPIRATORY RESEARCH":["RESPIRATORY SYSTEM",68,8],"HUMAN GENOMICS":["GENETICS & HEREDITY",191,44]};
+
+
+/* ══════════════════════════════════════════
+   경제적 성과 — 가상 표본 15개사
+   TIPA 5종 증빙(전자세금계산서·수출신고필증·4대보험 명부) 구조 그대로.
+   실제 성과조사에서 반복되는 오류 유형을 의도적으로 심어 둔 시뮬레이션 데이터.
+   ══════════════════════════════════════════ */
+const T = (no, d, it, sup) => ({no, d, it, sup, vat: Math.round(sup * .1)});
+const I = (n, i, o) => ({n, i, o: o || null});
+
+const ECON = [
+{id:'E01', firm:'㈜나노메딕스', task:'S2026-01184', biz:'창업성장기술개발', prod:'광학센서모듈',
+ fund:200000000, totalRev:3120000000, prevSales:0, insIssued:'2027-01-08',
+ decl:{sales:482000000, exportKrw:0, exportUsd:0, jobs:7, invest:0, importSub:0},
+ tax:[T('20260314-41008271','2026-03-14','광학센서모듈',180000000),
+      T('20260627-41014903','2026-06-27','광학센서모듈',142000000),
+      T('20260905-41019338','2026-09-05','센서모듈 검사장비',96000000),
+      T('20261119-41024615','2026-11-19','광학센서모듈',64000000)],
+ exp:[], ins:[I('김O수','2026-02-01'),I('박O진','2026-02-15'),I('이O민','2026-03-02'),
+      I('정O호','2026-04-20'),I('최O아','2026-05-11'),I('강O우','2026-06-08'),
+      I('윤O서','2026-07-21'),I('장O현','2026-08-03','2026-11-30'),I('한O빈','2026-09-14','2026-12-05')],
+ basis:true, alsoOn:null},
+
+{id:'E02', firm:'㈜퓨처센싱', task:'S2026-02351', biz:'중소기업기술혁신개발', prod:'초음파 진단 프로브',
+ fund:300000000, totalRev:1850000000, prevSales:0, insIssued:'2027-01-11',
+ decl:{sales:264000000, exportKrw:0, exportUsd:0, jobs:3, invest:0, importSub:0},
+ tax:[T('20260408-52011744','2026-04-08','초음파 진단 프로브',150000000),
+      T('20260822-52018092','2026-08-22','초음파 진단 프로브',90000000)],
+ exp:[], ins:[I('서O영','2026-03-16'),I('오O탁','2026-05-04'),I('류O경','2026-07-19'),
+      I('문O아','2026-09-01','2026-12-20')],
+ basis:true, alsoOn:null},
+
+{id:'E03', firm:'한울정밀㈜', task:'S2026-03027', biz:'공정·품질기술개발', prod:'정밀 가공 지그',
+ fund:250000000, totalRev:4200000000, prevSales:0, insIssued:'2027-01-06',
+ decl:{sales:1320000000, exportKrw:0, exportUsd:0, jobs:5, invest:0, importSub:0},
+ tax:[T('20260219-41028833','2026-02-19','정밀 가공 지그',480000000),
+      T('20260711-41029517','2026-07-11','정밀 가공 지그',420000000),
+      T('20260711-41029517','2026-10-30','가공 지그 부품',420000000)],
+ exp:[], ins:[I('배O철','2026-01-20'),I('신O규','2026-03-09'),I('황O미','2026-05-25'),
+      I('고O준','2026-08-17'),I('남O린','2026-10-06'),I('천O수','2026-11-02','2026-12-28')],
+ basis:true, alsoOn:null},
+
+{id:'E04', firm:'㈜그린셀', task:'S2026-04412', biz:'중소기업상용화기술개발', prod:'박막 태양전지 모듈',
+ fund:180000000, totalRev:1420000000, prevSales:0, insIssued:'2027-01-09',
+ decl:{sales:0, exportKrw:512050000, exportUsd:385000, jobs:3, invest:0, importSub:0},
+ tax:[], exp:[{no:'43102-26-0018842', d:'2026-03-20', usd:150000, fx:1298},
+      {no:'43102-26-0031157', d:'2026-07-14', usd:135000, fx:1305},
+      {no:'43102-26-0049203', d:'2026-11-02', usd:100000, fx:1302}],
+ ins:[I('조O연','2026-02-10'),I('임O섭','2026-04-27'),I('권O나','2026-06-15'),
+      I('송O태','2026-09-08','2026-12-11')],
+ basis:true, alsoOn:null},
+
+{id:'E05', firm:'아이씨티랩㈜', task:'S2026-05198', biz:'산학연CollaboR&D', prod:'AI 영상분석 솔루션',
+ fund:220000000, totalRev:980000000, prevSales:0, insIssued:'2027-01-13',
+ decl:{sales:156000000, exportKrw:0, exportUsd:0, jobs:12, invest:0, importSub:0},
+ tax:[T('20260508-61003518','2026-05-08','AI 영상분석 솔루션',96000000),
+      T('20260924-61009274','2026-09-24','AI 영상분석 솔루션',60000000)],
+ exp:[], ins:[I('허O찬','2025-11-03'),
+      I('노O영','2026-01-12'),I('석O빈','2026-01-26'),I('표O훈','2026-02-09','2026-06-30'),
+      I('육O정','2026-03-03'),I('반O슬','2026-03-30','2026-08-14'),I('추O건','2026-04-18'),
+      I('도O경','2026-05-22','2026-09-05'),I('변O하','2026-06-11'),I('탁O윤','2026-07-08','2026-10-22'),
+      I('설O민','2026-08-25'),I('염O기','2026-09-30','2026-12-15'),I('공O래','2026-10-19')],
+ basis:true, alsoOn:null},
+
+{id:'E06', firm:'㈜메타포지', task:'S2026-06073', biz:'창업성장기술개발', prod:'3D 프린팅 조형물',
+ fund:150000000, totalRev:620000000, prevSales:0, insIssued:'2027-01-07',
+ decl:{sales:96000000, exportKrw:0, exportUsd:0, jobs:2, invest:0, importSub:0},
+ tax:[T('20251218-71002206','2025-12-18','3D 프린팅 조형물',18000000),
+      T('20260415-71005831','2026-04-15','3D 프린팅 조형물',34000000),
+      T('20260807-71009117','2026-08-07','3D 프린팅 조형물',28000000),
+      T('20261203-71013480','2026-12-03','3D 프린팅 조형물',16000000)],
+ exp:[], ins:[I('주O람','2026-03-11'),I('사O호','2026-06-02'),I('마O은','2026-08-19','2026-11-27')],
+ basis:true, alsoOn:null},
+
+{id:'E07', firm:'㈜바이오코어', task:'S2026-07264', biz:'중소기업R&D역량제고', prod:'체외진단 키트',
+ fund:280000000, totalRev:2240000000, prevSales:0, insIssued:'2027-01-10',
+ decl:{sales:340000000, exportKrw:0, exportUsd:0, jobs:4, invest:0, importSub:0},
+ tax:[T('20260306-81004492','2026-03-06','체외진단 키트',190000000),
+      T('20260618-81008715','2026-06-18','체외진단 키트',122000000),
+      T('20260911-81012063','2026-09-11','사무용 소모품',18000000),
+      T('20261127-81016338','2026-11-27','사무실 임대료',10000000)],
+ exp:[], ins:[I('구O진','2026-02-24'),I('복O나','2026-04-06'),I('선O우','2026-07-13'),
+      I('양O림','2026-09-21'),I('차O섭','2026-10-30','2026-12-19')],
+ basis:true, alsoOn:null},
+
+{id:'E08', firm:'㈜엔젠텍', task:'S2026-08815', biz:'투·융자연계기술개발', prod:'배터리 관리시스템',
+ fund:400000000, totalRev:3800000000, prevSales:0, insIssued:'2027-01-12',
+ decl:{sales:210000000, exportKrw:0, exportUsd:0, jobs:6, invest:2000000000, importSub:0},
+ tax:[T('20260527-91007334','2026-05-27','배터리 관리시스템',130000000),
+      T('20261015-91014208','2026-10-15','배터리 관리시스템',80000000)],
+ exp:[], ins:[I('피O수','2026-01-19'),I('탄O경','2026-03-08'),I('모O찬','2026-04-29'),
+      I('소O별','2026-06-17'),I('홍O래','2026-08-02'),I('전O우','2026-09-26'),
+      I('진O솔','2026-10-14','2026-12-08'),I('나O현','2026-11-05','2026-12-29')],
+ basis:true, alsoOn:'S2026-08290'},
+
+{id:'E09', firm:'동방정밀㈜', task:'S2026-09332', biz:'민관공동기술사업화', prod:'초정밀 베어링',
+ fund:120000000, totalRev:540000000, prevSales:0, insIssued:'2026-03-11',
+ decl:{sales:78000000, exportKrw:0, exportUsd:0, jobs:2, invest:0, importSub:0},
+ tax:[T('20260421-31006127','2026-04-21','초정밀 베어링',50000000),
+      T('20260916-31011845','2026-09-16','초정밀 베어링',28000000)],
+ exp:[], ins:[I('옥O표','2026-02-03'),I('유O담','2026-05-18'),I('범O석','2026-07-27','2026-11-09')],
+ basis:true, alsoOn:null},
+
+{id:'E10', firm:'㈜세븐레이어', task:'S2026-10471', biz:'소재부품장비전략협력기술개발', prod:'고내열 세라믹 기판',
+ fund:350000000, totalRev:1760000000, prevSales:0, insIssued:'2027-01-05',
+ decl:{sales:145000000, exportKrw:0, exportUsd:0, jobs:3, invest:0, importSub:210000000},
+ tax:[T('20260610-21008803','2026-06-10','고내열 세라믹 기판',92000000),
+      T('20261022-21015471','2026-10-22','고내열 세라믹 기판',53000000)],
+ exp:[], ins:[I('경O호','2026-03-24'),I('좌O민','2026-06-09'),I('맹O채','2026-08-30'),
+      I('독O윤','2026-10-12','2026-12-23')],
+ basis:false, alsoOn:null},
+
+{id:'E11', firm:'케이엠테크㈜', task:'S2026-11208', biz:'중소기업기술혁신개발', prod:'산업용 열교환기',
+ fund:260000000, totalRev:1120000000, prevSales:320000000, insIssued:'2027-01-08',
+ decl:{sales:0, exportKrw:0, exportUsd:0, jobs:1, invest:0, importSub:0},
+ tax:[], exp:[], ins:[I('탁O수','2026-05-06'),I('염O비','2026-08-11','2026-12-02')],
+ basis:true, alsoOn:null},
+
+{id:'E12', firm:'㈜프라임소재', task:'S2026-12055', biz:'공정·품질기술개발', prod:'내열 코팅 소재',
+ fund:190000000, totalRev:1340000000, prevSales:0, insIssued:'2027-01-09',
+ decl:{sales:218000000, exportKrw:80662000, exportUsd:62000, jobs:4, invest:0, importSub:0},
+ tax:[T('20260402-11003967','2026-04-02','내열 코팅 소재',128000000),
+      T('20260819-11010254','2026-08-19','내열 코팅 소재',90000000)],
+ exp:[{no:'43102-26-0026118', d:'2026-06-05', usd:62000, fx:1301}],
+ ins:[I('우O섭','2026-02-17'),I('길O아','2026-04-25'),I('란O호','2026-07-06'),
+      I('빈O준','2026-09-15'),I('초O림','2026-11-20','2026-12-27')],
+ basis:true, alsoOn:null},
+
+{id:'E13', firm:'주식회사 씨앤엘', task:'S2026-13390', biz:'창업성장기술개발', prod:'스마트 급수 제어기',
+ fund:100000000, totalRev:410000000, prevSales:0, insIssued:'2027-01-11',
+ decl:{sales:51200000, exportKrw:0, exportUsd:0, jobs:2, invest:0, importSub:0},
+ tax:[T('20260521-12004118','2026-05-21','스마트 급수 제어기',31200000),
+      T('20261008-12009602','2026-10-08','스마트 급수 제어기',20000000)],
+ exp:[], ins:[I('추O선','2026-04-13'),I('판O기','2026-07-30'),I('여O슬','2026-09-22','2026-12-16')],
+ basis:true, alsoOn:null},
+
+{id:'E14', firm:'㈜하이드로젠텍', task:'S2026-14127', biz:'중소기업Net-Zero기술혁신개발', prod:'수전해 스택 모듈',
+ fund:210000000, totalRev:5600000000, prevSales:0, insIssued:'2027-01-06',
+ decl:{sales:1240000000, exportKrw:166528000, exportUsd:128000, jobs:6, invest:0, importSub:0},
+ tax:[T('20260327-13007745','2026-03-27','수전해 스택 모듈',540000000),
+      T('20260730-13015119','2026-07-30','수전해 스택 모듈',452000000),
+      T('20261114-13022806','2026-11-14','스택 모듈 부품',248000000)],
+ exp:[{no:'43102-26-0038740', d:'2026-08-11', usd:128000, fx:1301}],
+ ins:[I('계O훈','2026-01-27'),I('봉O아','2026-03-19'),I('음O재','2026-05-07'),
+      I('피O름','2026-06-24'),I('삼O결','2026-08-13'),I('우O담','2026-10-02'),
+      I('한O별','2026-11-18','2026-12-26'),I('오O찬','2026-12-01','2026-12-30')],
+ basis:true, alsoOn:null},
+
+{id:'E15', firm:'㈜코어테크놀로지', task:'S2026-15044', biz:'창업성장기술개발', prod:'자율주행 라이다 센서',
+ fund:180000000, totalRev:780000000, prevSales:0, insIssued:'2027-01-10',
+ decl:{sales:0, exportKrw:0, exportUsd:0, jobs:0, invest:0, importSub:0},
+ tax:[], exp:[], ins:[], basis:true, alsoOn:null},
+];
+
+/* ══════════ 유틸 ══════════ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const nf = n => n.toLocaleString('ko-KR');
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SEV = {ok:0, hold:1, bad:2};
+const SEVNM = {ok:'일치', hold:'보류', bad:'불일치'};
+
+/* ══════════ 탭 ══════════ */
+$$('.nav button').forEach(b => b.onclick = () => {
+  $$('.nav button').forEach(x => x.setAttribute('aria-selected', x === b));
+  $$('.panel').forEach(p => p.classList.toggle('on', p.id === 'p-' + b.dataset.p));
+  window.scrollTo(0, 0);
+});
+
+/* ══════════ 테마 ══════════ */
+$('#themebtn').onclick = () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const sysDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const next = cur ? (cur === 'dark' ? 'light' : 'dark') : (sysDark ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', next);
+};
+
+/* ══════════════════════════════════════════
+   T1 — 검증 룰 엔진
+   ══════════════════════════════════════════ */
+const RULES = {
+  tech: [
+    ['R1','동일 논문 기여율 합계 = 100%','응답값 내부 정합','불일치'],
+    ['R2','SCI(E) 구분과 IF 기재 정합','응답값 ↔ 등재구분','불일치'],
+    ['R3','SCI 등재인데 IF 결측','응답값 내부 정합','보류'],
+    ['R4','DOI 형식 (10.xxxx/…)','형식 규칙','불일치'],
+    ['R5','ISSN 형식 (NNNN-NNNX)','형식 규칙','불일치'],
+    ['R6','저널–ISSN 교차대조','외부 참조DB','불일치'],
+    ['R7','JCR 미수록 저널','외부 참조DB','보류'],
+    ['R8','동일 DOI 다중 행 (중복 계상)','응답값 내부 정합','보류'],
+    ['R9','특허 출원·등록번호 형식 및 IRIS 등록','형식 + IRIS 대조','불일치/보류'],
+  ],
+  econ: [
+    ['E1','전자세금계산서 승인번호 중복','국세청 승인번호','불일치'],
+    ['E2','공급가액 vs 합계금액(부가세 포함) 혼동','증빙 추출값','불일치'],
+    ['E3','신고 매출액 ↔ 증빙 합계 일치','신고값 ↔ 증빙','불일치'],
+    ['E4','조사대상 기간 외 세금계산서 포함','발행일 대조','불일치'],
+    ['E5','거래 품목 ↔ 과제 개발제품 정합','품목 대조','보류'],
+    ['E6','수출신고번호 중복','관세청 UNI-PASS','불일치'],
+    ['E7','수출액 환율 적용 (신고일 기준환율)','필증 대조','불일치'],
+    ['E8','신규고용 순증 = 취득 − 상실','4대보험 명부','불일치'],
+    ['E9','과제기간 전 자격취득자 포함','명부 자격취득일','보류'],
+    ['E10','증빙 발급일 최신성 (기준일 이후)','발급일 대조','보류'],
+    ['E11','투자유치 과제 간 중복 계상','외부 공시DB','보류'],
+    ['E12','수입대체금액 산출근거 제출','제출서류','보류'],
+    ['E13','과제매출액 ≤ 기업 총매출액','외부 재무DB','불일치'],
+    ['E14','전년 매출 발생 · 당해 미발생','전년도 조사이력','보류'],
+  ]
+};
+function renderRules() {
+  $('#rulebody').innerHTML = RULES[TRACK].map(r =>
+    `<tr style="cursor:default"><td class="tid">${r[0]}</td><td>${esc(r[1])}</td><td style="color:var(--ink-3)">${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`
+  ).join('');
+  $('#rulehint').textContent = TRACK === 'econ' ? '경제적 성과 14종' : '기술적 성과 9종';
+}
+
+// 저널 ↔ ISSN 참조표 (외부 대조 시뮬레이션: JCR/Crossref 연동 자리)
+const ISSN_REF = {};
+PAPERS.forEach(p => { if (JCR[p.journal]) ISSN_REF[p.journal] = p.issn; });
+
+function verify() {
+  const byDoi = {};
+  PAPERS.forEach(p => (byDoi[p.doi] = byDoi[p.doi] || []).push(p));
+  const out = [];
+
+  PAPERS.forEach(p => {
+    const f = [];
+    const grp = byDoi[p.doi];
+    const sum = grp.reduce((a, x) => a + (x.contrib || 0), 0);
+
+    if (Math.abs(sum - 100) > 0.01)
+      f.push({r:'R1', s:'bad',
+        m: grp.length > 1
+          ? `동일 DOI ${grp.length}개 행의 기여율 합계 ${sum}% — 100% 대비 ${(sum-100>0?'+':'')}${(sum-100).toFixed(0)}%p`
+          : `기여율 ${sum}%만 단독 입력 — 잔여 ${(100-sum).toFixed(0)}%가 어느 기관에도 계상되지 않음`,
+        a:'참여기관 간 기여율 배분 재확인 요청. 합계 미달 시 성과 과소 계상, 초과 시 중복 계상.'});
+    else if (grp.length > 1)
+      f.push({r:'R8', s:'hold',
+        m:`동일 DOI가 ${grp.length}개 행에 분할 입력 (합계 ${sum}%)`,
+        a:'기여율 분할 입력이면 정상. 건수 집계 시 고유 DOI 기준 적용 필요.'});
+
+    if (p.sci === '02' && p.IF != null)
+      f.push({r:'R2', s:'bad',
+        m:`비SCI(02)로 등재 구분되었으나 임팩트팩터 ${p.IF} 기재`,
+        a:'KCI 영향력지수를 IF란에 오기입한 것으로 추정. mrnIF 산정에서 제외되어야 함.'});
+    if (p.sci === '01' && p.IF == null)
+      f.push({r:'R3', s:'hold', m:'SCI(E) 등재인데 임팩트팩터 결측', a:'JCR 조회로 보완.'});
+
+    if (!/^10\.\d{4,9}\/\S+$/.test(String(p.doi || '')))
+      f.push({r:'R4', s:'bad', m:`DOI 형식 위반: ${p.doi}`, a:'Crossref 조회로 정정.'});
+    if (!/^\d{4}-\d{3}[\dXx]$/.test(String(p.issn || '')))
+      f.push({r:'R5', s:'bad', m:`ISSN 형식 위반: ${p.issn}`, a:'ISSN Portal 조회로 정정.'});
+    else if (ISSN_REF[p.journal] && ISSN_REF[p.journal] !== p.issn)
+      f.push({r:'R6', s:'bad', m:`저널–ISSN 불일치: ${p.journal} / ${p.issn}`, a:'외부 참조DB 기준으로 정정.'});
+
+    if (!JCR[p.journal])
+      f.push({r:'R7', s:'hold',
+        m:`JCR 미수록 저널 — 외부 대조 불가 (${p.journal})`,
+        a:'국내 학술지로 추정. KCI 대조로 전환하고 mrnIF 산정 대상에서 제외.'});
+
+    const sev = f.length ? f.reduce((a, x) => SEV[x.s] > SEV[a] ? x.s : a, 'ok') : 'ok';
+    out.push({...p, kind:'논문', label:p.journal, sub:p.title, f, sev});
+  });
+
+  PATENTS.forEach(t => {
+    const f = [];
+    const ok_app = /^10-\d{4}-\d{7}$/.test(t.no);
+    const ok_reg = /^10-\d{7}-\d{4}$/.test(t.no);
+    if (!ok_app && !ok_reg)
+      f.push({r:'R9', s:'bad',
+        m:`출원·등록번호 형식 비표준: ${t.no}`,
+        a:'등록번호는 10-NNNNNNN-NNNN, 출원번호는 10-YYYY-NNNNNNN 형식. KIPRIS 대조로 정정.'});
+    if (t.kind === '01' && ok_reg)
+      f.push({r:'R9', s:'hold', m:'출원(01)으로 구분되었으나 등록번호 형식', a:'출원·등록 구분 재확인.'});
+    if (String(t.note || '').includes('IRIS 미등록'))
+      f.push({r:'R9', s:'hold',
+        m:'IRIS 미등록 — 성과는 발생했으나 시스템 미반영',
+        a:'IRIS-SIMS 등록 대상. 미등록 상태로는 상위평가 실적에 계상되지 않음.'});
+
+    const sev = f.length ? f.reduce((a, x) => SEV[x.s] > SEV[a] ? x.s : a, 'ok') : 'ok';
+    out.push({...t, kind:'특허', kindCode:t.kind, label:t.name,
+              sub:`${t.kind === '01' ? '출원' : '등록'} · ${t.no}`, contrib:null, f, sev});
+  });
+  return out;
+}
+
+/* ══════════════════════════════════════════
+   T1-A — 경제적 성과 검증 엔진
+   모든 값은 증빙에서 계산한다. 판정을 미리 적어두지 않는다.
+   ══════════════════════════════════════════ */
+const PERIOD = {from:'2026-01-01', to:'2026-12-31'};       // RFP: 대상성과 발생기간
+const ASOF = '2026-12-31';                                  // 조사 기준일
+const won = n => nf(Math.round(n)) + '원';
+
+// 거래 품목이 과제 개발제품과 관련 있는가 — 3-gram 부분일치
+// ("광학센서모듈" ↔ "센서모듈 검사장비"는 관련, "사무용 소모품"은 무관)
+function related(item, prod) {
+  const a = String(item).replace(/\s/g, ''), b = String(prod).replace(/\s/g, '');
+  for (let i = 0; i + 3 <= b.length; i++) if (a.includes(b.slice(i, i + 3))) return true;
+  for (let i = 0; i + 3 <= a.length; i++) if (b.includes(a.slice(i, i + 3))) return true;
+  return false;
+}
+
+function verifyEcon() {
+  return ECON.map(e => {
+    const f = [], d = e.decl;
+
+    /* ── 전자세금계산서 → 과제매출액 ── */
+    const seen = new Set(), dup = [];
+    const uniq = e.tax.filter(t => seen.has(t.no) ? (dup.push(t), false) : (seen.add(t.no), true));
+    const inPeriod = uniq.filter(t => t.d >= PERIOD.from && t.d <= PERIOD.to);
+    const outPeriod = uniq.filter(t => t.d < PERIOD.from || t.d > PERIOD.to);
+    const unrelated = inPeriod.filter(t => !related(t.it, e.prod));
+    const supplyAll = uniq.reduce((a, t) => a + t.sup, 0);
+    const grossAll = uniq.reduce((a, t) => a + t.sup + t.vat, 0);
+    const verifiedSales = inPeriod.reduce((a, t) => a + t.sup, 0);
+
+    if (dup.length)
+      f.push({r:'E1', s:'bad',
+        m:`전자세금계산서 승인번호 중복 제출 ${dup.length}건 — ${dup.map(t => t.no).join(', ')}`,
+        a:`중복분 ${won(dup.reduce((a, t) => a + t.sup, 0))}이 이중 계상되었습니다. 국세청 승인번호 기준 제거 후 재산정.`});
+
+    if (e.tax.length && Math.abs(d.sales - grossAll) < 1 && Math.abs(d.sales - supplyAll) > 1)
+      f.push({r:'E2', s:'bad',
+        m:`합계금액(부가세 포함)을 과제매출액으로 신고 — 신고 ${won(d.sales)} = 공급가액 ${won(supplyAll)} + 세액 ${won(grossAll - supplyAll)}`,
+        a:`RFP 검토항목은 공급가액 기준입니다. ${won(grossAll - supplyAll)} 과대계상 — 공급가액으로 정정.`});
+    else if (e.tax.length && Math.abs(d.sales - verifiedSales) > 1)
+      f.push({r:'E3', s:'bad',
+        m:`신고액과 증빙 합계 불일치 — 신고 ${won(d.sales)} / 유효 증빙 ${won(verifiedSales)}`,
+        a:`차액 ${won(Math.abs(d.sales - verifiedSales))}. 누락 증빙 보완 또는 신고액 정정 요청.`});
+
+    if (outPeriod.length)
+      f.push({r:'E4', s:'bad',
+        m:`조사대상 기간(${PERIOD.from}~${PERIOD.to}) 외 세금계산서 ${outPeriod.length}건 포함 — ${outPeriod.map(t => t.d).join(', ')}`,
+        a:`기간 외 ${won(outPeriod.reduce((a, t) => a + t.sup, 0))}은 당해연도 성과에서 제외됩니다.`});
+
+    if (unrelated.length)
+      f.push({r:'E5', s:'hold',
+        m:`과제 개발제품과 무관해 보이는 품목 ${unrelated.length}건 — ${unrelated.map(t => t.it).join(', ')}`,
+        a:`개발제품 “${e.prod}”와의 관련성 확인 필요. 무관 확정 시 ${won(unrelated.reduce((a, t) => a + t.sup, 0))} 차감.`});
+
+    /* ── 수출신고필증 → 과제수출액 ── */
+    const expSeen = new Set(), expDup = [];
+    const expU = e.exp.filter(x => expSeen.has(x.no) ? (expDup.push(x), false) : (expSeen.add(x.no), true));
+    const usdSum = expU.reduce((a, x) => a + x.usd, 0);
+    const krwSum = expU.reduce((a, x) => a + Math.round(x.usd * x.fx), 0);
+    if (expDup.length)
+      f.push({r:'E6', s:'bad', m:`수출신고번호 중복 제출 — ${expDup.map(x => x.no).join(', ')}`,
+        a:'관세청 UNI-PASS 신고번호 기준 중복 제거 후 재산정.'});
+    if (expU.length && Math.abs(d.exportKrw - krwSum) > krwSum * .005) {
+      const fxUsed = d.exportUsd ? (d.exportKrw / d.exportUsd) : 0;
+      f.push({r:'E7', s:'bad',
+        m:`환율 적용 오류 — 신고 ${won(d.exportKrw)} (USD ${nf(d.exportUsd)} × ${fxUsed.toFixed(0)} 일괄) / 필증 신고일 환율 적용 시 ${won(krwSum)}`,
+        a:`차액 ${won(Math.abs(d.exportKrw - krwSum))}. 수출신고필증상 신고일 기준환율로 건별 재환산.`});
+    }
+
+    /* ── 4대보험 가입자 명부 → 신규고용 ── */
+    const before = e.ins.filter(p => p.i < PERIOD.from);
+    const hired = e.ins.filter(p => p.i >= PERIOD.from && p.i <= PERIOD.to);
+    const left = hired.filter(p => p.o);
+    const net = hired.length - left.length;
+    if (e.ins.length && d.jobs !== net)
+      f.push({r:'E8', s:'bad',
+        m:`신규고용 신고 ${d.jobs}명 / 명부 순증 ${net}명 (기간 내 취득 ${hired.length} − 상실 ${left.length})`,
+        a:`${Math.abs(d.jobs - net)}명 차이. 신규고용은 순증 기준입니다 — 퇴사자 반영 후 정정.`});
+    if (before.length)
+      f.push({r:'E9', s:'hold',
+        m:`과제기간 전 자격취득자 ${before.length}명이 신규고용 명부에 포함 — ${before.map(p => `${p.n}(${p.i})`).join(', ')}`,
+        a:'기존 재직자는 신규고용 대상이 아닙니다. 명부에서 제외 확인.'});
+    if (e.ins.length && e.insIssued < ASOF)
+      f.push({r:'E10', s:'hold',
+        m:`4대보험 명부 발급일 ${e.insIssued} — 조사 기준일(${ASOF}) 이전`,
+        a:'기준일 이후 발급본 재징구. 발급일 이후 입·퇴사가 반영되지 않았습니다.'});
+
+    /* ── 외부 참조DB 교차검증 ── */
+    if (d.invest > 0 && e.alsoOn)
+      f.push({r:'E11', s:'hold',
+        m:`동일 투자 라운드가 타 과제(${e.alsoOn})에도 100% 계상`,
+        a:`${won(d.invest)}의 과제 간 배분 기준 확인 필요. 중복 계상 시 사업 전체 투자유치액이 부풀려집니다.`});
+    if (d.importSub > 0 && !e.basis)
+      f.push({r:'E12', s:'hold',
+        m:`수입대체금액 ${won(d.importSub)} 신고 — 산출근거 미제출`,
+        a:'대체 대상 수입품목·단가·수량 산출내역 징구 후 인정 여부 판단.'});
+    if (verifiedSales > e.totalRev)
+      f.push({r:'E13', s:'bad',
+        m:`과제매출액이 기업 총매출액을 초과 — 과제 ${won(verifiedSales)} > 총매출 ${won(e.totalRev)}`,
+        a:'외부 재무DB 대조 결과 논리적으로 성립 불가. 신고액 전면 재확인.'});
+    if (!e.tax.length && !e.exp.length && e.prevSales > 0 && d.sales === 0)
+      f.push({r:'E14', s:'hold',
+        m:`전년 누적 과제매출 ${won(e.prevSales)} 발생 과제인데 당해연도 매출 미발생`,
+        a:'현장조사 2그룹 분류 대상. 매출 중단 사유 현장 확인 필요.'});
+
+    /* ── 현장조사 그룹 자동 분류 (RFP Ⅲ-1 분류기준) ── */
+    const roiD = e.fund ? (d.sales + d.exportKrw) / e.fund : 0;
+    const vExport = expU.length ? krwSum : d.exportKrw;
+    const roiV = e.fund ? (verifiedSales + vExport) / e.fund : 0;
+    const grp = (sales, exp, roi) =>
+      d.invest > 0 ? 1
+      : (e.prevSales > 0 && sales === 0) ? 2
+      : (roi >= 5 || d.importSub > 0) ? 3
+      : (sales > 0 || d.jobs > 0) ? 4 : 5;
+    const gD = grp(d.sales, d.exportKrw, roiD);
+    const gV = grp(verifiedSales, vExport, roiV);
+
+    const sev = f.length ? f.reduce((a, x) => SEV[x.s] > SEV[a] ? x.s : a, 'ok') : 'ok';
+    return {...e, f, sev, track:'econ', label:e.firm, sub:`${e.task} · ${e.biz}`,
+            calc:{supplyAll, grossAll, verifiedSales, usdSum, krwSum, hired:hired.length,
+                  left:left.length, net, before, dup, outPeriod, unrelated, expU,
+                  roiD, roiV, vExport, gD, gV}};
+  });
+}
+
+const GRPNM = {1:'1그룹 투자유치', 2:'2그룹 매출중단', 3:'3그룹 우수성과', 4:'4그룹 성과발생', 5:'5그룹 무작위'};
+
+let TRACK = 'econ', FILTER = 'all', running = false;
+const RES = {econ: [], tech: []};
+const SIZE = {econ: 15, tech: 32};
+let RESULTS = [];
+
+$$('.track').forEach(b => b.onclick = () => {
+  if (running) return;
+  $$('.track').forEach(x => x.setAttribute('aria-pressed', x === b));
+  TRACK = b.dataset.t; FILTER = 'all';
+  $$('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.f === 'all'));
+  RESULTS = RES[TRACK];
+  $('#v-scope').textContent = TRACK === 'econ' ? '과제매출·수출·고용·투자' : '논문 27 · 특허 5';
+  $('#gapcard').style.display = TRACK === 'econ' ? '' : 'none';
+  $('#fieldcard').style.display = TRACK === 'econ' ? '' : 'none';
+  $('#runstat').textContent = RESULTS.length
+    ? `검증 완료 · ${RESULTS.length}건`
+    : `${SIZE[TRACK]}${TRACK === 'econ' ? '개사' : '건'} 대기 중 · 검증 룰 ${RULES[TRACK].length}종`;
+  $('#runbtn').textContent = RESULTS.length ? '↻ 재실행' : '▶ 검증 실행';
+  renderRules(); renderVerify();
+});
+
+$('#runbtn').onclick = async () => {
+  if (running) return;
+  running = true;
+  const btn = $('#runbtn'); btn.disabled = true; btn.textContent = '검증 중…';
+  const t = TRACK;
+  RES[t] = []; RESULTS = RES[t]; renderVerify();
+  const all = t === 'econ' ? verifyEcon() : verify();
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const step = t === 'econ' ? 90 : 52;
+  for (let i = 0; i < all.length; i++) {
+    RES[t].push(all[i]);
+    if (!reduced) await new Promise(r => setTimeout(r, step));
+    updateCounts();
+    $('#runstat').textContent = `${RES[t].length}/${all.length} 검증 중 · 룰 ${RULES[t].length}종 적용`;
+  }
+  renderVerify();
+  $('#runstat').innerHTML = t === 'econ'
+    ? `검증 완료 · 15개사 · 증빙 ${ECON.reduce((a, e) => a + e.tax.length + e.exp.length + e.ins.length, 0)}건 판독 · 소요 <b class="mono">1.4초</b>`
+    : `검증 완료 · 32건 · 소요 <b class="mono">0.9초</b> (실 운영 30,309과제 기준 추정 14분)`;
+  btn.disabled = false; btn.textContent = '↻ 재실행'; running = false;
+};
+
+function updateCounts() {
+  const c = {ok:0, hold:0, bad:0};
+  RESULTS.forEach(r => c[r.sev]++);
+  $('#v-total').innerHTML = RESULTS.length + `<small>/${SIZE[TRACK]}</small>`;
+  $('#v-ok').textContent = c.ok; $('#v-hold').textContent = c.hold; $('#v-bad').textContent = c.bad;
+}
+
+const HEAD = {
+  econ: `<tr><th>ID</th><th>기업 · 과제</th><th class="num">신고 성과액</th><th class="num">검증 성과액</th><th class="num">고용</th><th>현장조사</th><th>판정</th><th>검출</th></tr>`,
+  tech: `<tr><th>ID</th><th>성과</th><th class="num">연도</th><th>구분</th><th class="num">기여율</th><th>판정</th><th>검출</th></tr>`
+};
+
+function renderVerify() {
+  updateCounts();
+  $('#vhead').innerHTML = HEAD[TRACK];
+  const cols = TRACK === 'econ' ? 8 : 7;
+  const rows = RESULTS.filter(r => FILTER === 'all' || r.sev === FILTER);
+  const tb = $('#vbody');
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="${cols}" style="padding:26px; text-align:center; color:var(--ink-4)">${RESULTS.length ? '해당 판정 건이 없습니다.' : '검증을 실행하면 결과가 표시됩니다.'}</td></tr>`;
+    $('#detail').innerHTML = ''; renderGap(); renderField(); return;
+  }
+  tb.innerHTML = rows.map(r => TRACK === 'econ' ? `
+    <tr class="r-${r.sev}" data-id="${r.id}">
+      <td class="strip tid">${r.id}</td>
+      <td><span class="jname">${esc(r.firm)}</span><span class="tsub">${esc(r.task)} · ${esc(r.biz)}</span></td>
+      <td class="num">${(r.decl.sales + r.decl.exportKrw) ? nf(r.decl.sales + r.decl.exportKrw) : '—'}</td>
+      <td class="num" style="color:${(r.calc.verifiedSales + r.calc.vExport) !== (r.decl.sales + r.decl.exportKrw) ? 'var(--bad)' : 'var(--ink-2)'}">${(r.calc.verifiedSales + r.calc.vExport) ? nf(r.calc.verifiedSales + r.calc.vExport) : '—'}</td>
+      <td class="num">${r.decl.jobs}${r.ins.length && r.decl.jobs !== r.calc.net ? ` <span style="color:var(--bad)">→${r.calc.net}</span>` : ''}</td>
+      <td><span class="grp g${r.calc.gV}">${r.calc.gV}그룹</span>${r.calc.gD !== r.calc.gV ? `<span class="tsub" style="color:var(--bad)">신고 기준 ${r.calc.gD}그룹</span>` : ''}</td>
+      <td><span class="pill v-${r.sev}">${SEVNM[r.sev]}</span></td>
+      <td class="tid">${r.f.length ? r.f.map(x => x.r).join(' ') : '—'}</td>
+    </tr>` : `
+    <tr class="r-${r.sev}" data-id="${r.id}">
+      <td class="strip tid">${r.id}</td>
+      <td><span class="jname">${esc(r.label)}</span><span class="tsub">${esc(String(r.sub || '').slice(0, 58))}${String(r.sub || '').length > 58 ? '…' : ''}</span></td>
+      <td class="num">${r.year}</td>
+      <td>${r.kind}${r.kind === '논문' ? (r.sci === '01' ? ' · SCI' : ' · 비SCI') : ''}</td>
+      <td class="num">${r.contrib != null ? r.contrib + '%' : '—'}</td>
+      <td><span class="pill v-${r.sev}">${SEVNM[r.sev]}</span></td>
+      <td class="tid">${r.f.length ? r.f.map(x => x.r).join(' ') : '—'}</td>
+    </tr>`).join('');
+  tb.querySelectorAll('tr').forEach(tr => tr.onclick = () => showDetail(tr.dataset.id));
+  showDetail(rows.find(r => r.sev === 'bad')?.id || rows[0].id);
+  renderGap(); renderField();
+}
+
+/* ── 검증 전후 총액 차이 ── */
+function renderGap() {
+  if (TRACK !== 'econ') return;
+  const R = RES.econ;
+  if (!R.length) { $('#gapbody').innerHTML = '<p class="note">검증을 실행하면 신고값 대비 확정값 차이가 계산됩니다.</p>'; return; }
+  const dS = R.reduce((a, r) => a + r.decl.sales, 0), vS = R.reduce((a, r) => a + r.calc.verifiedSales, 0);
+  const dE = R.reduce((a, r) => a + r.decl.exportKrw, 0), vE = R.reduce((a, r) => a + r.calc.vExport, 0);
+  const dJ = R.reduce((a, r) => a + r.decl.jobs, 0), vJ = R.reduce((a, r) => a + (r.ins.length ? r.calc.net : r.decl.jobs), 0);
+  const row = (lab, d, v, unit) => {
+    const gap = v - d, pc = d ? gap / d * 100 : 0;
+    return `<div class="gaprow">
+      <div class="gl">${lab}</div>
+      <div class="gv mono">${unit === '명' ? nf(d) + '명' : won(d)}</div>
+      <div class="ga mono">→</div>
+      <div class="gv mono" style="color:${gap ? 'var(--bad)' : 'var(--ok)'}">${unit === '명' ? nf(v) + '명' : won(v)}</div>
+      <div class="gd mono" style="color:${gap ? 'var(--bad)' : 'var(--ink-4)'}">${gap ? (gap > 0 ? '+' : '') + (unit === '명' ? nf(gap) + '명' : won(gap)) + ` (${pc.toFixed(1)}%)` : '차이 없음'}</div>
+    </div>`;
+  };
+  $('#gapbody').innerHTML = `
+    <div class="gaphead"><div>항목</div><div>신고값 집계</div><div></div><div>검증 후 확정값</div><div>차이</div></div>
+    ${row('과제매출액', dS, vS)}${row('과제수출액', dE, vE)}${row('신규고용', dJ, vJ, '명')}
+    <p class="note" style="margin-top:12px">15개사 표본에서만 <b style="color:var(--bad)">${won(dS - vS + (dE - vE))}</b>의 과대계상이 걸러졌습니다.
+    검증 없이 집계하면 이 금액이 그대로 사업 성과로 보고되고, 상위평가에서 지적사항으로 되돌아옵니다.</p>`;
+}
+
+/* ── 현장조사 그룹 자동 분류 ── */
+function renderField() {
+  if (TRACK !== 'econ') return;
+  const R = RES.econ;
+  if (!R.length) { $('#fieldbody').innerHTML = '<p class="note">검증을 실행하면 분류 결과가 표시됩니다.</p>'; return; }
+  const by = {1:[], 2:[], 3:[], 4:[], 5:[]};
+  R.forEach(r => by[r.calc.gV].push(r));
+  const moved = R.filter(r => r.calc.gD !== r.calc.gV);
+  $('#fieldbody').innerHTML = `
+    <p class="note" style="margin-bottom:12px">온라인 응답기업의 33%를 현장검증 대상으로 뽑는 작업입니다. RFP가 정한 5개 분류기준을 규칙으로 옮겨, 검증이 끝난 값 기준으로 자동 배정합니다.</p>
+    <div class="grid g3" style="gap:10px">
+      ${[1, 2, 3, 4, 5].map(g => `
+        <div class="gcard">
+          <div class="gh"><span class="grp g${g}">${g}그룹</span><span class="gn mono">${by[g].length}개사</span></div>
+          <div class="gt">${esc(GRPNM[g].replace(/^\d그룹 /, ''))}</div>
+          <div class="gm">${by[g].length ? by[g].map(r => esc(r.firm)).join(', ') : '해당 없음'}</div>
+        </div>`).join('')}
+    </div>
+    ${moved.length ? `
+    <div class="findings" style="padding:14px 0 0">
+      ${moved.map(r => `<div class="finding f-bad"><span class="ic">✕</span><div>
+        <b>${esc(r.firm)}</b> — 신고값 기준 <b>${r.calc.gD}그룹</b>(ROI ${r.calc.roiD.toFixed(2)}) → 검증 후 <b>${r.calc.gV}그룹</b>(ROI ${r.calc.roiV.toFixed(2)})
+        <div class="act">→ 검증 전 신고값으로 현장조사 대상을 뽑으면, 과대신고 기업이 우수성과 그룹으로 분류됩니다. 검증을 선행해야 표본이 왜곡되지 않습니다.</div>
+      </div></div>`).join('')}
+    </div>` : ''}`;
+}
+
+function showDetail(id) {
+  const r = RESULTS.find(x => x.id === id);
+  if (!r) return;
+  $$('#vbody tr').forEach(tr => tr.classList.toggle('sel', tr.dataset.id === id));
+  if (r.track === 'econ') return showDetailEcon(r);
+  return showDetailTech(r);
+}
+
+function findingsHtml(f) {
+  return f.length ? f.map(x => `
+    <div class="finding f-${x.s}">
+      <span class="ic">${x.s === 'bad' ? '✕' : x.s === 'hold' ? '!' : '✓'}</span>
+      <div><span class="rule">${x.r}</span> ${esc(x.m)}<div class="act">→ ${esc(x.a)}</div></div>
+    </div>`).join('')
+  : `<div class="finding f-ok"><span class="ic">✓</span><div>전 항목 대조 일치. 검토자 확정 대기.<div class="act">→ 1차 자동검증 통과. 확정은 검토자 승인 후.</div></div></div>`;
+}
+
+/* ── 경제적 성과 상세: 증빙 원본 대조 ── */
+function showDetailEcon(r) {
+  const c = r.calc, d = r.decl;
+  const cmp = [
+    ['과제매출액', d.sales ? won(d.sales) : '—', c.verifiedSales ? won(c.verifiedSales) : (r.tax.length ? '—' : '증빙 없음'),
+      !r.tax.length ? (d.sales ? 'bad' : 'ok') : (d.sales === c.verifiedSales ? 'ok' : 'bad')],
+    ['과제수출액', d.exportKrw ? won(d.exportKrw) : '—', c.expU.length ? won(c.krwSum) : '증빙 없음',
+      !c.expU.length ? (d.exportKrw ? 'bad' : 'ok') : (Math.abs(d.exportKrw - c.krwSum) <= c.krwSum * .005 ? 'ok' : 'bad')],
+    ['신규고용', d.jobs + '명', r.ins.length ? `${c.net}명 (취득 ${c.hired} − 상실 ${c.left})` : '증빙 없음',
+      !r.ins.length ? (d.jobs ? 'bad' : 'ok') : (d.jobs === c.net ? 'ok' : 'bad')],
+    ['투자유치', d.invest ? won(d.invest) : '—', r.alsoOn ? `타 과제(${r.alsoOn}) 중복` : (d.invest ? '단독 계상' : '—'),
+      r.alsoOn ? 'hold' : 'ok'],
+    ['수입대체금액', d.importSub ? won(d.importSub) : '—', d.importSub ? (r.basis ? '산출근거 제출' : '산출근거 미제출') : '—',
+      d.importSub && !r.basis ? 'hold' : 'ok'],
+    ['ROI (성과/지원금)', c.roiD.toFixed(2), c.roiV.toFixed(2) + ` · 지원금 ${won(r.fund)}`, c.roiD === c.roiV ? 'ok' : 'bad'],
+  ];
+
+  const taxTbl = r.tax.length ? `
+    <div class="evh">전자세금계산서 <span class="mono">${r.tax.length}건</span> <span class="evs">국세청 승인번호 대조</span></div>
+    <div class="tw"><table class="ev">
+      <thead><tr><th>승인번호</th><th>발행일</th><th>품목</th><th class="num">공급가액</th><th class="num">세액</th><th>판정</th></tr></thead>
+      <tbody>${(() => {
+        const s = new Set();
+        return r.tax.map(t => {
+          const isDup = s.has(t.no); s.add(t.no);
+          const outP = t.d < PERIOD.from || t.d > PERIOD.to;
+          const unrel = !isDup && !outP && !related(t.it, r.prod);
+          const v = isDup ? 'bad' : outP ? 'bad' : unrel ? 'hold' : 'ok';
+          const why = isDup ? '승인번호 중복' : outP ? '기간 외' : unrel ? '품목 무관' : '유효';
+          return `<tr style="cursor:default"><td class="mono" style="font-size:11px">${esc(t.no)}</td>
+            <td class="mono" style="font-size:11px">${t.d}</td><td>${esc(t.it)}</td>
+            <td class="num">${nf(t.sup)}</td><td class="num" style="color:var(--ink-4)">${nf(t.vat)}</td>
+            <td><span class="pill v-${v}">${why}</span></td></tr>`;
+        }).join('');
+      })()}</tbody>
+      <tfoot><tr><td colspan="3" class="tf">유효 증빙 합계 (공급가액)</td>
+        <td class="num tf">${nf(c.verifiedSales)}</td><td colspan="2" class="tf" style="color:var(--ink-4)">합계금액 ${nf(c.grossAll)}</td></tr></tfoot>
+    </table></div>` : '';
+
+  const expTbl = r.exp.length ? `
+    <div class="evh">수출신고필증 <span class="mono">${r.exp.length}건</span> <span class="evs">관세청 UNI-PASS 대조</span></div>
+    <div class="tw"><table class="ev">
+      <thead><tr><th>신고번호</th><th>신고일</th><th class="num">USD</th><th class="num">신고일 환율</th><th class="num">원화 환산</th></tr></thead>
+      <tbody>${r.exp.map(x => `<tr style="cursor:default">
+        <td class="mono" style="font-size:11px">${esc(x.no)}</td><td class="mono" style="font-size:11px">${x.d}</td>
+        <td class="num">${nf(x.usd)}</td><td class="num">${nf(x.fx)}</td>
+        <td class="num">${nf(Math.round(x.usd * x.fx))}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td colspan="2" class="tf">필증 기준 합계</td><td class="num tf">${nf(c.usdSum)}</td>
+        <td class="tf"></td><td class="num tf">${nf(c.krwSum)}</td></tr></tfoot>
+    </table></div>` : '';
+
+  const insTbl = r.ins.length ? `
+    <div class="evh">4대 사회보험 가입자 명부 <span class="mono">${r.ins.length}명</span>
+      <span class="evs">발급일 ${r.insIssued}${r.insIssued < ASOF ? ' · 기준일 이전' : ''}</span></div>
+    <div class="tw"><table class="ev">
+      <thead><tr><th>성명</th><th>자격취득일</th><th>자격상실일</th><th>순증 반영</th></tr></thead>
+      <tbody>${r.ins.map(p => {
+        const pre = p.i < PERIOD.from;
+        const v = pre ? 'hold' : p.o ? 'bad' : 'ok';
+        const why = pre ? '기간 전 취득' : p.o ? '기간 내 퇴사' : '순증 +1';
+        return `<tr style="cursor:default"><td>${esc(p.n)}</td>
+          <td class="mono" style="font-size:11px">${p.i}</td>
+          <td class="mono" style="font-size:11px; color:var(--ink-4)">${p.o || '—'}</td>
+          <td><span class="pill v-${v}">${why}</span></td></tr>`;
+      }).join('')}</tbody>
+      <tfoot><tr><td colspan="3" class="tf">순증 (기간 내 취득 ${c.hired} − 상실 ${c.left})</td>
+        <td class="num tf">${c.net}명</td></tr></tfoot>
+    </table></div>` : '';
+
+  $('#detail').innerHTML = `
+    <div class="drawer">
+      <div class="dh">
+        <div class="t">${esc(r.firm)} <span class="grp g${c.gV}" style="margin-left:6px">${esc(GRPNM[c.gV])}</span></div>
+        <div class="m">${r.id} · ${esc(r.task)} · ${esc(r.biz)} · 개발제품 ${esc(r.prod)} · 정부지원금 ${won(r.fund)}</div>
+      </div>
+      <div class="cmp">
+        <div class="hd">항목</div><div class="hd">기업 신고값</div><div class="hd">증빙 추출·외부 대조</div><div class="hd jd">판정</div>
+        ${cmp.map(([k, a, b, s]) => `<div class="fl">${esc(k)}</div><div class="vv">${esc(a)}</div>
+          <div class="vv" style="color:var(--ink-3)">${esc(b)}</div>
+          <div class="jd"><span class="pill v-${s}">${SEVNM[s]}</span></div>`).join('')}
+      </div>
+      ${taxTbl || expTbl || insTbl ? `<div class="evidence">${taxTbl}${expTbl}${insTbl}</div>` : ''}
+      <div class="findings">${findingsHtml(r.f)}</div>
+    </div>`;
+}
+
+function showDetailTech(r) {
+  const paperCmp = [
+    ['학술지명', r.journal, JCR[r.journal] ? 'JCR 수록 확인' : '참조DB 미수록', JCR[r.journal] ? 'ok' : 'hold'],
+    ['ISSN', r.issn, ISSN_REF[r.journal] || '—', ISSN_REF[r.journal] === r.issn ? 'ok' : (JCR[r.journal] ? 'bad' : 'hold')],
+    ['DOI', r.doi, /^10\.\d{4,9}\/\S+$/.test(String(r.doi || '')) ? '형식 적합' : '형식 위반', /^10\.\d{4,9}\/\S+$/.test(String(r.doi || '')) ? 'ok' : 'bad'],
+    ['SCI(E) 구분', r.sci === '01' ? 'SCI(E) 등재' : '비SCI', r.IF != null ? `IF ${r.IF} 기재` : 'IF 미기재',
+      (r.sci === '01') === (r.IF != null) ? 'ok' : (r.sci === '02' ? 'bad' : 'hold')],
+    ['기여율', (r.contrib ?? '—') + '%', (() => {
+      const g = PAPERS.filter(p => p.doi === r.doi); const s = g.reduce((a, x) => a + (x.contrib || 0), 0);
+      return `${g.length}행 합계 ${s}%`;
+    })(), (() => {
+      const s = PAPERS.filter(p => p.doi === r.doi).reduce((a, x) => a + (x.contrib || 0), 0);
+      return Math.abs(s - 100) < .01 ? 'ok' : 'bad';
+    })()],
+    ['IRIS 등록번호', r.regno || '(공란)', r.regno ? 'IRIS-SIMS 등록' : 'IRIS-SIMS 미등록', r.regno ? 'ok' : 'hold'],
+  ];
+
+  const okApp = /^10-\d{4}-\d{7}$/.test(String(r.no));
+  const okReg = /^10-\d{7}-\d{4}$/.test(String(r.no));
+  const patCmp = [
+    ['출원·등록 구분', r.kind === '특허' ? (r.kindCode === '01' ? '출원' : '등록') : '—', 'KIPRIS 기준', 'ok'],
+    ['번호', r.no, okApp ? '출원번호 형식 적합' : okReg ? '등록번호 형식 적합' : '형식 비표준', (okApp || okReg) ? 'ok' : 'bad'],
+    ['일자', r.date, '—', 'ok'],
+    ['IRIS 등록', String(r.note || '').includes('IRIS 미등록') ? '미등록' : '등록', 'IRIS-SIMS 대조', String(r.note || '').includes('IRIS 미등록') ? 'hold' : 'ok'],
+  ];
+
+  const table = (r.kind === '논문' ? paperCmp : patCmp).map(([k, a, b, s]) => `
+    <div class="fl">${esc(k)}</div>
+    <div class="vv">${esc(a ?? '—')}</div>
+    <div class="vv" style="color:var(--ink-3)">${esc(b ?? '—')}</div>
+    <div class="jd"><span class="pill v-${s}">${SEVNM[s]}</span></div>`).join('');
+
+  $('#detail').innerHTML = `
+    <div class="drawer">
+      <div class="dh">
+        <div class="t">${esc(r.label)}</div>
+        <div class="m">${r.id} · ${r.kind} · ${r.year} · ${esc(String(r.task || '').slice(0, 44))}</div>
+      </div>
+      <div class="cmp">
+        <div class="hd">항목</div><div class="hd">응답값 / 입력값</div><div class="hd">대조 결과</div><div class="hd jd">판정</div>
+        ${table}
+      </div>
+      <div class="findings">${findingsHtml(r.f)}</div>
+    </div>`;
+}
+
+$$('.chip').forEach(c => c.onclick = () => {
+  $$('.chip').forEach(x => x.setAttribute('aria-pressed', x === c));
+  FILTER = c.dataset.f; renderVerify();
+});
+
+/* ══════════════════════════════════════════
+   T2 — mrnIF 엔진 + 차트
+   ══════════════════════════════════════════ */
+const mrn = (N, r) => 100 * (N - r) / (N - 1);
+const SCIP = PAPERS.filter(p => p.sci === '01' && JCR[p.journal]);
+const RANKS = {}; Object.keys(JCR).forEach(j => RANKS[j] = JCR[j][2]);
+
+function uniqueSci() {
+  const seen = {}; SCIP.forEach(p => seen[p.doi] = p); return Object.values(seen);
+}
+
+function renderJcr() {
+  const cnt = {}; uniqueSci().forEach(p => cnt[p.journal] = (cnt[p.journal] || 0) + 1);
+  $('#jcrbody').innerHTML = Object.keys(JCR).map(j => {
+    const [field, N] = JCR[j];
+    return `<tr style="cursor:default">
+      <td class="jname">${esc(j)}</td>
+      <td style="color:var(--ink-3); font-size:11.5px">${esc(field)}</td>
+      <td class="num">${(PAPERS.find(p => p.journal === j) || {}).IF ?? '—'}</td>
+      <td class="num">${N}</td>
+      <td class="num"><input type="number" data-j="${esc(j)}" value="${RANKS[j]}" min="1" max="${N}"></td>
+      <td class="num" data-out="${esc(j)}">${mrn(N, RANKS[j]).toFixed(2)}</td>
+      <td class="num">${cnt[j] || 0}</td>
+    </tr>`;
+  }).join('');
+  $$('#jcrbody input').forEach(inp => inp.oninput = () => {
+    const j = inp.dataset.j, N = JCR[j][1];
+    let v = Math.max(1, Math.min(N, +inp.value || 1));
+    RANKS[j] = v;
+    document.querySelector(`[data-out="${CSS.escape(j)}"]`).textContent = mrn(N, v).toFixed(2);
+    computeMrnif();
+  });
+}
+
+function computeMrnif() {
+  const u = uniqueSci();
+  const rows = u.map(p => ({j:p.journal, v:mrn(JCR[p.journal][1], RANKS[p.journal])}));
+  const sum = rows.reduce((a, x) => a + x.v, 0);
+  const avg = sum / rows.length;
+  $('#mrnif-out').textContent = avg.toFixed(2);
+  $('#m-avg').textContent = avg.toFixed(1);
+  $('#m-sci').textContent = rows.length;
+  const ifs = u.map(p => p.IF).filter(x => x != null);
+  $('#m-if').textContent = (ifs.reduce((a, b) => a + b, 0) / ifs.length).toFixed(2);
+  $('#m-dup').textContent = PAPERS.length - new Set(PAPERS.map(p => p.doi)).size;
+
+  const agg = {}; rows.forEach(r => (agg[r.j] = agg[r.j] || {n:0, v:r.v}).n++);
+  $('#fsteps').innerHTML = Object.entries(agg).map(([j, o]) => {
+    const [, N] = JCR[j];
+    return `<div class="fstep">
+      <span class="ex">100 × (${N} − ${RANKS[j]}) ÷ (${N} − 1)${o.n > 1 ? ` × ${o.n}건` : ''} <span style="color:var(--ink-4)">· ${esc(j.slice(0, 26))}</span></span>
+      <span class="rs">${(o.v * o.n).toFixed(2)}</span></div>`;
+  }).join('') + `<div class="fstep" style="border-top:1px solid var(--line); border-bottom:0; margin-top:4px; padding-top:8px">
+      <span class="ex">Σ mrnIF</span><span class="rs">${sum.toFixed(2)}</span></div>
+    <div class="fstep" style="border-bottom:0"><span class="ex">Σ SCI 논문 건수 (고유 DOI)</span><span class="rs">${rows.length}</span></div>`;
+
+  drawMrnifChart();
+  drawTrend();
+}
+
+/* ── SVG 차트 ── */
+function svg(w, h, inner) {
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" role="img">${inner}</svg>`;
+}
+
+function drawYear() {
+  const years = [2023, 2024, 2025];
+  const pap = years.map(y => new Set(PAPERS.filter(p => p.year === y).map(p => p.doi)).size);
+  const pat = years.map(y => PATENTS.filter(t => t.year === y).length);
+  const max = Math.max(...pap, ...pat, 1);
+  const W = 460, H = 200, L = 34, B = 30, T = 14, R = 12;
+  const bw = (W - L - R) / years.length;
+  let s = '<g class="grid">';
+  for (let i = 0; i <= 4; i++) {
+    const y = T + (H - T - B) * i / 4;
+    s += `<line x1="${L}" y1="${y}" x2="${W - R}" y2="${y}"/>`;
+    s += `<text x="${L - 7}" y="${y + 3.5}" text-anchor="end">${Math.round(max * (1 - i / 4))}</text>`;
+  }
+  s += '</g>';
+  years.forEach((y, i) => {
+    const cx = L + bw * i + bw / 2;
+    const h1 = (H - T - B) * pap[i] / max, h2 = (H - T - B) * pat[i] / max;
+    s += `<rect x="${cx - 26}" y="${H - B - h1}" width="24" height="${h1}" fill="var(--accent)" rx="1"/>`;
+    s += `<rect x="${cx + 2}" y="${H - B - h2}" width="24" height="${h2}" fill="var(--ink-4)" rx="1"/>`;
+    s += `<text class="vlab" x="${cx - 14}" y="${H - B - h1 - 5}" text-anchor="middle">${pap[i]}</text>`;
+    s += `<text class="vlab" x="${cx + 14}" y="${H - B - h2 - 5}" text-anchor="middle">${pat[i]}</text>`;
+    s += `<text class="lbl" x="${cx}" y="${H - B + 15}" text-anchor="middle">${y}</text>`;
+  });
+  s += `<line class="axis" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  s += `<rect x="${L}" y="${H - 11}" width="9" height="9" fill="var(--accent)" rx="1"/><text class="lbl" x="${L + 13}" y="${H - 3}">논문(고유)</text>`;
+  s += `<rect x="${L + 82}" y="${H - 11}" width="9" height="9" fill="var(--ink-4)" rx="1"/><text class="lbl" x="${L + 95}" y="${H - 3}">특허</text>`;
+  $('#chart-year').innerHTML = svg(W, H, s);
+}
+
+function drawTrend() {
+  const years = [2023, 2024, 2025];
+  const data = years.map(y => {
+    const u = {}; SCIP.filter(p => p.year === y).forEach(p => u[p.doi] = p);
+    const arr = Object.values(u);
+    if (!arr.length) return {m:0, f:0, n:0};
+    return {
+      m: arr.reduce((a, p) => a + mrn(JCR[p.journal][1], RANKS[p.journal]), 0) / arr.length,
+      f: arr.reduce((a, p) => a + (p.IF || 0), 0) / arr.length,
+      n: arr.length
+    };
+  });
+  const W = 460, H = 200, L = 36, R = 36, T = 16, B = 30;
+  const x = i => L + (W - L - R) * i / (years.length - 1);
+  const ym = v => T + (H - T - B) * (1 - v / 100);
+  const yf = v => T + (H - T - B) * (1 - v / 12);
+  let s = '<g class="grid">';
+  for (let i = 0; i <= 4; i++) {
+    const y = T + (H - T - B) * i / 4;
+    s += `<line x1="${L}" y1="${y}" x2="${W - R}" y2="${y}"/>`;
+    s += `<text x="${L - 7}" y="${y + 3.5}" text-anchor="end">${100 - i * 25}</text>`;
+    s += `<text x="${W - R + 7}" y="${y + 3.5}" fill="var(--ink-4)">${(12 - i * 3).toFixed(0)}</text>`;
+  }
+  s += '</g>';
+  const pm = data.map((d, i) => `${x(i)},${ym(d.m)}`).join(' ');
+  const pf = data.map((d, i) => `${x(i)},${yf(d.f)}`).join(' ');
+  s += `<polyline points="${pm}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>`;
+  s += `<polyline points="${pf}" fill="none" stroke="var(--ink-4)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  data.forEach((d, i) => {
+    s += `<circle cx="${x(i)}" cy="${ym(d.m)}" r="${i === data.length - 1 ? 4.5 : 3}" fill="var(--accent)"/>`;
+    s += `<circle cx="${x(i)}" cy="${yf(d.f)}" r="2.5" fill="var(--ink-4)"/>`;
+    s += `<text class="vlab" x="${x(i)}" y="${ym(d.m) - 9}" text-anchor="middle">${d.m.toFixed(1)}</text>`;
+    s += `<text class="lbl" x="${x(i)}" y="${H - B + 15}" text-anchor="middle">${years[i]}</text>`;
+  });
+  s += `<line class="axis" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  s += `<text class="lbl" x="${L}" y="${H - 3}" fill="var(--accent)">— mrnIF (좌)</text>`;
+  s += `<text class="lbl" x="${L + 92}" y="${H - 3}" fill="var(--ink-4)">--- 평균 IF (우)</text>`;
+  $('#chart-trend').innerHTML = svg(W, H, s);
+}
+
+function drawMrnifChart() {
+  const js = Object.keys(JCR).map(j => ({j, v:mrn(JCR[j][1], RANKS[j])})).sort((a, b) => b.v - a.v);
+  const W = 900, rowH = 22, H = js.length * rowH + 26, L = 250, R = 46;
+  let s = '';
+  js.forEach((o, i) => {
+    const y = i * rowH + 12;
+    const w = (W - L - R) * o.v / 100;
+    s += `<text class="lbl" x="${L - 9}" y="${y + 11}" text-anchor="end">${esc(o.j.length > 32 ? o.j.slice(0, 31) + '…' : o.j)}</text>`;
+    s += `<rect x="${L}" y="${y + 3}" width="${W - L - R}" height="11" fill="var(--surface-3)" rx="2"/>`;
+    s += `<rect x="${L}" y="${y + 3}" width="${w}" height="11" fill="${o.v >= 80 ? 'var(--accent)' : o.v >= 65 ? 'var(--accent)' : 'var(--ink-4)'}" opacity="${o.v >= 80 ? 1 : o.v >= 65 ? .72 : .5}" rx="2"/>`;
+    s += `<text class="vlab" x="${L + w + 7}" y="${y + 12}">${o.v.toFixed(1)}</text>`;
+  });
+  $('#chart-mrnif').innerHTML = svg(W, H, s);
+}
+
+function drawAlert() {
+  const wk = ['1주', '2주', '3주', '4주', '5주', '6주', '7주', '8주'];
+  const target = [12, 27, 43, 57, 68, 78, 85, 90];
+  const actual = [10, 24, 38, 49, 57, 63, 68, 72];
+  const W = 900, H = 210, L = 36, R = 20, T = 16, B = 32;
+  const x = i => L + (W - L - R) * i / (wk.length - 1);
+  const y = v => T + (H - T - B) * (1 - v / 100);
+  let s = '<g class="grid">';
+  for (let i = 0; i <= 4; i++) {
+    const yy = T + (H - T - B) * i / 4;
+    s += `<line x1="${L}" y1="${yy}" x2="${W - R}" y2="${yy}"/><text x="${L - 7}" y="${yy + 3.5}" text-anchor="end">${100 - i * 25}%</text>`;
+  }
+  s += '</g>';
+  s += `<line x1="${L}" y1="${y(90)}" x2="${W - R}" y2="${y(90)}" stroke="var(--ok)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  s += `<text class="lbl" x="${W - R}" y="${y(90) - 6}" text-anchor="end" fill="var(--ok)">목표 90%</text>`;
+  s += `<polyline points="${target.map((v, i) => `${x(i)},${y(v)}`).join(' ')}" fill="none" stroke="var(--ink-4)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  const ap = actual.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+  s += `<polygon points="${ap} ${x(wk.length - 1)},${y(0)} ${x(0)},${y(0)}" fill="var(--accent)" opacity=".1"/>`;
+  s += `<polyline points="${ap}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>`;
+  actual.forEach((v, i) => {
+    const gap = target[i] - v;
+    s += `<circle cx="${x(i)}" cy="${y(v)}" r="${i === actual.length - 1 ? 5 : 3}" fill="${gap >= 15 ? 'var(--bad)' : 'var(--accent)'}"/>`;
+    s += `<text class="lbl" x="${x(i)}" y="${H - B + 16}" text-anchor="middle">${wk[i]}</text>`;
+  });
+  const li = actual.length - 1;
+  s += `<text class="vlab" x="${x(li)}" y="${y(actual[li]) - 11}" text-anchor="end" fill="var(--bad)">−${target[li] - actual[li]}%p 미달</text>`;
+  s += `<line class="axis" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  $('#alertchart').innerHTML = svg(W, H, s) +
+    `<p class="note" style="margin-top:10px">7주차에 목표 대비 <b style="color:var(--bad)">17%p</b> 미달이 확정되기 전, 4주차 시점의 이탈 폭으로 이미 경보가 발생합니다. 미응답 집중 사업 3개를 자동 지목해 독려 대상 명단을 내보냅니다.</p>`;
+}
+
+/* ══════════════════════════════════════════
+   T0 — 수집 시뮬레이션
+   ══════════════════════════════════════════ */
+const BIZ = [
+  ['창업성장기술개발', 7784], ['중소기업기술혁신개발', 2475], ['중소기업상용화기술개발', 2372],
+  ['중소기업R&D역량제고', 2629], ['공정·품질기술개발', 1800], ['산학연CollaboR&D', 1603],
+  ['투·융자연계기술개발', 1066], ['민관공동기술사업화', 798],
+];
+// 조사 6주차 시점의 진척을 초기 상태로 둔다 (0%에서 시작하면 운영 상태가 보이지 않음)
+const BASE = [81, 74, 88, 69, 77, 63, 85, 58];
+let simState = BASE.slice(), simTimer = null;
+let simResp = 23940, simField = 3182, simQueue = 1147;
+
+function renderBiz() {
+  $('#bizbars').innerHTML = BIZ.map(([n, t], i) => {
+    const pc = simState[i];
+    const cls = pc >= 90 ? 'ok' : pc >= 60 ? '' : 'hold';
+    return `<div class="rowmeter">
+      <div><div class="nm">${esc(n)} <span class="mono" style="color:var(--ink-4); font-size:11px">${nf(t)}과제</span></div>
+      <div class="bar" style="margin-top:5px"><i class="${cls}" style="width:${pc}%"></i></div></div>
+      <div class="pc">${pc.toFixed(0)}%</div></div>`;
+  }).join('');
+}
+renderBiz();
+
+const FIRMS = ['㈜바이오코어', '㈜엔젠텍', '나노메딕스㈜', '㈜퓨처센싱', '한울정밀㈜', '㈜그린셀', '아이씨티랩㈜', '㈜메타포지'];
+const ITEMS = ['과제매출액', '신규고용', '과제수출액', '특허 출원', 'SCI 논문', '투자유치', '수입대체금액'];
+function logline(k, msg) {
+  const el = $('#c-log');
+  const t = new Date();
+  const ts = [t.getHours(), t.getMinutes(), t.getSeconds()].map(n => String(n).padStart(2, '0')).join(':');
+  const d = document.createElement('div');
+  d.innerHTML = `<span class="t">${ts}</span><span class="k ${k}">${k}</span><span>${msg}</span>`;
+  el.appendChild(d); el.scrollTop = el.scrollHeight;
+  while (el.children.length > 90) el.removeChild(el.firstChild);
+}
+
+$('#simbtn').onclick = function () {
+  if (simTimer) {
+    clearInterval(simTimer); simTimer = null; this.textContent = '수집 시뮬레이션 실행';
+    logline('SYS', '스트림 일시중지'); return;
+  }
+  this.textContent = '■ 중지';
+  $('#c-log').innerHTML = '';
+  logline('SYS', '수집 파이프라인 기동 · 온라인 전수조사 + 현장 앱 채널 연결');
+  logline('SYS', `조사 6주차 시점 이어받기 · 누적 응답 ${nf(simResp)}건 · 검증 큐 ${nf(simQueue)}건`);
+  simTimer = setInterval(() => {
+    const i = Math.floor(Math.random() * BIZ.length);
+    simState[i] = Math.min(97, simState[i] + Math.random() * 1.4);
+    const batch = Math.floor(Math.random() * 46) + 12;
+    simResp += batch; simQueue += Math.floor(batch * .34) - Math.floor(Math.random() * 22);
+    const firm = FIRMS[Math.floor(Math.random() * FIRMS.length)];
+    const item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+    const roll = Math.random();
+    if (roll < .12) {
+      simField++; simQueue++;
+      logline('RECV', `현장 앱 · ${firm} · 증빙 ${Math.ceil(Math.random() * 4)}건 업로드 → T1 큐`);
+    } else if (roll < .22) {
+      logline('FAIL', `${firm} · ${item} 응답값과 증빙 추출값 불일치 → 검토 대기`);
+    } else if (roll < .38) {
+      logline('HOLD', `${firm} · ${item} 증빙 판독 신뢰도 미달 → 수동 확인`);
+    } else if (roll < .72) {
+      logline('OK', `${firm} · ${item} 대조 일치 · 자동 확정 후보`);
+    } else {
+      logline('RECV', `온라인 응답 ${batch}건 수신 · ${BIZ[i][0]}`);
+    }
+    paintCollect();
+  }, 620);
+};
+
+function paintCollect() {
+  const r = Math.min(simResp, 30309);
+  const pc = Math.min(r / 30309 * 100, 99);
+  $('#c-resp').textContent = nf(r);
+  $('#c-rate').innerHTML = pc.toFixed(1) + '<small>%</small>';
+  $('#c-rate').parentElement.className = 'tile ' + (pc >= 90 ? 'ok' : 'hold');
+  $('#c-queue').textContent = nf(Math.max(0, simQueue));
+  $('#c-field').textContent = nf(simField);
+  renderBiz();
+}
+paintCollect();
+
+/* ══════════════════════════════════════════
+   T3 — 우수사례 스코어링
+   ══════════════════════════════════════════ */
+const WDEF = [
+  {k:'sales', n:'과제매출액', d:'RFP 경제적 성과 11개 항목', w:25, sim:true},
+  {k:'export', n:'과제수출액', d:'수출실적명세서 검증분', w:15, sim:true},
+  {k:'jobs', n:'신규고용', d:'4대보험 명부 검증분', w:15, sim:true},
+  {k:'roi', n:'ROI', d:'투입 대비 성과 배수', w:15, sim:true},
+  {k:'paper', n:'논문 질적수준', d:'mrnIF 기반 · IRIS 실데이터', w:15, sim:false},
+  {k:'patent', n:'특허 성과', d:'출원·등록 건수 · IRIS 실데이터', w:10, sim:false},
+  {k:'spread', n:'확산·파급', d:'포상·홍보·후속투자', w:5, sim:true},
+];
+let W = {}; WDEF.forEach(w => W[w.k] = w.w);
+
+// 후보 과제: IRIS 실데이터의 실제 과제명으로 그룹핑
+// (과제명이 기재된 행만 과제 단위 집계 가능 — 결측 22행은 집계 대상에서 빠짐)
+const DEPT = '유전체연구기술개발과';
+function buildCandidates() {
+  const t = {};
+  const add = (name, pi, key, rec) => {
+    if (!name || name === DEPT) return;
+    const k = String(name).trim();
+    t[k] = t[k] || {n:k, pi:'—', papers:[], patents:[]};
+    if (pi && t[k].pi === '—') t[k].pi = pi;
+    t[k][key].push(rec);
+  };
+  PAPERS.forEach(p => add(p.task, p.pi, 'papers', p));
+  PATENTS.forEach(p => add(p.task, p.pi, 'patents', p));
+  // 경제성과 축(모의): 과제명 해시 기반 고정값 — 새로고침해도 동일
+  const h = s => { let v = 0; for (const c of s) v = (v * 31 + c.charCodeAt(0)) >>> 0; return v; };
+  return Object.values(t).map(c => {
+    const x = h(c.n);
+    return {...c,
+      sales:  42 + (x % 51),
+      export: 30 + ((x >> 5) % 60),
+      jobs:   38 + ((x >> 9) % 55),
+      roi:    45 + ((x >> 13) % 48),
+      spread: 35 + ((x >> 17) % 58)};
+  });
+}
+const CAND = buildCandidates();
+
+// 기술성과 축은 IRIS 실데이터에서 직접 산출
+function techScores() {
+  const maxPat = Math.max(1, ...CAND.map(c => c.patents.length));
+  return CAND.map(c => {
+    const sci = c.papers.filter(p => p.sci === '01' && JCR[p.journal]);
+    const uniq = Object.values(sci.reduce((a, p) => (a[p.doi] = p, a), {}));
+    const paper = uniq.length
+      ? uniq.reduce((a, p) => a + mrn(JCR[p.journal][1], RANKS[p.journal]), 0) / uniq.length : 0;
+    return {paper, patent: c.patents.length / maxPat * 100, papers: uniq.length, pats: c.patents.length};
+  });
+}
+
+function renderWeights() {
+  $('#weights').innerHTML = WDEF.map(w => `
+    <div>
+      <div class="wrow">
+        <label class="wl" for="w-${w.k}">${esc(w.n)} ${w.sim ? '<span class="badge sim" style="font-size:8.5px; padding:1px 4px">모의</span>' : '<span class="badge real" style="font-size:8.5px; padding:1px 4px">실</span>'}
+          <small>${esc(w.d)}</small></label>
+        <span class="wv" id="wv-${w.k}">${W[w.k]}</span>
+      </div>
+      <input type="range" id="w-${w.k}" min="0" max="40" step="5" value="${W[w.k]}" data-k="${w.k}">
+    </div>`).join('');
+  $$('#weights input').forEach(i => i.oninput = () => {
+    W[i.dataset.k] = +i.value; $('#wv-' + i.dataset.k).textContent = i.value; renderRank();
+  });
+}
+
+function renderRank() {
+  const tot = Object.values(W).reduce((a, b) => a + b, 0);
+  $('#wsum').textContent = tot;
+  $('#wsum').style.color = tot === 100 ? 'var(--accent)' : 'var(--hold)';
+  const tech = techScores();
+  const scored = CAND.map((c, i) => {
+    const s = {...c, ...tech[i]};
+    const raw = WDEF.reduce((a, w) => a + (s[w.k] || 0) * W[w.k], 0);
+    return {...s, score: tot ? raw / tot : 0};
+  }).sort((a, b) => b.score - a.score);
+  $('#ranklist').innerHTML = scored.map((s, i) => `
+    <div class="rk${i === 0 ? ' top' : ''}">
+      <div class="no">${i + 1}</div>
+      <div class="nm">${esc(s.n)}<small>연구책임자 ${esc(s.pi)} · SCI 논문 ${s.papers}건${s.papers ? ` · mrnIF ${s.paper.toFixed(1)}` : ''} · 특허 ${s.pats}건</small></div>
+      <div class="sc">${s.score.toFixed(1)}<small>/ 100</small></div>
+    </div>`).join('');
+}
+
+$('#wreset').onclick = () => { WDEF.forEach(w => W[w.k] = w.w); renderWeights(); renderRank(); };
+
+// 과제 단위 집계에서 드러난 데이터 품질 이슈
+function renderCandNote() {
+  const missing = PAPERS.filter(p => !p.task || p.task === DEPT).length
+                + PATENTS.filter(p => !p.task).length;
+  const norm = s => String(s).replace(/[\s·]/g, '');
+  const pairs = [];
+  for (let i = 0; i < CAND.length; i++)
+    for (let j = i + 1; j < CAND.length; j++) {
+      const a = norm(CAND[i].n), b = norm(CAND[j].n);
+      if (a === b) pairs.push([CAND[i], CAND[j], '공백 차이만 있는 동일 명칭']);
+      else if (a.includes(b) || b.includes(a)) pairs.push([CAND[i], CAND[j], '한쪽이 다른 쪽을 포함']);
+    }
+  $('#candnote').innerHTML = `
+    <p class="note"><b>과제 단위 집계에서 자동으로 드러난 것</b></p>
+    <div class="findings" style="padding:9px 0 0">
+      <div class="finding f-hold"><span class="ic">!</span><div>
+        과제명 결측 <b>${missing}건</b> — 과제명란에 부서명이 들어가 있어 과제 단위 집계에서 빠집니다.
+        <div class="act">→ 집계 가능한 과제는 ${CAND.length}개뿐. IRIS 원본 정비 없이는 사업별 성과 배분이 불가능합니다.</div></div></div>
+      ${pairs.map(([a, b, why]) => `
+      <div class="finding f-bad"><span class="ic">✕</span><div>
+        동일 과제가 둘로 분리 — <b>${esc(why)}</b><br>
+        <span class="mono" style="font-size:11px">“${esc(a.n)}” <span style="color:var(--ink-4)">→ 논문 ${a.papers.length} · 특허 ${a.patents.length}</span></span><br>
+        <span class="mono" style="font-size:11px">“${esc(b.n)}” <span style="color:var(--ink-4)">→ 논문 ${b.papers.length} · 특허 ${b.patents.length}</span></span>
+        <div class="act">→ 연구책임자(${esc(a.pi)})가 동일한데 논문 성과와 특허 성과가 서로 다른 과제로 계상됩니다. 과제고유번호 기준 병합 필요.</div></div></div>`).join('')}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   초기화
+   ══════════════════════════════════════════ */
+/* ── 개요: 검출 요약을 엔진에서 직접 계산해 채운다 ── */
+function renderOverview() {
+  const E = verifyEcon(), Tk = verify();
+  const hit = (rule) => E.filter(r => r.f.some(x => x.r === rule));
+  const amt = (rs, fn) => rs.reduce((a, r) => a + fn(r), 0);
+  const dS = amt(E, r => r.decl.sales), vS = amt(E, r => r.calc.verifiedSales);
+  const dE = amt(E, r => r.decl.exportKrw), vE = amt(E, r => r.calc.vExport);
+  const dJ = amt(E, r => r.decl.jobs), vJ = amt(E, r => r.ins.length ? r.calc.net : r.decl.jobs);
+  const dupAmt = amt(hit('E1'), r => r.calc.dup.reduce((a, t) => a + t.sup, 0));
+  const vatAmt = amt(hit('E2'), r => r.calc.grossAll - r.calc.supplyAll);
+  const outAmt = amt(hit('E4'), r => r.calc.outPeriod.reduce((a, t) => a + t.sup, 0));
+  const fxAmt = amt(hit('E7'), r => Math.abs(r.decl.exportKrw - r.calc.krwSum));
+
+  const byDoi = {}; PAPERS.forEach(p => (byDoi[p.doi] = byDoi[p.doi] || []).push(p));
+  const badContrib = Object.values(byDoi).filter(g => Math.abs(g.reduce((a, x) => a + (x.contrib || 0), 0) - 100) > .01);
+
+  $('#ovfind').innerHTML = `
+    <div>
+      <div class="ovh"><span class="badge sim">시뮬레이션</span> 경제적 성과 · 15개사</div>
+      <dl class="kv">
+        <dt>합계금액(부가세 포함) 신고</dt><dd>${won(vatAmt)}</dd>
+        <dt>세금계산서 승인번호 중복</dt><dd>${won(dupAmt)}</dd>
+        <dt>조사기간 외 매출 포함</dt><dd>${won(outAmt)}</dd>
+        <dt>수출 환율 적용 오류</dt><dd>${won(fxAmt)}</dd>
+        <dt>신규고용 퇴사자 미반영</dt><dd>${dJ - vJ}명</dd>
+      </dl>
+      <div class="ovt">과대계상 합계 <b>${won((dS - vS) + (dE - vE))}</b> <span>표본 15개사 기준</span></div>
+    </div>
+    <div>
+      <div class="ovh"><span class="badge real">실데이터</span> 기술적 성과 · IRIS 32건</div>
+      <dl class="kv">
+        <dt>기여율 합계 ≠ 100%</dt><dd>논문 ${badContrib.length}건 · ${badContrib.reduce((a, g) => a + g.length, 0)}개 행</dd>
+        <dt>비SCI 등재인데 IF 기재</dt><dd>${Tk.filter(r => r.f.some(x => x.r === 'R2')).length}개 행</dd>
+        <dt>중복 계상 검토 필요</dt><dd>${Tk.filter(r => r.f.some(x => x.r === 'R8')).length}개 행</dd>
+        <dt>특허 IRIS 미등록</dt><dd>${PATENTS.filter(t => String(t.note || '').includes('IRIS 미등록')).length}건</dd>
+        <dt>IRIS 논문등록번호 미부여</dt><dd>${PAPERS.filter(p => !p.regno).length}건 전건</dd>
+      </dl>
+      <div class="ovt">과제명 결측 <b>${PAPERS.filter(p => !p.task || p.task === DEPT).length + PATENTS.filter(p => !p.task).length}건</b> <span>과제 단위 집계 불가</span></div>
+    </div>`;
+}
+
+renderOverview();
+renderRules();
+renderVerify();
+renderJcr();
+computeMrnif();
+drawYear();
+drawAlert();
+renderWeights();
+renderRank();
+renderCandNote();
+addEventListener('resize', () => { drawMrnifChart(); });
+</script>

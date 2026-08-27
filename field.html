@@ -1,0 +1,903 @@
+<title>PACE 현장조사 앱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --ground:#EDF2F3; --surface:#FFFFFF; --surface-2:#F5F9FA; --surface-3:#E7EFF0;
+  --ink:#0B1719; --ink-2:#3B5054; --ink-3:#6B8085; --ink-4:#93A7AB;
+  --line:#D2DDDF; --line-2:#E4ECED;
+  --accent:#0E5866; --accent-2:#0A414C; --accent-soft:#DBEAED; --accent-on:#FFFFFF;
+  --ok:#1A6B44; --ok-soft:#DCF0E5; --ok-line:#8FCFAF;
+  --hold:#8A5806; --hold-soft:#F9EDD5; --hold-line:#DFBC74;
+  --bad:#A02218; --bad-soft:#F9E2E0; --bad-line:#E09B93;
+  --desk:#DCE5E7; --frame:#12211F;
+  --r:10px; --rs:6px;
+  --fs:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --fm:"IBM Plex Mono","Consolas",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326; --surface-3:#1D2F33;
+    --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+    --line:#22383C; --line-2:#1A2B2E;
+    --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+    --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+    --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+    --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
+    --desk:#050C0D; --frame:#243639;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326; --surface-3:#1D2F33;
+  --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+  --line:#22383C; --line-2:#1A2B2E;
+  --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+  --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+  --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+  --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
+  --desk:#050C0D; --frame:#243639;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--fs); font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.015em; text-wrap:balance}
+p{margin:0}
+button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer; border:0; background:none}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.mono{font-family:var(--fm); font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important; transition-duration:.01ms!important}}
+
+/* ── device shell ────────────────────────── */
+.app{
+  position:relative; display:flex; flex-direction:column; overflow:hidden;
+  background:var(--ground); width:100%; min-height:100dvh;
+}
+.desknote{display:none}
+@media (min-width:760px){
+  body{display:flex; flex-direction:column; align-items:center; gap:14px; padding:26px 20px 40px; background:var(--desk)}
+  .app{
+    width:390px; height:800px; min-height:0; flex:none;
+    border:11px solid var(--frame); border-radius:42px;
+    box-shadow:0 30px 70px -30px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.2);
+  }
+  .desknote{
+    display:block; max-width:390px; text-align:center; font-size:11.5px;
+    color:var(--ink-3); line-height:1.6;
+  }
+  .deskhead{
+    display:flex; align-items:baseline; gap:9px; margin-bottom:2px;
+    font-size:12px; color:var(--ink-3);
+  }
+}
+
+/* ── app bar ─────────────────────────────── */
+.bar{
+  flex:none; background:var(--accent); color:var(--accent-on);
+  padding:10px 16px 12px; display:flex; flex-direction:column; gap:2px;
+}
+.bar .r1{display:flex; align-items:center; justify-content:space-between; gap:10px; font-family:var(--fm); font-size:10.5px; opacity:.82}
+.bar .r2{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.bar h1{font-size:19px}
+.bar .sub{font-size:11.5px; opacity:.8; font-family:var(--fm)}
+.net{display:inline-flex; align-items:center; gap:5px; font-size:10px; font-family:var(--fm)}
+.net i{width:6px; height:6px; border-radius:50%; background:#7BE3A8; display:block}
+.net.off i{background:#FFC46B}
+.back{
+  width:30px; height:30px; margin:-4px 0 -4px -6px; border-radius:50%;
+  display:grid; place-items:center; font-size:19px; color:var(--accent-on);
+}
+.back:active{background:rgba(255,255,255,.16)}
+
+/* ── screen ──────────────────────────────── */
+.screen{flex:1; overflow-y:auto; overscroll-behavior:contain; padding:14px 14px 20px}
+.screen::-webkit-scrollbar{width:0}
+.view{display:none; flex-direction:column; gap:12px}
+.view.on{display:flex}
+
+/* ── tab bar ─────────────────────────────── */
+.tabs{
+  flex:none; display:grid; grid-template-columns:repeat(3,1fr);
+  background:var(--surface); border-top:1px solid var(--line); padding:6px 4px 8px;
+}
+.tab{display:flex; flex-direction:column; align-items:center; gap:3px; padding:5px 0; color:var(--ink-4)}
+.tab .ic{font-size:17px; line-height:1}
+.tab .lb{font-size:10.5px; font-weight:500}
+.tab[aria-selected="true"]{color:var(--accent)}
+.tab .badge{
+  position:absolute; transform:translate(15px,-4px); background:var(--bad); color:#fff;
+  font-family:var(--fm); font-size:9px; min-width:15px; height:15px; border-radius:8px;
+  display:grid; place-items:center; padding:0 4px; font-weight:600;
+}
+.tabwrap{position:relative; display:grid; place-items:center}
+
+/* ── cards ───────────────────────────────── */
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+.card>.ch{
+  padding:11px 14px; border-bottom:1px solid var(--line-2);
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+.card>.ch h3{font-size:13.5px}
+.card>.ch .hint{font-size:10.5px; color:var(--ink-3); font-family:var(--fm)}
+.cb{padding:13px 14px}
+.stack{display:flex; flex-direction:column; gap:10px}
+
+/* ── progress ring ───────────────────────── */
+.today{display:grid; grid-template-columns:96px 1fr; gap:15px; align-items:center}
+.ring{position:relative; width:96px; height:96px}
+.ring svg{transform:rotate(-90deg)}
+.ring .rt{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:0;
+}
+.ring .rn{font-family:var(--fm); font-size:24px; font-weight:600; letter-spacing:-.03em; line-height:1}
+.ring .rl{font-size:9.5px; color:var(--ink-3); font-family:var(--fm)}
+.tstats{display:flex; flex-direction:column; gap:7px}
+.tstat{display:flex; align-items:baseline; justify-content:space-between; gap:8px; font-size:12.5px}
+.tstat .k{color:var(--ink-3)}
+.tstat .v{font-family:var(--fm); font-weight:600}
+.tstat .v.bad{color:var(--bad)} .tstat .v.hold{color:var(--hold)} .tstat .v.ok{color:var(--ok)}
+
+/* ── visit list ──────────────────────────── */
+.visit{
+  width:100%; text-align:left; background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--line); border-radius:var(--r); padding:12px 13px;
+  display:flex; flex-direction:column; gap:5px; transition:transform .1s;
+}
+.visit:active{transform:scale(.985)}
+.visit.s-done{border-left-color:var(--ok)}
+.visit.s-live{border-left-color:var(--accent); background:var(--accent-soft)}
+.visit.s-sent{border-left-color:var(--ok-line); opacity:.72}
+.visit .v1{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.visit .nm{font-size:14.5px; font-weight:600}
+.visit .mt{font-family:var(--fm); font-size:10.5px; color:var(--ink-3)}
+.visit .v2{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+
+/* ── pills ───────────────────────────────── */
+.pill{
+  display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:11px;
+  font-size:11px; font-weight:600; border:1px solid; white-space:nowrap;
+}
+.pill::before{content:""; width:5px; height:5px; border-radius:50%; background:currentColor}
+.pill.plain::before{display:none}
+.v-ok{color:var(--ok); background:var(--ok-soft); border-color:var(--ok-line)}
+.v-hold{color:var(--hold); background:var(--hold-soft); border-color:var(--hold-line)}
+.v-bad{color:var(--bad); background:var(--bad-soft); border-color:var(--bad-line)}
+.v-idle{color:var(--ink-3); background:var(--surface-2); border-color:var(--line)}
+.v-acc{color:var(--accent); background:var(--accent-soft); border-color:var(--accent)}
+
+/* ── declared values ─────────────────────── */
+.dv{display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px solid var(--line-2)}
+.dv:last-child{border-bottom:0}
+.dv .k{font-size:12.5px; color:var(--ink-3)}
+.dv .v{font-family:var(--fm); font-size:13.5px; font-weight:600}
+
+/* ── verify item ─────────────────────────── */
+.item{border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:var(--surface)}
+.item .ih{display:flex; align-items:center; justify-content:space-between; gap:9px; padding:11px 13px}
+.item .it{font-size:13.5px; font-weight:600}
+.item .id{font-size:10.5px; color:var(--ink-3); font-family:var(--fm); margin-top:1px}
+.item .ib{padding:0 13px 12px; display:flex; flex-direction:column; gap:9px}
+.cmpline{display:grid; grid-template-columns:1fr auto; gap:8px; font-size:12px; padding:5px 0; border-bottom:1px dashed var(--line-2)}
+.cmpline:last-child{border-bottom:0}
+.cmpline .ck{color:var(--ink-3)}
+.cmpline .cv{font-family:var(--fm); font-weight:600}
+.cmpline .cv.bad{color:var(--bad)}
+
+/* ── buttons ─────────────────────────────── */
+.btn{
+  display:flex; align-items:center; justify-content:center; gap:7px; width:100%;
+  background:var(--accent); color:var(--accent-on); border-radius:var(--rs);
+  padding:12px; font-size:14px; font-weight:600; transition:filter .12s;
+}
+.btn:active{filter:brightness(1.15)}
+.btn.sm{padding:9px; font-size:12.5px}
+.btn.ghost{background:transparent; color:var(--accent); border:1px solid var(--accent)}
+.btn.grey{background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line)}
+.btn.danger{background:var(--bad); color:#fff}
+.btn[disabled]{opacity:.45; filter:none; cursor:default}
+.btnrow{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+
+/* ── camera / capture ────────────────────── */
+.cap{
+  border:1.5px dashed var(--line); border-radius:var(--rs); padding:18px 12px;
+  text-align:center; background:var(--surface-2); display:flex; flex-direction:column; gap:6px; align-items:center;
+}
+.cap .ico{font-size:26px; line-height:1}
+.cap .t{font-size:12.5px; font-weight:600}
+.cap .d{font-size:10.5px; color:var(--ink-3); line-height:1.5}
+.shots{display:flex; gap:7px; flex-wrap:wrap}
+.shot{
+  width:58px; height:58px; border-radius:var(--rs); border:1px solid var(--line);
+  object-fit:cover; background:var(--surface-3); display:grid; place-items:center;
+  font-size:9.5px; color:var(--ink-4); font-family:var(--fm); text-align:center; overflow:hidden;
+}
+.shot img{width:100%; height:100%; object-fit:cover}
+input[type=file]{display:none}
+
+/* ── scan animation ──────────────────────── */
+.scan{display:flex; flex-direction:column; gap:8px; padding:4px 0}
+.scanbar{height:4px; background:var(--surface-3); border-radius:2px; overflow:hidden}
+.scanbar>i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s linear}
+.scanlog{font-family:var(--fm); font-size:10.5px; color:var(--ink-3); min-height:16px}
+
+/* ── sheet ───────────────────────────────── */
+.sheet{
+  position:absolute; inset:0; z-index:20; display:none;
+  background:rgba(6,18,20,.45); backdrop-filter:blur(2px);
+}
+.sheet.on{display:block}
+.sheetbody{
+  position:absolute; left:0; right:0; bottom:0; max-height:88%;
+  background:var(--surface); border-radius:18px 18px 0 0; padding:8px 16px 20px;
+  display:flex; flex-direction:column; gap:12px; overflow-y:auto;
+  animation:up .22s cubic-bezier(.2,.8,.3,1);
+}
+@keyframes up{from{transform:translateY(22px); opacity:.5} to{transform:none; opacity:1}}
+.grab{width:34px; height:4px; border-radius:2px; background:var(--line); margin:2px auto 4px}
+.sheetbody h3{font-size:16px}
+.sheetbody .sd{font-size:12px; color:var(--ink-3); margin-top:-6px}
+
+/* ── chips ───────────────────────────────── */
+.chips{display:flex; flex-wrap:wrap; gap:7px}
+.chip{
+  border:1px solid var(--line); background:var(--surface); border-radius:14px;
+  padding:6px 12px; font-size:12.5px; color:var(--ink-2);
+}
+.chip[aria-pressed="true"]{background:var(--accent); color:var(--accent-on); border-color:var(--accent)}
+label.fl{font-size:11.5px; color:var(--ink-3); display:block; margin-bottom:4px}
+input[type=text],input[type=number],textarea{
+  width:100%; font-family:var(--fm); font-size:14px; padding:10px 11px;
+  border:1px solid var(--line); border-radius:var(--rs);
+  background:var(--surface); color:var(--ink);
+}
+textarea{font-family:var(--fs); font-size:13px; min-height:64px; resize:vertical; line-height:1.5}
+input:focus,textarea:focus{border-color:var(--accent); outline:none}
+.check{display:flex; align-items:flex-start; gap:9px; font-size:12.5px; line-height:1.5}
+.check input{width:18px; height:18px; margin-top:1px; accent-color:var(--accent); flex:none}
+
+/* ── outbox ──────────────────────────────── */
+.ob{display:flex; align-items:center; gap:11px; padding:11px 13px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r)}
+.ob .oi{width:32px; height:32px; border-radius:var(--rs); display:grid; place-items:center; font-size:15px; flex:none; background:var(--surface-3)}
+.ob .on{flex:1; min-width:0}
+.ob .ot{font-size:13px; font-weight:600}
+.ob .om{font-size:10.5px; color:var(--ink-3); font-family:var(--fm)}
+
+/* ── misc ────────────────────────────────── */
+.note{font-size:11px; color:var(--ink-4); line-height:1.6}
+.empty{text-align:center; padding:36px 16px; color:var(--ink-4); font-size:13px}
+.empty .ico{font-size:30px; display:block; margin-bottom:8px; opacity:.5}
+.badge{
+  display:inline-flex; align-items:center; font-family:var(--fm); font-size:9px;
+  letter-spacing:.08em; padding:2px 6px; border-radius:2px; border:1px solid; font-weight:500;
+}
+.badge.sim{color:var(--ink-3); border-color:var(--line); background:var(--surface-2)}
+.sechead{
+  font-family:var(--fm); font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-4); padding:4px 2px 0;
+}
+.toast{
+  position:absolute; left:14px; right:14px; bottom:76px; z-index:40;
+  background:var(--ink); color:var(--ground); padding:11px 14px; border-radius:var(--rs);
+  font-size:12.5px; box-shadow:0 8px 24px -10px rgba(0,0,0,.5);
+  display:none; animation:up .2s ease;
+}
+.toast.on{display:block}
+</style>
+
+<div class="deskhead">
+  <b style="font-size:13px; color:var(--ink)">PACE 필드</b>
+  <span>현장조사원 앱 · TENOPA 제안 시연</span>
+</div>
+
+<div class="app" id="app">
+  <div class="bar">
+    <div class="r1">
+      <span id="bar-date">2027. 3. 18. (목)</span>
+      <span class="net" id="net"><i></i><span id="netlabel">온라인</span></span>
+    </div>
+    <div class="r2">
+      <div style="display:flex; align-items:center; gap:4px; min-width:0">
+        <button class="back" id="backbtn" style="display:none" aria-label="뒤로">‹</button>
+        <div style="min-width:0">
+          <h1 id="bar-title">현장조사</h1>
+          <div class="sub" id="bar-sub">조사원 류O균 · 대전권역</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen">
+
+    <!-- ══ 오늘 ══ -->
+    <section class="view on" id="v-today">
+      <div class="card">
+        <div class="cb">
+          <div class="today">
+            <div class="ring" id="ring"></div>
+            <div class="tstats" id="tstats"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sechead">오늘의 방문</div>
+      <div class="stack" id="visitlist"></div>
+      <p class="note">방문 순서는 이동거리 기준으로 자동 정렬됩니다. 오프라인 상태에서도 조사·기록이 가능하며, 연결이 복구되면 전송함에서 일괄 전송합니다.</p>
+    </section>
+
+    <!-- ══ 방문 상세 ══ -->
+    <section class="view" id="v-visit">
+      <div class="card">
+        <div class="ch"><h3 id="fv-name">—</h3><span class="pill v-idle plain" id="fv-status">대기</span></div>
+        <div class="cb">
+          <div class="dv"><span class="k">과제번호</span><span class="v" id="fv-task">—</span></div>
+          <div class="dv"><span class="k">사업명</span><span class="v" id="fv-biz" style="font-size:12px">—</span></div>
+          <div class="dv"><span class="k">개발제품</span><span class="v" id="fv-prod" style="font-size:12px">—</span></div>
+          <div class="dv"><span class="k">현장조사 그룹</span><span class="v" id="fv-grp" style="font-size:12px">—</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><h3>온라인 응답값</h3><span class="hint">기업 신고</span></div>
+        <div class="cb" id="fv-decl"></div>
+      </div>
+
+      <div class="sechead">검증 항목</div>
+      <div class="stack" id="fv-items"></div>
+
+      <div id="fv-actions"></div>
+    </section>
+
+    <!-- ══ 전송함 ══ -->
+    <section class="view" id="v-out">
+      <div class="card">
+        <div class="cb">
+          <div class="tstat"><span class="k">전송 대기</span><span class="v" id="ob-wait">0건</span></div>
+          <div class="tstat" style="margin-top:6px"><span class="k">전송 완료</span><span class="v ok" id="ob-done">0건</span></div>
+          <div class="tstat" style="margin-top:6px"><span class="k">현장 종결한 불일치</span><span class="v bad" id="ob-fix">0건</span></div>
+        </div>
+      </div>
+      <div id="ob-list" class="stack"></div>
+      <div id="ob-btn"></div>
+      <p class="note">전송된 조사결과는 본부 PACE 콘솔의 T1 검증 큐에 즉시 반영됩니다. 증빙 원본은 단말에 저장되지 않고 폐쇄망 VPN을 통해 서버로만 전송됩니다.</p>
+    </section>
+  </div>
+
+  <div class="tabs">
+    <button class="tab" data-v="today" aria-selected="true"><span class="ic">◎</span><span class="lb">오늘</span></button>
+    <button class="tab" data-v="visit" aria-selected="false"><span class="ic">▤</span><span class="lb">조사</span></button>
+    <button class="tab tabwrap" data-v="out" aria-selected="false"><span class="ic">↑</span><span class="lb">전송함</span><span class="badge-slot" id="obbadge"></span></button>
+  </div>
+
+  <div class="sheet" id="sheet"><div class="sheetbody" id="sheetbody"></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<p class="desknote">
+  실제 단말에서는 전체화면으로 동작합니다. 증빙 촬영 버튼은 스마트폰에서 후면 카메라를 직접 호출하며,
+  데스크톱에서는 파일 선택으로 대체됩니다. 촬영 없이 흐름만 보려면 <b>샘플 증빙으로 시연</b>을 사용하세요.
+</p>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const nf = n => Number(n).toLocaleString('ko-KR');
+const won = n => nf(Math.round(n)) + '원';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SEVNM = {ok:'일치', hold:'보류', bad:'불일치'};
+
+/* ══════════════════════════════════════════
+   오늘의 방문 6건
+   증빙 데이터는 가상 표본(시뮬레이션). 대조 연산은 실제 로직.
+   ══════════════════════════════════════════ */
+const T = (no, d, it, sup) => ({no, d, it, sup, vat: Math.round(sup * .1)});
+const I = (n, i, o) => ({n, i, o: o || null});
+
+const VISITS = [
+{id:'E02', firm:'㈜퓨처센싱', task:'S2026-02351', biz:'중소기업기술혁신개발', prod:'초음파 진단 프로브',
+ grp:4, at:'09:30', addr:'대전 유성구',
+ decl:{sales:264000000, exportKrw:0, exportUsd:0, jobs:3},
+ tax:[T('20260408-52011744','2026-04-08','초음파 진단 프로브',150000000),
+      T('20260822-52018092','2026-08-22','초음파 진단 프로브',90000000)],
+ exp:[], ins:[I('서O영','2026-03-16'),I('오O탁','2026-05-04'),I('류O경','2026-07-19'),
+      I('문O아','2026-09-01','2026-12-20')]},
+
+{id:'E05', firm:'아이씨티랩㈜', task:'S2026-05198', biz:'산학연CollaboR&D', prod:'AI 영상분석 솔루션',
+ grp:4, at:'11:00', addr:'대전 서구',
+ decl:{sales:156000000, exportKrw:0, exportUsd:0, jobs:12},
+ tax:[T('20260508-61003518','2026-05-08','AI 영상분석 솔루션',96000000),
+      T('20260924-61009274','2026-09-24','AI 영상분석 솔루션',60000000)],
+ exp:[], ins:[I('허O찬','2025-11-03'),I('노O영','2026-01-12'),I('석O빈','2026-01-26'),
+      I('표O훈','2026-02-09','2026-06-30'),I('육O정','2026-03-03'),I('반O슬','2026-03-30','2026-08-14'),
+      I('추O건','2026-04-18'),I('도O경','2026-05-22','2026-09-05'),I('변O하','2026-06-11'),
+      I('탁O윤','2026-07-08','2026-10-22'),I('설O민','2026-08-25'),I('염O기','2026-09-30','2026-12-15'),
+      I('공O래','2026-10-19')]},
+
+{id:'E01', firm:'㈜나노메딕스', task:'S2026-01184', biz:'창업성장기술개발', prod:'광학센서모듈',
+ grp:4, at:'13:30', addr:'세종시',
+ decl:{sales:482000000, exportKrw:0, exportUsd:0, jobs:7},
+ tax:[T('20260314-41008271','2026-03-14','광학센서모듈',180000000),
+      T('20260627-41014903','2026-06-27','광학센서모듈',142000000),
+      T('20260905-41019338','2026-09-05','센서모듈 검사장비',96000000),
+      T('20261119-41024615','2026-11-19','광학센서모듈',64000000)],
+ exp:[], ins:[I('김O수','2026-02-01'),I('박O진','2026-02-15'),I('이O민','2026-03-02'),
+      I('정O호','2026-04-20'),I('최O아','2026-05-11'),I('강O우','2026-06-08'),
+      I('윤O서','2026-07-21'),I('장O현','2026-08-03','2026-11-30'),I('한O빈','2026-09-14','2026-12-05')]},
+
+{id:'E04', firm:'㈜그린셀', task:'S2026-04412', biz:'중소기업상용화기술개발', prod:'박막 태양전지 모듈',
+ grp:4, at:'15:00', addr:'충남 천안',
+ decl:{sales:0, exportKrw:512050000, exportUsd:385000, jobs:3},
+ tax:[], exp:[{no:'43102-26-0018842', d:'2026-03-20', usd:150000, fx:1298},
+      {no:'43102-26-0031157', d:'2026-07-14', usd:135000, fx:1305},
+      {no:'43102-26-0049203', d:'2026-11-02', usd:100000, fx:1302}],
+ ins:[I('조O연','2026-02-10'),I('임O섭','2026-04-27'),I('권O나','2026-06-15'),
+      I('송O태','2026-09-08','2026-12-11')]},
+
+{id:'E07', firm:'㈜바이오코어', task:'S2026-07264', biz:'중소기업R&D역량제고', prod:'체외진단 키트',
+ grp:4, at:'16:30', addr:'충북 청주',
+ decl:{sales:340000000, exportKrw:0, exportUsd:0, jobs:4},
+ tax:[T('20260306-81004492','2026-03-06','체외진단 키트',190000000),
+      T('20260618-81008715','2026-06-18','체외진단 키트',122000000),
+      T('20260911-81012063','2026-09-11','사무용 소모품',18000000),
+      T('20261127-81016338','2026-11-27','사무실 임대료',10000000)],
+ exp:[], ins:[I('구O진','2026-02-24'),I('복O나','2026-04-06'),I('선O우','2026-07-13'),
+      I('양O림','2026-09-21'),I('차O섭','2026-10-30','2026-12-19')]},
+
+{id:'E14', firm:'㈜하이드로젠텍', task:'S2026-14127', biz:'중소기업Net-Zero기술혁신개발', prod:'수전해 스택 모듈',
+ grp:3, at:'18:00', addr:'충남 아산',
+ decl:{sales:1240000000, exportKrw:166528000, exportUsd:128000, jobs:6},
+ tax:[T('20260327-13007745','2026-03-27','수전해 스택 모듈',540000000),
+      T('20260730-13015119','2026-07-30','수전해 스택 모듈',452000000),
+      T('20261114-13022806','2026-11-14','스택 모듈 부품',248000000)],
+ exp:[{no:'43102-26-0038740', d:'2026-08-11', usd:128000, fx:1301}],
+ ins:[I('계O훈','2026-01-27'),I('봉O아','2026-03-19'),I('음O재','2026-05-07'),
+      I('피O름','2026-06-24'),I('삼O결','2026-08-13'),I('우O담','2026-10-02'),
+      I('한O별','2026-11-18','2026-12-26'),I('오O찬','2026-12-01','2026-12-30')]},
+];
+
+const PERIOD = {from:'2026-01-01', to:'2026-12-31'};
+const GRPNM = {1:'1그룹 투자유치', 2:'2그룹 매출중단', 3:'3그룹 우수성과', 4:'4그룹 성과발생', 5:'5그룹 무작위'};
+
+function related(item, prod) {
+  const a = String(item).replace(/\s/g, ''), b = String(prod).replace(/\s/g, '');
+  for (let i = 0; i + 3 <= b.length; i++) if (a.includes(b.slice(i, i + 3))) return true;
+  for (let i = 0; i + 3 <= a.length; i++) if (b.includes(a.slice(i, i + 3))) return true;
+  return false;
+}
+
+/* ── 항목 정의: 증빙 → 추출 → 대조 ── */
+const ITEMS = {
+  sales: {
+    name: '과제매출액', ev: '전자세금계산서 · 매출원장',
+    has: v => v.tax.length > 0,
+    extract(v) {
+      const supply = v.tax.reduce((a, t) => a + t.sup, 0);
+      const gross = v.tax.reduce((a, t) => a + t.sup + t.vat, 0);
+      const unrel = v.tax.filter(t => !related(t.it, v.prod));
+      const valid = v.tax.filter(t => related(t.it, v.prod)).reduce((a, t) => a + t.sup, 0);
+      return {supply, gross, valid, unrel, n: v.tax.length};
+    },
+    compare(v, x) {
+      const d = v.decl.sales;
+      if (Math.abs(d - x.gross) < 1 && Math.abs(d - x.supply) > 1)
+        return {sev:'bad', fixed:x.supply, gap:x.gross - x.supply,
+          why:'부가세 포함 합계금액을 신고', detail:`신고 ${won(d)} = 공급가액 ${won(x.supply)} + 세액 ${won(x.gross - x.supply)}`};
+      if (x.unrel.length)
+        return {sev:'hold', fixed:x.valid, gap:d - x.valid,
+          why:'과제와 무관해 보이는 품목 포함', detail:`${x.unrel.map(t => t.it).join(', ')} — ${won(x.unrel.reduce((a, t) => a + t.sup, 0))}`};
+      if (Math.abs(d - x.supply) > 1)
+        return {sev:'bad', fixed:x.supply, gap:d - x.supply,
+          why:'신고액과 증빙 합계 불일치', detail:`신고 ${won(d)} / 증빙 ${won(x.supply)}`};
+      return {sev:'ok', fixed:d, gap:0, why:'공급가액 합계 일치', detail:`세금계산서 ${x.n}건 · ${won(x.supply)}`};
+    },
+    rows: (v, x) => [['신고 과제매출액', won(v.decl.sales), false],
+                     ['공급가액 합계', won(x.supply), false],
+                     ['합계금액(부가세 포함)', won(x.gross), Math.abs(v.decl.sales - x.gross) < 1],
+                     ['세금계산서', x.n + '건', false]],
+    fmt: n => won(n), unit: '원',
+    reasons: ['부가세 포함 신고', '과제 무관 매출 포함', '기간 외 매출 포함', '증빙 누락', '기타']
+  },
+  jobs: {
+    name: '신규고용', ev: '4대 사회보험 가입자 명부',
+    has: v => v.ins.length > 0,
+    extract(v) {
+      const before = v.ins.filter(p => p.i < PERIOD.from);
+      const hired = v.ins.filter(p => p.i >= PERIOD.from && p.i <= PERIOD.to);
+      const left = hired.filter(p => p.o);
+      return {before, hired: hired.length, left: left.length, net: hired.length - left.length, n: v.ins.length};
+    },
+    compare(v, x) {
+      const d = v.decl.jobs;
+      if (d !== x.net)
+        return {sev:'bad', fixed:x.net, gap:d - x.net,
+          why: x.left ? '퇴사자 미반영' : '명부 순증과 불일치',
+          detail:`신고 ${d}명 / 순증 ${x.net}명 (취득 ${x.hired} − 상실 ${x.left})`};
+      if (x.before.length)
+        return {sev:'hold', fixed:x.net, gap:0, why:'과제기간 전 취득자 포함',
+          detail:`${x.before.map(p => `${p.n}(${p.i})`).join(', ')}`};
+      return {sev:'ok', fixed:d, gap:0, why:'명부 순증 일치', detail:`취득 ${x.hired} − 상실 ${x.left} = ${x.net}명`};
+    },
+    rows: (v, x) => [['신고 신규고용', v.decl.jobs + '명', false],
+                     ['기간 내 자격취득', x.hired + '명', false],
+                     ['기간 내 자격상실', x.left + '명', x.left > 0],
+                     ['순증', x.net + '명', v.decl.jobs !== x.net]],
+    fmt: n => n + '명', unit: '명',
+    reasons: ['퇴사자 미반영', '기존 재직자 계상', '기간 외 입사자 포함', '중복 계상', '기타']
+  },
+  exportKrw: {
+    name: '과제수출액', ev: '수출신고필증',
+    has: v => v.exp.length > 0,
+    extract(v) {
+      const usd = v.exp.reduce((a, x) => a + x.usd, 0);
+      const krw = v.exp.reduce((a, x) => a + Math.round(x.usd * x.fx), 0);
+      return {usd, krw, n: v.exp.length, list: v.exp};
+    },
+    compare(v, x) {
+      const d = v.decl.exportKrw;
+      if (Math.abs(d - x.krw) > x.krw * .005) {
+        const fx = v.decl.exportUsd ? d / v.decl.exportUsd : 0;
+        return {sev:'bad', fixed:x.krw, gap:d - x.krw, why:'환율 적용 오류',
+          detail:`신고 ${nf(fx.toFixed(0))} 일괄 적용 / 필증 신고일 환율 건별 환산 시 ${won(x.krw)}`};
+      }
+      return {sev:'ok', fixed:d, gap:0, why:'필증 환산액 일치', detail:`필증 ${x.n}건 · USD ${nf(x.usd)}`};
+    },
+    rows: (v, x) => [['신고 과제수출액', won(v.decl.exportKrw), false],
+                     ['필증 USD 합계', 'USD ' + nf(x.usd), false],
+                     ['신고일 환율 환산', won(x.krw), Math.abs(v.decl.exportKrw - x.krw) > x.krw * .005],
+                     ['수출신고필증', x.n + '건', false]],
+    fmt: n => won(n), unit: '원',
+    reasons: ['환율 적용 오류', '신고번호 중복', '과제 무관 수출 포함', '증빙 누락', '기타']
+  }
+};
+
+function itemsOf(v) { return Object.keys(ITEMS).filter(k => ITEMS[k].has(v)); }
+
+/* ══════════ 상태 (localStorage) ══════════ */
+const KEY = 'pace-field-v1';
+let S = {cur: null, tab: 'today', visits: {}};
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function st(id) {
+  if (!S.visits[id]) S.visits[id] = {items: {}, sent: false};
+  return S.visits[id];
+}
+function itemState(id, k) {
+  const v = st(id);
+  if (!v.items[k]) v.items[k] = {shot: 0, done: false, sev: null, fixed: null, reason: '', memo: '', confirmed: false};
+  return v.items[k];
+}
+const visitDone = v => itemsOf(v).every(k => itemState(v.id, k).done);
+const visitStatus = v => {
+  const s = st(v.id);
+  if (s.sent) return 'sent';
+  if (visitDone(v)) return 'done';
+  return itemsOf(v).some(k => itemState(v.id, k).shot) ? 'live' : 'idle';
+};
+
+/* ══════════ 네비게이션 ══════════ */
+function go(view, id) {
+  if (view === 'visit' && id) S.cur = id;
+  if (view === 'visit' && !S.cur) S.cur = VISITS[0].id;
+  S.tab = view; save();
+  $$('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + view));
+  $$('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.v === view));
+  $('#backbtn').style.display = view === 'visit' ? 'grid' : 'none';
+  const T2 = {today:['현장조사', '조사원 류O균 · 대전권역'],
+              visit:['방문 조사', '증빙 수집 및 현장 대조'],
+              out:['전송함', '본부 T1 검증 큐로 전송']};
+  $('#bar-title').textContent = T2[view][0];
+  $('#bar-sub').textContent = T2[view][1];
+  $('#screen').scrollTop = 0;
+  render();
+}
+$$('.tab').forEach(t => t.onclick = () => go(t.dataset.v));
+$('#backbtn').onclick = () => go('today');
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2200);
+}
+
+/* ══════════ 온라인/오프라인 ══════════ */
+let forcedOffline = false;
+function online() { return navigator.onLine && !forcedOffline; }
+function paintNet() {
+  $('#net').className = 'net' + (online() ? '' : ' off');
+  $('#netlabel').textContent = online() ? '온라인' : '오프라인 · 로컬 저장';
+}
+$('#net').onclick = () => { forcedOffline = !forcedOffline; paintNet(); render();
+  toast(online() ? '온라인으로 전환했습니다.' : '오프라인 모드입니다. 조사는 계속 가능합니다.'); };
+addEventListener('online', paintNet); addEventListener('offline', paintNet);
+
+/* ══════════ 렌더 ══════════ */
+function render() {
+  paintNet();
+  if (S.tab === 'today') renderToday();
+  if (S.tab === 'visit') renderVisit();
+  if (S.tab === 'out') renderOut();
+  const wait = VISITS.filter(v => visitDone(v) && !st(v.id).sent).length;
+  $('#obbadge').innerHTML = wait ? `<span class="badge">${wait}</span>` : '';
+}
+
+function renderToday() {
+  const done = VISITS.filter(v => visitStatus(v) === 'done' || visitStatus(v) === 'sent').length;
+  const pc = done / VISITS.length;
+  const R = 42, C = 2 * Math.PI * R;
+  $('#ring').innerHTML = `
+    <svg width="96" height="96" viewBox="0 0 96 96">
+      <circle cx="48" cy="48" r="${R}" fill="none" stroke="var(--surface-3)" stroke-width="8"/>
+      <circle cx="48" cy="48" r="${R}" fill="none" stroke="var(--accent)" stroke-width="8"
+        stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pc)}"
+        style="transition:stroke-dashoffset .5s cubic-bezier(.2,.7,.3,1)"/>
+    </svg>
+    <div class="rt"><span class="rn">${done}<span style="font-size:14px; color:var(--ink-4)">/${VISITS.length}</span></span>
+      <span class="rl">방문 완료</span></div>`;
+
+  let bad = 0, hold = 0, fixed = 0;
+  VISITS.forEach(v => itemsOf(v).forEach(k => {
+    const i = itemState(v.id, k);
+    if (!i.done) return;
+    if (i.sev === 'bad') bad++; if (i.sev === 'hold') hold++;
+    if (i.confirmed) fixed++;
+  }));
+  $('#tstats').innerHTML = `
+    <div class="tstat"><span class="k">불일치 검출</span><span class="v bad">${bad}건</span></div>
+    <div class="tstat"><span class="k">보류</span><span class="v hold">${hold}건</span></div>
+    <div class="tstat"><span class="k">현장 종결</span><span class="v ok">${fixed}건</span></div>
+    <div class="tstat"><span class="k">전송 대기</span><span class="v">${VISITS.filter(v => visitDone(v) && !st(v.id).sent).length}건</span></div>`;
+
+  $('#visitlist').innerHTML = VISITS.map(v => {
+    const s = visitStatus(v);
+    const lbl = {idle:['대기', 'v-idle'], live:['조사 중', 'v-acc'], done:['조사 완료', 'v-ok'], sent:['전송 완료', 'v-ok']}[s];
+    const n = itemsOf(v).length, dn = itemsOf(v).filter(k => itemState(v.id, k).done).length;
+    const bads = itemsOf(v).filter(k => itemState(v.id, k).done && itemState(v.id, k).sev === 'bad').length;
+    return `<button class="visit s-${s}" data-go="${v.id}">
+      <div class="v1"><span class="nm">${esc(v.firm)}</span><span class="pill ${lbl[1]} plain">${lbl[0]}</span></div>
+      <div class="mt">${v.at} · ${esc(v.addr)} · ${esc(v.task)}</div>
+      <div class="v2">
+        <span class="pill v-idle plain" style="font-family:var(--fm); font-size:10px">검증 ${dn}/${n}</span>
+        ${bads ? `<span class="pill v-bad">불일치 ${bads}</span>` : ''}
+        ${v.grp === 3 ? '<span class="pill v-ok plain" style="font-size:10px">3그룹 우수성과</span>' : ''}
+      </div>
+    </button>`;
+  }).join('');
+  $$('#visitlist [data-go]').forEach(b => b.onclick = () => go('visit', b.dataset.go));
+}
+
+function renderVisit() {
+  const v = VISITS.find(x => x.id === S.cur) || VISITS[0];
+  const s = visitStatus(v);
+  $('#fv-name').textContent = v.firm;
+  const lbl = {idle:['대기', 'v-idle'], live:['조사 중', 'v-acc'], done:['조사 완료', 'v-ok'], sent:['전송 완료', 'v-ok']}[s];
+  $('#fv-status').className = `pill ${lbl[1]} plain`; $('#fv-status').textContent = lbl[0];
+  $('#fv-task').textContent = v.task;
+  $('#fv-biz').textContent = v.biz;
+  $('#fv-prod').textContent = v.prod;
+  $('#fv-grp').textContent = GRPNM[v.grp];
+
+  $('#fv-decl').innerHTML = [
+    v.decl.sales ? ['과제매출액', won(v.decl.sales)] : null,
+    v.decl.exportKrw ? ['과제수출액', won(v.decl.exportKrw) + ` (USD ${nf(v.decl.exportUsd)})`] : null,
+    ['신규고용', v.decl.jobs + '명'],
+  ].filter(Boolean).map(([k, val]) => `<div class="dv"><span class="k">${k}</span><span class="v">${esc(val)}</span></div>`).join('');
+
+  $('#fv-items').innerHTML = itemsOf(v).map(k => {
+    const D = ITEMS[k], i = itemState(v.id, k);
+    if (!i.done) {
+      return `<div class="item">
+        <div class="ih"><div><div class="it">${D.name}</div><div class="id">${D.ev}</div></div>
+          <span class="pill ${i.shot ? 'v-acc' : 'v-idle'} plain">${i.shot ? '판독 대기' : '미수집'}</span></div>
+        <div class="ib">
+          <div class="cap">
+            <span class="ico">▣</span>
+            <span class="t">${D.ev} 촬영</span>
+            <span class="d">서류 전체가 프레임에 들어오도록 촬영하세요.<br>여러 장 연속 촬영이 가능합니다.</span>
+          </div>
+          <input type="file" accept="image/*" capture="environment" id="cam-${k}" multiple>
+          <div class="shots" id="shots-${k}"></div>
+          <div class="btnrow">
+            <button class="btn sm" data-cam="${k}">촬영</button>
+            <button class="btn sm ghost" data-demo="${k}">샘플 증빙으로 시연</button>
+          </div>
+          <div class="scan" id="scan-${k}" style="display:none">
+            <div class="scanbar"><i></i></div><div class="scanlog"></div>
+          </div>
+        </div></div>`;
+    }
+    const x = D.extract(v), c = D.compare(v, x);
+    const sev = i.confirmed ? 'ok' : i.sev;
+    return `<div class="item">
+      <div class="ih"><div><div class="it">${D.name}</div><div class="id">${D.ev} · 판독 완료</div></div>
+        <span class="pill v-${sev}">${i.confirmed ? '현장 종결' : SEVNM[i.sev]}</span></div>
+      <div class="ib">
+        ${D.rows(v, x).map(([kk, vv, hl]) => `<div class="cmpline"><span class="ck">${esc(kk)}</span>
+          <span class="cv${hl ? ' bad' : ''}">${esc(vv)}</span></div>`).join('')}
+        ${i.sev !== 'ok' ? `<div style="background:var(--${i.sev}-soft); border:1px solid var(--${i.sev}-line); border-radius:var(--rs); padding:9px 11px">
+            <div style="font-size:12.5px; font-weight:600; color:var(--${i.sev})">${esc(c.why)}</div>
+            <div style="font-size:11px; color:var(--ink-2); margin-top:3px; line-height:1.5">${esc(c.detail)}</div>
+            ${i.confirmed ? `<div style="font-size:11.5px; margin-top:7px; padding-top:7px; border-top:1px dashed var(--${i.sev}-line)">
+              <b>현장 확인</b> · ${esc(i.reason)} → <span class="mono">${esc(D.fmt(i.fixed))}</span>로 보정
+              ${i.memo ? `<div style="color:var(--ink-3); margin-top:3px">${esc(i.memo)}</div>` : ''}</div>` : ''}
+          </div>` : ''}
+        ${i.sev !== 'ok' && !i.confirmed
+          ? `<button class="btn sm danger" data-fix="${k}">현장 확인 기록</button>`
+          : `<button class="btn sm grey" data-reset="${k}">다시 촬영</button>`}
+      </div></div>`;
+  }).join('');
+
+  itemsOf(v).forEach(k => {
+    const i = itemState(v.id, k);
+    if (!i.done && i.shot) paintShots(k, i.shot);
+  });
+
+  $$('#fv-items [data-cam]').forEach(b => b.onclick = () => $('#cam-' + b.dataset.cam).click());
+  $$('#fv-items [data-demo]').forEach(b => b.onclick = () => runScan(v, b.dataset.demo, null));
+  $$('#fv-items [data-fix]').forEach(b => b.onclick = () => openFix(v, b.dataset.fix));
+  $$('#fv-items [data-reset]').forEach(b => b.onclick = () => {
+    const i = itemState(v.id, b.dataset.reset);
+    Object.assign(i, {shot:0, done:false, sev:null, fixed:null, reason:'', memo:'', confirmed:false});
+    save(); render();
+  });
+  itemsOf(v).forEach(k => {
+    const el = $('#cam-' + k);
+    if (el) el.onchange = e => runScan(v, k, e.target.files);
+  });
+
+  const allDone = visitDone(v);
+  const sent = st(v.id).sent;
+  $('#fv-actions').innerHTML = sent
+    ? `<div class="card"><div class="cb" style="text-align:center">
+        <div style="font-size:13px; font-weight:600; color:var(--ok)">본부 전송 완료</div>
+        <p class="note" style="margin-top:4px">PACE 콘솔 T1 검증 큐에 반영되었습니다.</p></div></div>`
+    : allDone
+      ? `<button class="btn" id="finish">조사 종료 · 전송함에 담기</button>`
+      : `<p class="note" style="text-align:center; padding:6px 0">검증 항목 ${itemsOf(v).filter(k => itemState(v.id, k).done).length}/${itemsOf(v).length} 완료 — 남은 항목의 증빙을 수집하세요.</p>`;
+  const fin = $('#finish');
+  if (fin) fin.onclick = () => { toast('전송함에 담았습니다.'); go('out'); };
+}
+
+function paintShots(k, n) {
+  const el = $('#shots-' + k);
+  if (!el) return;
+  el.innerHTML = Array.from({length: n}, (_, j) => `<div class="shot">IMG_${String(j + 1).padStart(2, '0')}</div>`).join('');
+}
+
+/* ── 촬영 → 판독 → 대조 ── */
+async function runScan(v, k, files) {
+  const D = ITEMS[k], i = itemState(v.id, k);
+  const n = files && files.length ? files.length : (k === 'sales' ? v.tax.length : k === 'exportKrw' ? v.exp.length : 1);
+  i.shot = n; save();
+
+  const box = $('#scan-' + k);
+  if (!box) return;
+  box.style.display = 'flex';
+  const bar = box.querySelector('i'), log = box.querySelector('.scanlog');
+  paintShots(k, n);
+  if (files && files.length) {
+    const el = $('#shots-' + k);
+    [...files].slice(0, 6).forEach((f, j) => {
+      const url = URL.createObjectURL(f);
+      const d = el.children[j]; if (d) d.innerHTML = `<img src="${url}" alt="">`;
+    });
+  }
+
+  const steps = k === 'sales'
+    ? ['이미지 보정·기울기 교정', `서식 인식 — 전자세금계산서 ${n}건`, '승인번호·발행일·품목 추출', '공급가액·세액 분리 추출', '온라인 응답값과 대조']
+    : k === 'exportKrw'
+      ? ['이미지 보정·기울기 교정', `서식 인식 — 수출신고필증 ${n}건`, '신고번호·신고일·결제금액 추출', '신고일 기준환율 조회', '온라인 응답값과 대조']
+      : ['이미지 보정·기울기 교정', '서식 인식 — 4대보험 가입자 명부', '성명·자격취득일·상실일 추출', '과제기간 내 취득·상실 판정', '온라인 응답값과 대조'];
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (let s = 0; s < steps.length; s++) {
+    log.textContent = steps[s];
+    bar.style.width = ((s + 1) / steps.length * 100) + '%';
+    if (!reduced) await new Promise(r => setTimeout(r, 340));
+  }
+  const x = D.extract(v), c = D.compare(v, x);
+  i.done = true; i.sev = c.sev; i.fixed = c.fixed; save();
+  render();
+  if (c.sev === 'bad') toast(`${D.name} 불일치 — 현장에서 확인하세요.`);
+  else if (c.sev === 'hold') toast(`${D.name} 보류 — 확인이 필요합니다.`);
+  else toast(`${D.name} 대조 일치.`);
+}
+
+/* ── 현장 확인 기록 시트 ── */
+function openFix(v, k) {
+  const D = ITEMS[k], i = itemState(v.id, k);
+  const x = D.extract(v), c = D.compare(v, x);
+  let reason = i.reason || c.why;
+  $('#sheetbody').innerHTML = `
+    <div class="grab"></div>
+    <h3>현장 확인 기록</h3>
+    <p class="sd">${esc(v.firm)} · ${D.name}</p>
+    <div class="card"><div class="cb">
+      <div class="dv"><span class="k">기업 신고값</span><span class="v">${esc(D.fmt(v.decl[k === 'jobs' ? 'jobs' : k]))}</span></div>
+      <div class="dv"><span class="k">증빙 판독값</span><span class="v" style="color:var(--bad)">${esc(D.fmt(c.fixed))}</span></div>
+      <div class="dv"><span class="k">차이</span><span class="v">${esc(D.fmt(Math.abs(c.gap)))}</span></div>
+    </div></div>
+    <div>
+      <label class="fl">불일치 사유</label>
+      <div class="chips" id="fx-reasons">
+        ${D.reasons.map(r => `<button class="chip" data-r="${esc(r)}" aria-pressed="${r === reason}">${esc(r)}</button>`).join('')}
+      </div>
+    </div>
+    <div>
+      <label class="fl" for="fx-val">현장 확인 후 보정값 (${D.unit})</label>
+      <input type="number" id="fx-val" value="${c.fixed}" inputmode="numeric">
+    </div>
+    <div>
+      <label class="fl" for="fx-memo">현장 메모</label>
+      <textarea id="fx-memo" placeholder="담당자 확인 내용을 적으세요.">${esc(i.memo)}</textarea>
+    </div>
+    <label class="check"><input type="checkbox" id="fx-ok">
+      <span>기업 담당자에게 위 내용을 확인받았습니다. 확인 시각과 조사원 정보가 함께 기록됩니다.</span></label>
+    <div class="btnrow">
+      <button class="btn grey" id="fx-cancel">취소</button>
+      <button class="btn" id="fx-save" disabled>저장</button>
+    </div>
+    <p class="note">저장 시 원본 신고값·판독값·보정값이 모두 이력으로 남습니다. 보정값이 최종 확정값은 아니며, 본부 검토자 승인 후 확정됩니다.</p>`;
+  $('#sheet').classList.add('on');
+
+  $$('#fx-reasons .chip').forEach(b => b.onclick = () => {
+    reason = b.dataset.r;
+    $$('#fx-reasons .chip').forEach(x2 => x2.setAttribute('aria-pressed', x2 === b));
+  });
+  $('#fx-ok').onchange = e => $('#fx-save').disabled = !e.target.checked;
+  $('#fx-cancel').onclick = () => $('#sheet').classList.remove('on');
+  $('#fx-save').onclick = () => {
+    i.reason = reason; i.memo = $('#fx-memo').value.trim();
+    i.fixed = Number($('#fx-val').value); i.confirmed = true;
+    save(); $('#sheet').classList.remove('on'); render();
+    toast('현장에서 종결했습니다. 재방문이 필요 없습니다.');
+  };
+}
+$('#sheet').onclick = e => { if (e.target.id === 'sheet') $('#sheet').classList.remove('on'); };
+
+/* ── 전송함 ── */
+function renderOut() {
+  const wait = VISITS.filter(v => visitDone(v) && !st(v.id).sent);
+  const done = VISITS.filter(v => st(v.id).sent);
+  let fixed = 0;
+  VISITS.forEach(v => itemsOf(v).forEach(k => { if (itemState(v.id, k).confirmed) fixed++; }));
+  $('#ob-wait').textContent = wait.length + '건';
+  $('#ob-done').textContent = done.length + '건';
+  $('#ob-fix').textContent = fixed + '건';
+
+  const card = (v, sent) => {
+    const bads = itemsOf(v).filter(k => itemState(v.id, k).sev !== 'ok').length;
+    return `<div class="ob">
+      <div class="oi" style="color:var(--${sent ? 'ok' : 'accent'})">${sent ? '✓' : '↑'}</div>
+      <div class="on"><div class="ot">${esc(v.firm)}</div>
+        <div class="om">${esc(v.task)} · 검증 ${itemsOf(v).length}항목${bads ? ` · 불일치 ${bads}` : ''}</div></div>
+      <span class="pill ${sent ? 'v-ok' : 'v-acc'} plain">${sent ? '전송됨' : '대기'}</span>
+    </div>`;
+  };
+  $('#ob-list').innerHTML = (wait.length || done.length)
+    ? wait.map(v => card(v, false)).join('') + done.map(v => card(v, true)).join('')
+    : `<div class="empty"><span class="ico">↑</span>전송할 조사결과가 없습니다.<br>오늘의 방문에서 조사를 진행하세요.</div>`;
+
+  $('#ob-btn').innerHTML = wait.length
+    ? `<button class="btn" id="send">${online() ? `${wait.length}건 본부로 전송` : `오프라인 · ${wait.length}건 대기 중`}</button>`
+    : '';
+  const b = $('#send');
+  if (b) {
+    b.disabled = !online();
+    b.onclick = async () => {
+      b.disabled = true; b.textContent = '전송 중…';
+      for (const v of wait) {
+        await new Promise(r => setTimeout(r, 260));
+        st(v.id).sent = true; save(); renderOut();
+      }
+      toast(`${wait.length}건 전송 완료 · 본부 T1 검증 큐 반영`);
+      render();
+    };
+  }
+}
+
+/* ── 초기화 ── */
+go(S.tab || 'today');
+</script>
