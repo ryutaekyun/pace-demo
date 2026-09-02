@@ -514,6 +514,23 @@ table.ev .tf{font-size:11px}
 .indcard .ibar>i{display:block; height:100%; border-radius:3px}
 .indg{color:var(--ok)} .indy{color:var(--hold)} .indr{color:var(--bad)}
 .indg-bg{background:var(--ok)} .indy-bg{background:var(--hold)} .indr-bg{background:var(--bad)}
+
+/* ── 성과 인사이트 ─────────────────────────── */
+.instatrow{display:flex; gap:10px; overflow-x:auto; padding:2px 2px 8px; scrollbar-width:thin}
+.instat{flex:0 0 152px; border:1px solid var(--line); border-radius:var(--r); padding:14px 15px; background:var(--surface)}
+.instat .ic{font-size:17px; margin-bottom:9px; line-height:1}
+.instat .iv{font-family:var(--fm); font-size:21px; font-weight:700; letter-spacing:-.01em}
+.instat .il{font-size:11.5px; color:var(--ink-2); margin-top:3px}
+.instat .id{font-size:10px; color:var(--accent); margin-top:7px; font-family:var(--fm)}
+.intypehead{display:flex; align-items:center; gap:8px; margin:24px 0 10px}
+.intypehead .dot{width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none}
+.intypehead b{font-size:13.5px; letter-spacing:-.01em}
+.inbarrow{display:flex; flex-direction:column; gap:4px; margin-bottom:11px}
+.inbarrow:last-child{margin-bottom:0}
+.inbarrow .lab{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-2); gap:8px}
+.inbarrow .lab span:last-child{font-family:var(--fm); color:var(--ink-3); flex:none}
+.inbarrow .bg{height:6px; background:var(--surface-3); border-radius:3px; overflow:hidden}
+.inbarrow .bg>i{display:block; height:100%; background:var(--accent); border-radius:3px}
 pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r); padding:12px 14px; font-family:var(--fm); font-size:11.5px; line-height:1.6; overflow-x:auto; white-space:pre}
 
 /* ── T6 진단서 인쇄 ───────────────────────── */
@@ -551,11 +568,12 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         <button role="tab" data-p="t0"><span class="tag">T0</span><span class="nm">실시간 수집</span></button>
         <button role="tab" data-p="t1"><span class="tag">T1</span><span class="nm">AI 성과검증</span></button>
         <button role="tab" data-p="t2"><span class="tag">T2</span><span class="nm">정량분석 · mrnIF</span></button>
-        <button role="tab" data-p="t3"><span class="tag">T3</span><span class="nm">우수사례 스코어링</span></button>
-        <button role="tab" data-p="t4"><span class="tag">T4</span><span class="nm">현장조사 앱</span></button>
-        <button role="tab" data-p="t5"><span class="tag">T5</span><span class="nm">성과지표 달성도</span></button>
-        <button role="tab" data-p="t6"><span class="tag">T6</span><span class="nm">사업별 진단서</span></button>
-        <button role="tab" data-p="t7" id="navt7"><span class="tag">T7</span><span class="nm">회원관리<span class="navcount" id="pendcount" style="display:none">0</span></span></button>
+        <button role="tab" data-p="insight"><span class="tag">T3</span><span class="nm">성과 인사이트</span></button>
+        <button role="tab" data-p="t3"><span class="tag">T4</span><span class="nm">우수사례 스코어링</span></button>
+        <button role="tab" data-p="t4"><span class="tag">T5</span><span class="nm">현장조사 앱</span></button>
+        <button role="tab" data-p="t5"><span class="tag">T6</span><span class="nm">성과지표 달성도</span></button>
+        <button role="tab" data-p="t6"><span class="tag">T7</span><span class="nm">사업별 진단서</span></button>
+        <button role="tab" data-p="t7" id="navt7"><span class="tag">T8</span><span class="nm">회원관리<span class="navcount" id="pendcount" style="display:none">0</span></span></button>
       </div>
     </div>
     <div class="acctbadge">
@@ -803,10 +821,34 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       </div>
     </section>
 
+    <!-- ══ 성과 인사이트 ══ -->
+    <section class="panel" id="p-insight">
+      <div class="phead">
+        <div class="eyebrow">T3 · Insight</div>
+        <h2>성과 인사이트</h2>
+        <p class="sub">전략계획서 지표에 연동된 성과뿐 아니라, 과학적·기술적·경제적·인프라적·사회적 성과 전체를 모아 보여준다.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="cbody" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+          <label for="insbiz" style="font-size:12.5px; color:var(--ink-3); flex:none">사업 선택</label>
+          <select id="insbiz" style="flex:1 1 260px; min-width:200px; padding:8px 11px; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); color:var(--ink); font-family:var(--fs); font-size:13px"></select>
+          <label for="insyear" style="font-size:12.5px; color:var(--ink-3); flex:none">연도</label>
+          <select id="insyear" style="flex:none; padding:8px 11px; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); color:var(--ink); font-family:var(--fs); font-size:13px">
+            <option value="2026" selected>2026년</option><option value="2025">2025년</option><option value="2024">2024년</option>
+          </select>
+          <span class="hint" id="insscope" style="flex:none; margin-left:auto"></span>
+        </div>
+      </div>
+
+      <div class="instatrow" id="instatrow"></div>
+      <div id="intypebody" style="margin-top:6px"></div>
+    </section>
+
     <!-- ══ T3 스코어링 ══ -->
     <section class="panel" id="p-t3">
       <div class="phead">
-        <div class="eyebrow">T3 · Evaluate</div>
+        <div class="eyebrow">T4 · Evaluate</div>
         <h2>우수사례 스코어링</h2>
         <p class="sub">가중치를 옮기면 랭킹이 그 자리에서 다시 정렬됩니다. 우수사례 선정 회의에서 “왜 이 과제가 1순위인가”를 화면으로 설명할 수 있습니다.</p>
       </div>
@@ -837,7 +879,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     <!-- ══ T4 현장 앱 ══ -->
     <section class="panel" id="p-t4">
       <div class="phead">
-        <div class="eyebrow">T4 · Field</div>
+        <div class="eyebrow">T5 · Field</div>
         <h2>현장조사 앱</h2>
         <p class="sub">온라인 응답기업의 33%, 약 1만 과제를 조사원이 직접 방문합니다. 증빙을 현장에서 촬영해 올리면 그 자리에서 응답값과 대조되고, 불일치가 뜨면 조사원이 현장을 떠나기 전에 재확인합니다.</p>
       </div>
@@ -971,9 +1013,16 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     <!-- ══ T5 성과지표 달성도 ══ -->
     <section class="panel" id="p-t5">
       <div class="phead">
-        <div class="eyebrow">T5 · Insight</div>
+        <div class="eyebrow">T6 · Track</div>
         <h2>성과지표 달성도</h2>
-        <p class="sub">사업별 성과지표의 목표·실적·달성률을 확인한다. 지표를 클릭하면 산식 정의와 원천 성과건을 볼 수 있다. 달성률 100% 이상은 🟢 달성, 80~100%는 🟡 근접, 80% 미만은 🔴 미달로 표시한다.</p>
+        <p class="sub">내역사업 산하 세부과제 기업의 성과를 사업 단위로 종합해 목표·실적·달성률로 보여준다. 지표를 클릭하면 산식 정의와 원천 성과건을 볼 수 있다. 달성률 100% 이상은 🟢 달성, 80~100%는 🟡 근접, 80% 미만은 🔴 미달로 표시한다.</p>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="cbody" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+          <label for="t5biz" style="font-size:12.5px; color:var(--ink-3); flex:none">사업 선택</label>
+          <select id="t5biz" style="flex:1 1 320px; min-width:220px; padding:8px 11px; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); color:var(--ink); font-family:var(--fs); font-size:13px"></select>
+          <span class="hint" id="t5bizcount" style="flex:none"></span>
+        </div>
       </div>
       <div class="grid g2" id="indgrid" style="margin-bottom:14px"></div>
       <div id="inddetail"></div>
@@ -982,12 +1031,14 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     <!-- ══ T6 사업별 진단서 ══ -->
     <section class="panel" id="p-t6">
       <div class="phead">
-        <div class="eyebrow">T6 · Report</div>
+        <div class="eyebrow">T7 · Report</div>
         <h2>사업별 진단서</h2>
         <p class="sub">목표 대비 미달 지표와 원인 후보, 개선 제언을 1페이지로 자동 생성한다. 인쇄 시 보고서 형태로 그대로 출력된다.</p>
       </div>
-      <div style="display:flex; justify-content:flex-end; margin-bottom:10px" class="noprint">
-        <button class="btn ghost" id="printbtn" style="padding:6px 13px; font-size:12px">🖨 PDF로 저장</button>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px" class="noprint">
+        <label for="t6biz" style="font-size:12.5px; color:var(--ink-3); flex:none">사업 선택</label>
+        <select id="t6biz" style="flex:1 1 280px; min-width:220px; padding:7px 10px; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); color:var(--ink); font-family:var(--fs); font-size:12.5px"></select>
+        <button class="btn ghost" id="printbtn" style="padding:6px 13px; font-size:12px; margin-left:auto">🖨 PDF로 저장</button>
       </div>
       <div id="diagcard"></div>
     </section>
@@ -995,7 +1046,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     <!-- ══ T7 회원관리 ══ -->
     <section class="panel" id="p-t7">
       <div class="phead">
-        <div class="eyebrow">T7 · Access</div>
+        <div class="eyebrow">T8 · Access</div>
         <h2>회원관리</h2>
         <p class="sub">회원가입 신청을 검토하여 승인·반려하고, 등록된 계정을 관리한다.</p>
       </div>
@@ -2270,55 +2321,181 @@ function renderCandNote() {
 }
 
 /* ══════════════════════════════════════════
-   T5 — 성과지표 달성도 (S-09, F7-04·F7-05)
+   성과 인사이트 — 과학적·기술적·경제적·인프라적·사회적 성과 총괄
    ══════════════════════════════════════════ */
-const INDPROJ = '국가보건의료연구인프라구축(R&D)';
+function barCard(title, hint, data) {
+  const max = Math.max(...data.map(d => d[1]), 1);
+  return `<div class="card">
+    <header><h3>${esc(title)}</h3>${hint ? `<span class="hint">${esc(hint)}</span>` : ''}</header>
+    <div class="cbody">
+      ${data.map(([lab, val]) => `<div class="inbarrow">
+        <div class="lab"><span>${esc(lab)}</span><span>${nf(val)}</span></div>
+        <div class="bg"><i style="width:${Math.max(3, val / max * 100)}%"></i></div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function populateInsightBiz() {
+  const opts = ['<option value="__all__">전체 51개 사업</option>']
+    .concat(Object.entries(BIZLIST.reduce((a, [g, n]) => ((a[g] = a[g] || []).push(n), a), {}))
+      .map(([g, names]) => `<optgroup label="${esc(g)}">${names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('')}</optgroup>`));
+  $('#insbiz').innerHTML = opts.join('');
+  $('#insbiz').onchange = renderInsight;
+  $('#insyear').onchange = renderInsight;
+}
+
+function renderInsight() {
+  const bizSel = $('#insbiz').value || '__all__';
+  const yr = $('#insyear').value;
+  const yFactor = yr === '2026' ? 1 : yr === '2025' ? 0.83 : 0.68;
+  const isAll = bizSel === '__all__';
+  const VE = verifyEcon();
+  const Esel = isAll ? ECON : ECON.filter(e => normBiz(e.biz) === normBiz(bizSel));
+
+  $('#insscope').textContent = isAll ? '선택 범위: 전체 51개 사업' : `선택 범위: ${bizSel}${Esel.length ? ` · 참여기업 ${Esel.length}개사` : ' · 참여기업 없음'}`;
+
+  const sciN = PAPERS.filter(p => p.sci === '01').length, nonSciN = PAPERS.length - sciN;
+  const patApp = PATENTS.filter(t => t.kind === '01').length, patReg = PATENTS.length - patApp;
+  const commerceN = Esel.filter(e => e.decl.sales > 0 || e.decl.exportKrw > 0).length;
+
+  const stats = [
+    {ic:'📄', v:Math.round(PAPERS.length * yFactor), l:'논문', d:'전년대비 +3건'},
+    {ic:'🧪', v:Math.round(14 * yFactor), l:'화합물', d:'전년대비 +2건'},
+    {ic:'🧬', v:Math.round(9 * yFactor), l:'생명자원', d:'전년대비 +1건'},
+    {ic:'💡', v:Math.round(PATENTS.length * yFactor), l:'특허', d:'전년대비 +1건'},
+    {ic:'✅', v:Math.round(11 * yFactor), l:'인증·신기술', d:'전년대비 +2건'},
+    {ic:'📐', v:Math.round(4 * yFactor), l:'표준화', d:'전년대비 유지'},
+    {ic:'💰', v:Math.round(commerceN * yFactor), l:'사업화·매출', d:'전년대비 +2건'},
+  ];
+  $('#instatrow').innerHTML = stats.map(s => `<div class="instat">
+    <div class="ic">${s.ic}</div><div class="iv">${nf(s.v)}<small style="font-size:12px; font-weight:400">건</small></div>
+    <div class="il">${esc(s.l)}</div><div class="id">${esc(s.d)}</div>
+  </div>`).join('');
+
+  const jobsByBiz = {};
+  ECON.forEach(e => {
+    const r = VE.find(x => x.id === e.id);
+    jobsByBiz[e.biz] = (jobsByBiz[e.biz] || 0) + (r ? r.calc.net : 0);
+  });
+  const jobsCardData = isAll
+    ? Object.entries(jobsByBiz).sort((a, b) => b[1] - a[1]).slice(0, 5)
+    : [[bizSel, Esel.reduce((a, e) => { const r = VE.find(x => x.id === e.id); return a + (r ? r.calc.net : 0); }, 0)]];
+  const commerceCardData = [
+    ['매출 발생', Esel.filter(e => e.decl.sales > 0).length],
+    ['수출 발생', Esel.filter(e => e.decl.exportKrw > 0).length],
+    ['미발생', Esel.filter(e => e.decl.sales === 0 && e.decl.exportKrw === 0).length],
+  ];
+
+  const sections = [
+    ['과학적성과', [
+      barCard('논문(등재구분별 건수)', '실데이터', [['SCI(E)', sciN], ['비SCI', nonSciN]]),
+      barCard('화합물(등록유형별 건수)', null, [['신규 합성', 6], ['유도체', 4], ['천연물', 3], ['기타', 1]]),
+    ]],
+    ['기술적성과', [
+      barCard('특허(출원·등록별 건수)', '실데이터', [['출원', patApp], ['등록', patReg]]),
+      barCard('인증·신기술(유형별 건수)', null, [['NET 신기술인증', 4], ['GS인증', 3], ['성능인증(EPC)', 2], ['기타', 2]]),
+    ]],
+    ['경제적성과', [
+      barCard('신규고용(사업별 순증 인원)', isAll ? '상위 5개 사업' : null, jobsCardData.length ? jobsCardData : [['해당 없음', 0]]),
+      barCard('사업화·매출(현황별 기업 수)', null, commerceCardData),
+    ]],
+    ['인프라적성과', [
+      barCard('연구장비 활용(유형별 건수)', null, [['공동활용 장비', 5], ['전용 장비', 3], ['임차 장비', 2]]),
+      barCard('인프라 구축(유형별 건수)', null, [['실험공간 구축', 3], ['장비 도입', 2], ['플랫폼 구축', 1]]),
+    ]],
+    ['사회적성과', [
+      barCard('인력양성(과정별 건수)', null, [['현장 실무교육', 8], ['기술세미나', 5], ['창업교육', 3]]),
+      barCard('홍보·포상(유형별 건수)', null, [['언론 홍보', 6], ['수상·포상', 3], ['대외 발표', 4]]),
+    ]],
+  ];
+  $('#intypebody').innerHTML = sections.map(([nm, cards]) => `
+    <div class="intypehead"><span class="dot"></span><b>${esc(nm)}</b></div>
+    <div class="grid g2" style="gap:12px">${cards.join('')}</div>`).join('');
+}
+
+/* ══════════════════════════════════════════
+   T5/T6 — 사업 단위 성과지표 달성도
+   중소기업기술개발사업 산하 51개 내역사업(RFP ‘26년 조사 대상(안)) 기준.
+   내역사업 하위 세부과제를 수행하는 기업의 성과를 사업 단위로 종합한다.
+   ══════════════════════════════════════════ */
+const BIZLIST = [
+  ['일반','창업성장기술개발'],['일반','중소기업상용화기술개발사업'],['일반','중소기업기술혁신개발사업'],
+  ['일반','중소기업R&D역량제고'],['일반','공정·품질기술개발'],['일반','기술규제해결형기술개발'],
+  ['일반','해외인증규격적합제품기술개발'],['일반','스마트제조혁신기술개발사업'],['일반','산학연협력신사업R&D바우처'],
+  ['일반','건강기능식품개발지원사업'],['일반','중소기업지원선도연구기관협력기술개발'],['일반','AI기반고부가신제품기술개발'],
+  ['일반','성과공유형공통기술R&D'],['일반','미세먼지저감실용화기술개발'],['일반','스마트서비스ICT솔루션개발'],
+  ['일반','해외원천기술상용화기술개발'],['일반','현장수요맞춤형방역물품기술개발'],['일반','빅데이터기반서비스개발'],
+  ['일반','예비가젤형기술개발'],['일반','현장수요형스마트공장기술개발'],['일반','스마트센서선도프로젝트기술개발'],
+  ['일반','혁신제품고도화기술개발지원사업'],['일반','리빙랩활용기술개발지원'],['일반','제조중소기업글로벌역량강화'],
+  ['일반','제조데이터공동활용플랫폼기술개발'],['일반','글로벌창업기업기술개발'],
+  ['일반','스마트전통시장·상점가기술개발사업'],['일반','연구장비 활용 바우처 지원사업'],['일반','디지털기반중소제조산재예방기술개발'],
+  ['일반','민관공동기술사업화'],['일반','투·융자연계기술개발'],['일반','표준공정기반공정최적화기술개발'],
+  ['일반','중소기업수출핵심품목탄소감축기술개발'],['일반','중소제조특화Multi AI Agent개발'],
+  ['소특','중소기업기술혁신개발'],['소특','중소기업상용화기술개발사업'],['소특','창업성장기술개발'],
+  ['소특','Tech-Bridge활용상용화기술개발'],['소특','소재부품장비전략협력기술개발'],
+  ['지특','산학연CollaboR&D'],['지특','산학연협력기술개발사업'],['지특','산학연플랫폼협력기술개발'],
+  ['지특','지역중소기업공동수요기술개발'],['지특','산학협력거점형플랫폼'],
+  ['중진기금','중소기업기술사업화역량강화'],
+  ['소진기금','소상공인자영업자를위한생활혁신형기술개발'],['소진기금','소상공인스마트기술육성'],
+  ['기후기금','창업성장기술개발'],['기후기금','그린뉴딜유망기업'],['기후기금','중소기업Net-Zero 기술혁신개발사업'],
+  ['기후기금','중소기업탄소중립선도모델개발'],
+];
+let CURBIZ = '창업성장기술개발';
 function bandOf(rate) { return rate >= 100 ? 'g' : rate >= 80 ? 'y' : 'r'; }
 function bandNm(b) { return b === 'g' ? '🟢 달성' : b === 'y' ? '🟡 근접' : '🔴 미달'; }
 function bandPill(b) { return b === 'g' ? 'v-ok' : b === 'y' ? 'v-hold' : 'v-bad'; }
+const normBiz = s => String(s || '').replace(/[\s·]/g, '').replace(/사업$/, '');
+const econForBiz = bizName => verifyEcon().filter(e => normBiz(e.biz) === normBiz(bizName));
 
-function buildIndicators() {
-  const uniq = uniqueSci();
-  const mrnRows = uniq.map(p => ({j:p.journal, doi:p.doi, title:p.title, v:mrn(JCR[p.journal][1], RANKS[p.journal])}));
-  const mrnAvg = mrnRows.reduce((a, x) => a + x.v, 0) / mrnRows.length;
-  const regPat = PATENTS.filter(t => t.kind === '02');
-  const E = verifyEcon();
+function populateBizSelects() {
+  const opts = grp => Object.entries(BIZLIST.reduce((a, [g, n]) => ((a[g] = a[g] || []).push(n), a), {}))
+    .map(([g, names]) => `<optgroup label="${esc(g)}">${names.map(n => `<option value="${esc(n)}"${n === CURBIZ ? ' selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>`).join('');
+  ['#t5biz', '#t6biz'].forEach(sel => { $(sel).innerHTML = opts(); });
+  $('#t5biz').onchange = () => { CURBIZ = $('#t5biz').value; $('#t6biz').value = CURBIZ; IND_SEL = null; renderIndicators(); renderDiag(); };
+  $('#t6biz').onchange = () => { CURBIZ = $('#t6biz').value; $('#t5biz').value = CURBIZ; renderDiag(); };
+}
+
+function buildIndicatorsForBiz(bizName) {
+  const E = econForBiz(bizName);
+  if (!E.length) return [];
+  const n = E.length;
   const jobsSum = E.reduce((a, e) => a + e.calc.net, 0);
-
+  const roiOk = E.filter(e => e.calc.roiV >= 1).length;
+  const roiAvg = E.reduce((a, e) => a + e.calc.roiV, 0) / n;
   return [
-    {key:'sci', nm:'SCI 논문 게재 건수(고유 DOI)', unit:'건', target:15, actual:uniq.length,
-     schema:{"지표명":"SCI 논문 게재 건수(고유 DOI)","사업":INDPROJ,"단계":"통합 1단계",
-       "성과목표":"희귀질환 진단 연구기반의 학술적 파급력 제고","가중치":25,"단위":"건","산식유형":"합계",
-       "분자":{"성과항목":"논문(SCI)","필터":["SCI(E) 등재","고유 DOI 기준 중복 제거"],"집계":"COUNT(DISTINCT DOI)"},
-       "분모":null,"누적여부":false,"집계기간":"누적(2023~2025)","목표치":{"2025":15},"증빙요건":"Crossref 서지정보 자동조회"},
-     rows: uniq.map(p => ({a:p.journal, b:String(p.title).slice(0, 46) + '…', c:p.doi}))},
-
-    {key:'mrnif', nm:'평균 mrnIF', unit:'점', target:70, actual:Math.round(mrnAvg * 10) / 10,
-     schema:{"지표명":"평균 mrnIF","사업":INDPROJ,"단계":"통합 1단계",
-       "성과목표":"논문 질적 수준(피인용 영향력) 제고","가중치":20,"단위":"점","산식유형":"평균",
-       "분자":{"성과항목":"논문(SCI, 고유 DOI)","필터":["JCR 수록 저널"],"집계":"Σ mrnIF ÷ 고유 논문 수"},
-       "분모":"고유 SCI 논문 수","누적여부":false,"집계기간":"당해연도","목표치":{"2025":70},"증빙요건":"JCR 분야·순위 연동"},
-     rows: mrnRows.map(r => ({a:r.j, b:String(r.title).slice(0, 46) + '…', c:r.v.toFixed(2)}))},
-
-    {key:'patreg', nm:'특허 등록 건수', unit:'건', target:4, actual:regPat.length,
-     schema:{"지표명":"특허 등록 건수","사업":INDPROJ,"단계":"통합 1단계",
-       "성과목표":"연구성과의 권리화를 통한 기술 보호","가중치":20,"단위":"건","산식유형":"합계",
-       "분자":{"성과항목":"특허(등록)","필터":["kind = 02(등록)"],"집계":"COUNT"},
-       "분모":null,"누적여부":true,"집계기간":"누적(2023~2025)","목표치":{"2025":4},"증빙요건":"KIPRIS 등록원부"},
-     rows: regPat.map(t => ({a:t.no, b:String(t.name).slice(0, 46) + '…', c:t.date}))},
-
-    {key:'jobs', nm:'신규고용 순증 인원(15개사 합계)', unit:'명', target:65, actual:jobsSum,
-     schema:{"지표명":"신규고용 순증 인원","사업":"중소기업기술개발사업(경제성과 표본)","단계":"통합 1단계",
-       "성과목표":"R&D 투자를 통한 고용 창출","가중치":15,"단위":"명","산식유형":"합계",
-       "분자":{"성과항목":"신규고용","필터":["기간 내 자격취득","순증 = 취득 − 상실"],"집계":"SUM(순증)"},
-       "분모":null,"누적여부":false,"집계기간":"당해연도","목표치":{"2026":65},"증빙요건":"4대 사회보험 가입자 명부"},
+    {key:'jobs', nm:'신규고용 순증 인원', unit:'명', target:Math.max(3, n * 3), actual:jobsSum,
+     schema:{"지표명":"신규고용 순증 인원","사업":bizName,"성과목표":"R&D 투자를 통한 고용 창출","가중치":30,
+       "단위":"명","산식유형":"합계","분자":{"성과항목":"신규고용","필터":["기간 내 자격취득","순증 = 취득 − 상실"],"집계":"SUM(순증)"},
+       "분모":null,"누적여부":false,"집계기간":"당해연도","목표치":{"2026":Math.max(3, n * 3)},"증빙요건":"4대 사회보험 가입자 명부"},
      rows: E.map(e => ({a:e.firm, b:`취득 ${e.calc.hired} − 상실 ${e.calc.left}`, c:e.calc.net + '명'}))},
+
+    {key:'roiok', nm:'ROI 달성 기업 수', unit:'개사', target:n, actual:roiOk,
+     schema:{"지표명":"ROI 달성 기업 수","사업":bizName,"성과목표":"투입 대비 성과 창출 기업 확대","가중치":35,
+       "단위":"개사","산식유형":"비율(기업 기준)","분자":{"성과항목":"ROI(성과/지원금)","필터":["ROI ≥ 1"],"집계":"COUNT(기업)"},
+       "분모":"전체 참여기업 수","누적여부":false,"집계기간":"당해연도","목표치":{"2026":n},"증빙요건":"과제매출·수출 검증값 · 정부지원금"},
+     rows: E.map(e => ({a:e.firm, b:`지원금 ${won(e.fund)}`, c:'ROI ' + e.calc.roiV.toFixed(2)}))},
+
+    {key:'roi', nm:'평균 ROI', unit:'배', target:1.2, actual:Math.round(roiAvg * 100) / 100,
+     schema:{"지표명":"평균 ROI","사업":bizName,"성과목표":"사업 단위 투자 효율성 제고","가중치":35,
+       "단위":"배","산식유형":"평균","분자":{"성과항목":"(과제매출액+과제수출액)÷정부지원금","필터":[],"집계":"AVG(ROI)"},
+       "분모":"참여기업 수","누적여부":false,"집계기간":"당해연도","목표치":{"2026":1.2},"증빙요건":"검증 후 확정값 기준"},
+     rows: E.map(e => ({a:e.firm, b:`매출 ${won(e.calc.verifiedSales)} · 수출 ${won(e.calc.vExport)}`, c:'ROI ' + e.calc.roiV.toFixed(2)}))},
   ];
 }
 
 let IND_SEL = null;
 function renderIndicators() {
-  const inds = buildIndicators();
+  const inds = buildIndicatorsForBiz(CURBIZ);
+  const E = econForBiz(CURBIZ);
+  $('#t5bizcount').textContent = E.length ? `참여기업 ${E.length}개사` : '';
+  if (!inds.length) {
+    $('#indgrid').innerHTML = `<div class="card" style="grid-column:1/-1"><div class="cbody">
+      <p class="note">선택한 사업에 등록된 성과지표가 없습니다. 세부과제 수행기관의 성과가 입력되면 이 화면에 표시됩니다.</p>
+    </div></div>`;
+    $('#inddetail').innerHTML = '';
+    return;
+  }
   $('#indgrid').innerHTML = inds.map(i => {
     const rate = i.target ? Math.round(i.actual / i.target * 100) : 0;
     const b = bandOf(rate);
@@ -2331,6 +2508,7 @@ function renderIndicators() {
     </div>`;
   }).join('');
   $$('#indgrid [data-ind]').forEach(c => c.onclick = () => { IND_SEL = c.dataset.ind; renderIndicators(); });
+  if (!IND_SEL) IND_SEL = inds[0].key;
   renderIndDetail(inds);
 }
 function renderIndDetail(inds) {
@@ -2338,7 +2516,7 @@ function renderIndDetail(inds) {
   if (!i) { $('#inddetail').innerHTML = ''; return; }
   $('#inddetail').innerHTML = `
     <div class="card">
-      <header><h3>${esc(i.nm)} · 산식 정의</h3><span class="hint">F7-04 · F7-05</span></header>
+      <header><h3>${esc(i.nm)} · 산식 정의</h3></header>
       <div class="cbody"><pre class="jsonbox">${esc(JSON.stringify(i.schema, null, 2))}</pre></div>
     </div>
     <div class="card" style="margin-top:12px">
@@ -2349,22 +2527,26 @@ function renderIndDetail(inds) {
     </div>`;
 }
 
-/* ══════════════════════════════════════════
-   T6 — 사업별 진단서 (F7-08)
-   ══════════════════════════════════════════ */
+/* ── 사업별 진단서 ── */
 function renderDiag() {
-  const inds = buildIndicators();
+  const inds = buildIndicatorsForBiz(CURBIZ);
+  if (!inds.length) {
+    $('#diagcard').innerHTML = `<div class="diagpage"><h3>${esc(CURBIZ)} · 성과 진단서</h3>
+      <div class="dsub">발급일 2026-09-02 · PACE 콘솔 자동생성</div>
+      <p class="note" style="margin-top:14px">선택한 사업에 등록된 성과지표가 없어 진단서를 생성할 수 없습니다.</p></div>`;
+    return;
+  }
   const scored = inds.map(i => ({...i, rate: Math.round(i.actual / i.target * 100), b: bandOf(Math.round(i.actual / i.target * 100))}));
   const miss = scored.filter(i => i.rate < 100);
   $('#diagcard').innerHTML = `
     <div class="diagpage">
-      <h3>${esc(INDPROJ)} · 성과 진단서</h3>
-      <div class="dsub">발급일 2026-09-02 · PACE 콘솔 자동생성 · F7-08</div>
+      <h3>${esc(CURBIZ)} · 성과 진단서</h3>
+      <div class="dsub">발급일 2026-09-02 · PACE 콘솔 자동생성</div>
       <div class="diagrow"><span class="diaglab">평가 지표</span><span>${scored.length}종 중 <b style="color:var(--ok)">${scored.length - miss.length}종 달성</b> · <b style="color:var(--bad)">${miss.length}종 미달/근접</b></span></div>
       ${scored.map(i => `<div class="diagrow"><span class="diaglab">${esc(i.nm)}</span>
         <span><span class="pill ${bandPill(i.b)}">${bandNm(i.b)}</span> 실적 ${i.actual}${i.unit} / 목표 ${i.target}${i.unit} (${i.rate}%)</span></div>`).join('')}
       <div class="diagrow" style="border-bottom:0"><span class="diaglab">원인 후보</span><span>${miss.length
-        ? miss.map(i => `“${esc(i.nm)}”은 표본 수·조사기간이 제한적인 초기 단계로 목표치 대비 실적 반영에 시차가 있습니다.`).join(' ')
+        ? miss.map(i => `“${esc(i.nm)}”은 참여기업 수·조사기간이 제한적인 초기 단계로 목표치 대비 실적 반영에 시차가 있습니다.`).join(' ')
         : '전 지표 목표 달성 — 별도 원인 분석 불요.'}</span></div>
       <div class="diagrow" style="border-bottom:0"><span class="diaglab">개선 제언</span><span>${miss.length
         ? '조사 잔여기간 내 현장조사 우선순위를 미달 지표 관련 과제로 조정하고, 다음 분기 조사 문항에 근거자료 제출 안내를 추가한다.'
@@ -2457,8 +2639,11 @@ drawAlert();
 renderWeights();
 renderRank();
 renderCandNote();
+populateBizSelects();
 renderIndicators();
 renderDiag();
+populateInsightBiz();
+renderInsight();
 addEventListener('resize', () => { drawMrnifChart(); });
 </script>
 
