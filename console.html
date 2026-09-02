@@ -755,6 +755,12 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         <div class="cbody" id="fieldbody"></div>
       </div>
 
+      <div class="card" id="fieldresultcard" style="margin-bottom:14px">
+        <header><h3>현장조사 전송 결과</h3><span class="hint"><span class="badge real" style="margin-right:6px">실데이터 연동</span>PACE 필드 → 본부 T1 큐</span></header>
+        <div class="cbody" id="fieldresultbody"></div>
+      </div>
+
+      <div class="hr"></div>
       <div class="card">
         <header><h3>적용 검증 룰</h3><span class="hint" id="rulehint">경제적 성과 15종</span></header>
         <div class="tw"><table>
@@ -1584,7 +1590,7 @@ function renderVerify() {
   const tb = $('#vbody');
   if (!rows.length) {
     tb.innerHTML = `<tr><td colspan="${cols}" style="padding:26px; text-align:center; color:var(--ink-4)">${RESULTS.length ? '해당 판정 건이 없습니다.' : '검증을 실행하면 결과가 표시됩니다.'}</td></tr>`;
-    $('#detail').innerHTML = ''; renderGap(); renderField(); return;
+    $('#detail').innerHTML = ''; renderGap(); renderField(); renderFieldResults(); return;
   }
   tb.innerHTML = rows.map(r => TRACK === 'econ' ? `
     <tr class="r-${r.sev}" data-id="${r.id}">
@@ -1608,7 +1614,7 @@ function renderVerify() {
     </tr>`).join('');
   tb.querySelectorAll('tr').forEach(tr => tr.onclick = () => showDetail(tr.dataset.id));
   showDetail(rows.find(r => r.sev === 'reject')?.id || rows.find(r => r.sev === 'bad')?.id || rows[0].id);
-  renderGap(); renderField();
+  renderGap(); renderField(); renderFieldResults();
 }
 
 /* ── 검증 전후 총액 차이 ── */
@@ -1662,6 +1668,40 @@ function renderField() {
       </div></div>`).join('')}
     </div>` : ''}`;
 }
+
+/* ── 현장조사 전송 결과(PACE 필드 → 콘솔 실시간 연동) ── */
+const FIELD_SHARED_KEY = 'pace-field-submissions-v1';
+function renderFieldResults() {
+  const box = $('#fieldresultbody');
+  if (!box) return;
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(FIELD_SHARED_KEY)) || []; } catch (e) {}
+  if (!list.length) {
+    box.innerHTML = `<p class="note">아직 PACE 필드에서 전송된 현장조사 결과가 없습니다. 필드 앱에서 조사를 종료하고 전송하면 이 화면에 실시간으로 반영됩니다.</p>`;
+    return;
+  }
+  list = list.slice().sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt));
+  box.innerHTML = `<div class="tw"><table>
+    <thead><tr><th>기업 · 과제</th><th>현장 검증 결과</th><th>조사원 현장 확인</th><th>전송일시</th></tr></thead>
+    <tbody>${list.map(v => {
+      const badges = v.items.map(i => {
+        const ok = i.sev === 'ok';
+        return `<span class="pill ${ok ? 'v-ok' : 'v-hold'}" style="margin:2px 4px 2px 0">${ok ? '🟢' : '🟡'} ${esc(i.name)}</span>`;
+      }).join('');
+      const notes = v.items.filter(i => i.confirmed).map(i =>
+        `<div class="tsub">${esc(i.name)} — ${esc(i.reason || '사유 미기재')}${i.memo ? ` · ${esc(i.memo)}` : ''}</div>`).join('');
+      const dt = new Date(v.sentAt);
+      const dtStr = isNaN(dt) ? '—' : dt.toLocaleString('ko-KR', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+      return `<tr style="cursor:default">
+        <td><span class="jname">${esc(v.firm)}</span><span class="tsub">${esc(v.task)} · ${esc(v.biz)}</span></td>
+        <td>${badges}</td>
+        <td>${notes || '<span style="color:var(--ink-4)">현장 확인 기록 없음</span>'}</td>
+        <td class="mono" style="font-size:11px; white-space:nowrap">${dtStr}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+window.addEventListener('storage', e => { if (e.key === FIELD_SHARED_KEY) renderFieldResults(); });
 
 /* ── 승인/반려(검증담당자 판단) ──────────── */
 const DECISIONS = {};

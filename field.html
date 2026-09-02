@@ -177,7 +177,7 @@ button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer; bo
 .pill.plain::before{display:none}
 .v-ok{color:var(--ok); background:var(--ok-soft); border-color:var(--ok-line)}
 .v-hold{color:var(--hold); background:var(--hold-soft); border-color:var(--hold-line)}
-.v-bad{color:var(--bad); background:var(--bad-soft); border-color:var(--bad-line)}
+.v-bad{color:var(--hold); background:var(--hold-soft); border-color:var(--hold-line)}
 .v-idle{color:var(--ink-3); background:var(--surface-2); border-color:var(--line)}
 .v-acc{color:var(--accent); background:var(--accent-soft); border-color:var(--accent)}
 
@@ -405,7 +405,8 @@ const $$ = s => [...document.querySelectorAll(s)];
 const nf = n => Number(n).toLocaleString('ko-KR');
 const won = n => nf(Math.round(n)) + '원';
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const SEVNM = {ok:'일치', hold:'보류', bad:'불일치'};
+// 콘솔과 동일한 판정 체계: 🟢 자동확인 / 🟡 확인필요(값 불일치·경계값) — 재제출(🔴)은 판독 자체가 불가한 경우 전용, 필드 앱에서는 현재 미해당
+const SEVNM = {ok:'🟢 대조 일치', hold:'🟡 확인필요', bad:'🟡 확인필요'};
 
 /* ══════════════════════════════════════════
    오늘의 방문 6건
@@ -592,6 +593,23 @@ function itemState(id, k) {
   const v = st(id);
   if (!v.items[k]) v.items[k] = {shot: 0, done: false, sev: null, fixed: null, reason: '', memo: '', confirmed: false};
   return v.items[k];
+}
+
+/* ── 본부(PACE 콘솔) 실시간 연동 — 전송 시 공용 저장소에 결과 반영 ── */
+const FIELD_SHARED_KEY = 'pace-field-submissions-v1';
+function pushSharedSubmission(v) {
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(FIELD_SHARED_KEY)) || []; } catch (e) {}
+  list = list.filter(x => x.visitId !== v.id);
+  list.push({
+    visitId: v.id, firm: v.firm, task: v.task, biz: v.biz,
+    sentAt: new Date().toISOString(),
+    items: itemsOf(v).map(k => {
+      const i = itemState(v.id, k);
+      return {key:k, name:ITEMS[k].name, sev:i.sev, confirmed:i.confirmed, reason:i.reason, memo:i.memo};
+    }),
+  });
+  try { localStorage.setItem(FIELD_SHARED_KEY, JSON.stringify(list)); } catch (e) {}
 }
 const visitDone = v => itemsOf(v).every(k => itemState(v.id, k).done);
 const visitStatus = v => {
@@ -915,7 +933,7 @@ function renderOut() {
       b.disabled = true; b.textContent = '전송 중…';
       for (const v of wait) {
         await new Promise(r => setTimeout(r, 260));
-        st(v.id).sent = true; save(); renderOut();
+        st(v.id).sent = true; save(); pushSharedSubmission(v); renderOut();
       }
       toast(`${wait.length}건 전송 완료 · 본부 T1 검증 큐 반영`);
       render();
