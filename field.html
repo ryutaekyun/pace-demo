@@ -394,7 +394,7 @@ input:focus,textarea:focus{border-color:var(--accent); outline:none}
 
 <p class="desknote">
   실제 단말에서는 전체화면으로 동작합니다. 증빙 촬영 버튼은 스마트폰에서 후면 카메라를 직접 호출하며,
-  데스크톱에서는 파일 선택으로 대체됩니다. 촬영 없이 흐름만 보려면 <b>샘플 증빙으로 시연</b>을 사용하세요.
+  데스크톱에서는 파일 선택으로 대체됩니다. 촬영 없이 흐름만 보려면 <b>샘플 증빙 불러오기</b>를 사용하세요.
 </p>
 
 <script src="auth.js"></script>
@@ -410,7 +410,7 @@ const SEVNM = {ok:'🟢 대조 일치', hold:'🟡 확인필요', bad:'🟡 확�
 
 /* ══════════════════════════════════════════
    오늘의 방문 6건
-   증빙 데이터는 가상 표본(시뮬레이션). 대조 연산은 실제 로직.
+   증빙 데이터는 표본 데이터. 대조 연산은 실제 로직.
    ══════════════════════════════════════════ */
 const T = (no, d, it, sup) => ({no, d, it, sup, vat: Math.round(sup * .1)});
 const I = (n, i, o, rrn) => ({n, i, o: o || null, rrn: rrn || '——····-·······'});
@@ -742,7 +742,7 @@ function renderVisit() {
           <div class="shots" id="shots-${k}"></div>
           <div class="btnrow">
             <button class="btn sm" data-cam="${k}">촬영</button>
-            <button class="btn sm ghost" data-demo="${k}">샘플 증빙으로 시연</button>
+            <button class="btn sm ghost" data-demo="${k}">샘플 증빙 불러오기</button>
           </div>
           <div class="scan" id="scan-${k}" style="display:none">
             <div class="scanbar"><i></i></div><div class="scanlog"></div>

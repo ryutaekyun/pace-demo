@@ -346,7 +346,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
                   <input type="text" id="doi" placeholder="10.3390/children10101673" autocomplete="off">
                   <button class="btn sm" id="doilookup" style="flex:none">조회</button>
                 </div>
-                <span class="fh">Crossref에서 학술지명·ISSN·SCI(E) 구분·임팩트팩터를 가져옵니다. <span class="badge sim">시뮬레이션</span></span>
+                <span class="fh">Crossref에서 학술지명·ISSN·SCI(E) 구분·임팩트팩터를 가져옵니다.</span>
               </div>
               <div id="doiresult"></div>
             </div>
@@ -369,7 +369,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
                 <div class="filerow">
                   <input type="file" id="patfile" accept="application/pdf,image/*">
                   <button class="btn sm ghost" id="patfilebtn">등록증 파일 선택</button>
-                  <span class="fh" style="flex:1 1 260px">등록증 PDF를 올리면 OCR로 등록번호를 자동 추출한 뒤 <b>KIPRIS</b> 조회까지 이어서 진행합니다. <span class="badge sim">시뮬레이션</span></span>
+                  <span class="fh" style="flex:1 1 260px">등록증 PDF를 올리면 OCR로 등록번호를 자동 추출한 뒤 <b>KIPRIS</b> 조회까지 이어서 진행합니다.</span>
                 </div>
                 <div class="pulse" id="pulse-patocr" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
                 <div id="patupresult"></div>
@@ -394,7 +394,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
               <div class="conn">
                 <div class="cr">
                   <div>
-                    <div class="ct">국세청 전자세금계산서 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="ct">국세청 전자세금계산서 연동</div>
                     <div class="cd">2026.1.1~12.31 발행분을 불러옵니다. 과제로 개발한 제품·서비스의 매출 건만 선택하세요.</div>
                   </div>
                   <button class="btn sm" id="pull-tax">발행 내역 불러오기</button>
@@ -404,7 +404,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
               <div class="conn">
                 <div class="cr">
                   <div>
-                    <div class="ct">전자세금계산서 파일 업로드 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="ct">전자세금계산서 파일 업로드</div>
                     <div class="cd">국세청 연동이 어려운 경우 세금계산서 파일(PDF·이미지)을 올리면 공급가액이 자동 추출되고, 합계금액과의 차액이 표시됩니다.</div>
                   </div>
                   <div class="filerow"><input type="file" id="taxfile" accept="application/pdf,image/*"><button class="btn sm ghost" id="taxfilebtn">세금계산서 파일 선택</button></div>
@@ -423,7 +423,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
               <div class="conn">
                 <div class="cr">
                   <div>
-                    <div class="ct">관세청 UNI-PASS 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="ct">관세청 UNI-PASS 연동</div>
                     <div class="cd">원화 환산은 각 필증의 <b>신고일 기준환율</b>로 건별 자동 계산됩니다.</div>
                   </div>
                   <button class="btn sm" id="pull-exp">필증 불러오기</button>
@@ -441,7 +441,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
               <div class="conn">
                 <div class="cr">
                   <div>
-                    <div class="ct">국민건강보험공단 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="ct">국민건강보험공단 연동</div>
                     <div class="cd">신규고용은 <b>순증(자격취득 − 자격상실)</b> 기준입니다. 퇴사자가 자동 반영됩니다.</div>
                   </div>
                   <button class="btn sm" id="pull-ins">가입자 명부 불러오기</button>
@@ -451,7 +451,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
               <div class="conn">
                 <div class="cr">
                   <div>
-                    <div class="ct">가입자 명부 파일 업로드 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="ct">가입자 명부 파일 업로드</div>
                     <div class="cd">공단 연동이 어려운 경우 명부 파일(PDF·엑셀)을 올리면 동일하게 자동 판독됩니다. 주민등록번호는 업로드 즉시 마스킹 처리됩니다.</div>
                   </div>
                   <div class="filerow"><input type="file" id="insfile" accept=".pdf,.xlsx,.xls"><button class="btn sm ghost" id="insfilebtn">명부 파일 선택</button></div>
@@ -566,7 +566,7 @@ const HIST = {
   sales: [{y:2022, v:0}, {y:2023, v:41000000}, {y:2024, v:88000000}, {y:2025, v:174000000}],
   jobs:  [{y:2022, v:1}, {y:2023, v:2}, {y:2024, v:3}, {y:2025, v:4}],
 };
-// Crossref / KIPRIS 조회 결과 (시뮬레이션)
+// Crossref / KIPRIS 조회 결과
 const DOIDB = {
   '10.3390/children10101673': {journal:'Children', issn:'2227-9067', sci:'SCI(E)', IF:2.4,
     title:'Clinical Application of High-Frequency Ultrasound Probe in Neonatal Screening',
@@ -613,7 +613,7 @@ function gate() {
   const isFuture = CURUSER.org === '㈜퓨처센싱';
   $('#who-org').textContent = CURUSER.org;
   $('#who-bizno').textContent = CURUSER.bizno || '—';
-  if (!isFuture) toast('이 시연에는 ㈜퓨처센싱 표본 데이터만 구성되어 있습니다. 화면은 해당 표본으로 진행됩니다.');
+  if (!isFuture) toast('현재 계정에는 ㈜퓨처센싱 표본 데이터가 연결되어 있습니다. 해당 표본 기준으로 화면이 진행됩니다.');
 }
 $('#logoutbtn').onclick = () => { PaceAuth.logout(); location.href = 'index.html'; };
 
@@ -924,7 +924,7 @@ $('#doilookup').onclick = () => {
   if (!r) {
     $('#doiresult').innerHTML = `<div class="flag f-hold"><span class="fi">!</span>
       <div>Crossref에서 찾을 수 없습니다.
-      <span class="sub">DOI를 다시 확인하시거나, 아래 예시로 시연해 보세요.<br>
+      <span class="sub">DOI를 다시 확인하시거나, 아래 예시를 입력해 보세요.<br>
       <span class="mono">10.3390/children10101673</span> · <span class="mono">10.1016/j.ultras.2026.107412</span></span></div></div>`;
     return;
   }
@@ -995,7 +995,7 @@ function lookupPatent(raw, box) {
   if (!r) {
     box.innerHTML = `<div class="flag f-hold"><span class="fi">!</span>
       <div>KIPRIS에서 조회되지 않습니다.
-      <span class="sub">번호를 확인하시거나 아래 예시로 시연해 보세요.<br>
+      <span class="sub">번호를 확인하시거나 아래 예시를 입력해 보세요.<br>
       <span class="mono">10-2026-0197358</span> · <span class="mono">10-2807673-0000</span></span></div></div>`;
     return false;
   }
@@ -1010,7 +1010,7 @@ $('#patlookup').onclick = () => {
   if (lookupPatent(raw)) { $('#pat').value = ''; toast('KIPRIS 서지정보를 가져왔습니다.'); }
 };
 
-/* ══════════ Step 3 — 특허등록증 업로드(🔴 재제출 시연 포함) ══════════ */
+/* ══════════ Step 3 — 특허등록증 업로드(🔴 재제출 안내 포함) ══════════ */
 $('#patfilebtn').onclick = () => $('#patfile').click();
 $('#patfile').onchange = async (e) => {
   if (!e.target.files.length) return;

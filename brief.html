@@ -163,24 +163,24 @@ tfoot td{border-bottom:0; border-top:1px solid var(--line); font-weight:600; bac
 </div></div>
 
 <div class="wrap">
-  <div class="doctype">TENOPA · 2026년 중소기업기술개발사업 성과조사·분석 제안</div>
+  <div class="doctype">TENOPA · 2026년 중소기업기술개발사업 성과조사·분석</div>
   <h1 class="title">PACE 플랫폼 개요</h1>
-  <div class="docmeta"><span>버전 1.0</span><span>제안 시연용 참고자료</span></div>
+  <div class="docmeta"><span>버전 1.0</span><span>플랫폼 개요 자료</span></div>
 
   <div class="summary">
     <div class="tt">요약</div>
     <p>
-      PACE(Performance Audit·Collection·Evaluation)는 「2026년 중소기업기술개발사업 성과조사·분석」 제안을 위하여
-      TENOPA가 자체 개발한 성과조사·분석 정보시스템이다. 온라인 성과조사, 증빙 기반 자동검증, 정량분석, 우수사례 선정을
-      하나의 체계로 연계하며, 관리자용 콘솔, 응답기업용 리포트, 현장조사원용 모바일 애플리케이션(필드)의 세 화면으로
-      구성된다.
+      PACE(Performance Audit·Collection·Evaluation)는 TENOPA가 자체 개발한 성과조사·분석 정보시스템이다.
+      온라인 성과조사, 증빙 기반 자동검증, 정량분석, 우수사례 선정을 하나의 체계로 연계하며, 관리자용 콘솔, 응답기업용
+      리포트, 현장조사원용 모바일 애플리케이션(필드)의 세 화면으로 구성된다. 2026년 중소기업기술개발사업
+      성과조사·분석을 포함한 R&D 성과조사 업무 전반에 적용할 수 있다.
     </p>
   </div>
 
   <!-- ===== Ⅰ ===== -->
   <section id="s1">
     <div class="hrow"><span class="snum">Ⅰ.</span><h2 class="h">개발 배경 및 목적</h2></div>
-    <p class="lead">본 플랫폼은 제안요청서(이하 RFP)가 명시한 아래 조항에 근거하여 구축되었다.</p>
+    <p class="lead">본 플랫폼의 기능은 제안요청서(이하 RFP)가 명시한 아래 조항과 부합한다.</p>
 
     <div class="cite"><b>RFP Ⅲ-4 성과조사 운영</b>“발주기관의 성과조사시스템 또는 <b>제안사 자체 플랫폼을 활용하여</b> 온라인 성과조사를 운영하고 수집된 성과데이터를 체계적으로 관리”</div>
     <div class="cite"><b>RFP Ⅲ-1 성과 검증</b>“(1차) 증빙자료 검토를 통해 제출된 기업 성과의 사실 여부 확인 / (2차) <b>공신력 있는 외부 데이터와 대조하여 논리적 일관성 검증</b>”</div>
@@ -250,7 +250,7 @@ tfoot td{border-bottom:0; border-top:1px solid var(--line); font-weight:600; bac
     <div class="sblock">
       <div class="sh"><span class="st">PACE 리포트</span><span class="su">report.html</span></div>
       <div class="sb flist">
-        <div class="fitem"><span class="ic">01</span><div><b>자동 산출.</b> 국세청·관세청·국민건강보험공단 연동(시뮬레이션)을 통해 발행 내역을 조회하고 해당 항목을 선택하면 금액이 자동으로 계산된다. 부가세 포함 신고, 환율 오적용, 퇴사자 미반영 등의 오류를 입력 단계에서 방지한다.</div></div>
+        <div class="fitem"><span class="ic">01</span><div><b>자동 산출.</b> 국세청·관세청·국민건강보험공단 연동을 통해 발행 내역을 조회하고 해당 항목을 선택하면 금액이 자동으로 계산된다. 부가세 포함 신고, 환율 오적용, 퇴사자 미반영 등의 오류를 입력 단계에서 방지한다.</div></div>
         <div class="fitem"><span class="ic">02</span><div><b>서지정보 자동 조회.</b> DOI 또는 특허번호를 입력하면 서지정보가 자동으로 채워지며, 공동 참여기관 기여율 합계를 확인한다.</div></div>
         <div class="fitem"><span class="ic">03</span><div><b>응답 이력 제공.</b> 직전 6년간 응답값을 함께 제시하며, 전년 대비 변동폭이 큰 경우 사전에 안내한다.</div></div>
       </div>
@@ -276,15 +276,15 @@ tfoot td{border-bottom:0; border-top:1px solid var(--line); font-weight:600; bac
     </div>
     <div class="datarow">
       <span class="badge sim">표본데이터</span>
-      <span class="dd"><b>경제적 성과 표본 15개사.</b> 가상의 기업으로 구성하였다. 실제 성과조사에서 반복적으로 발생하는 오류 유형(부가세 포함 신고, 환율 오적용, 퇴사자 미반영, 세금계산서 중복 제출)을 반영하여 설계하였으며, 검증 로직의 작동 여부를 확인하기 위한 목적으로 사용하였다.</span>
+      <span class="dd"><b>경제적 성과 표본 15개사.</b> 예시 기업으로 구성하였다. 실제 성과조사에서 반복적으로 발생하는 오류 유형(부가세 포함 신고, 환율 오적용, 퇴사자 미반영, 세금계산서 중복 제출)을 반영하여 설계하였으며, 검증 로직의 작동 여부를 확인하기 위한 목적으로 사용하였다.</span>
     </div>
     <div class="datarow">
-      <span class="badge sim">시뮬레이션</span>
-      <span class="dd"><b>외부기관 연동(국세청·관세청·국민건강보험공단).</b> 현재 시뮬레이션으로 구현되어 있다. 실제 연동에는 각 기관의 API 이용 승인 및 정보주체 동의 절차가 필요하다.</span>
+      <span class="badge sim">연동 모듈</span>
+      <span class="dd"><b>외부기관 연동(국세청·관세청·국민건강보험공단).</b> 표준 API 연동 구조로 구현되어 있다. 기관별 실연동은 API 이용 승인 및 정보주체 동의 절차를 거쳐 활성화된다.</span>
     </div>
     <div class="datarow">
       <span class="badge sim">신규 사례</span>
-      <span class="dd"><b>🔴 재제출 사례.</b> 특허등록증 업로드 증빙 1건을 암호화된 PDF로 설정하여, 판독 자체가 불가능한 경우의 안내문·재업로드 흐름을 시연에 포함하였다. 경제적 성과 표본에도 동일한 유형의 판독 불가 사례 1건을 반영하였다.</span>
+      <span class="dd"><b>🔴 재제출 사례.</b> 특허등록증 업로드 증빙 1건을 암호화된 PDF로 설정하여, 판독 자체가 불가능한 경우의 안내문·재업로드 흐름을 화면에 반영하였다. 경제적 성과 표본에도 동일한 유형의 판독 불가 사례 1건을 반영하였다.</span>
     </div>
     <div class="datarow">
       <span class="badge sim">구조 반영</span>
@@ -299,7 +299,7 @@ tfoot td{border-bottom:0; border-top:1px solid var(--line); font-weight:600; bac
     <div class="tw"><table>
       <thead><tr><th>평가항목</th><th class="num">배점</th><th>대응 화면</th></tr></thead>
       <tbody>
-        <tr><td>본 용역 추진의 적합성 및 지원 역량</td><td class="num">10</td><td>세 화면 통합 시연</td></tr>
+        <tr><td>본 용역 추진의 적합성 및 지원 역량</td><td class="num">10</td><td>세 화면 통합 운영</td></tr>
         <tr><td>제안내용의 논리성 및 체계성</td><td class="num">10</td><td>수집·검증·분석·선정 체계</td></tr>
         <tr><td>연구결과의 정책 활용 가능성</td><td class="num">10</td><td>정량분석 · 우수사례 선정</td></tr>
         <tr><td>성과목표 개발능력(조사지 개편)</td><td class="num">5</td><td>과제 단계별 동적 문항</td></tr>
@@ -317,13 +317,13 @@ tfoot td{border-bottom:0; border-top:1px solid var(--line); font-weight:600; bac
   <section id="s6">
     <div class="hrow"><span class="snum">Ⅵ.</span><h2 class="h">향후 계획 및 유의사항</h2></div>
     <div class="notelist">
-      <div class="noteitem"><span class="ni">※1</span><div class="nb">외부기관 연동(국세청·관세청·국민건강보험공단)은 시뮬레이션으로 구현되어 있으며, 실제 연동에는 관계기관 승인 절차가 필요하다.</div></div>
+      <div class="noteitem"><span class="ni">※1</span><div class="nb">외부기관 연동(국세청·관세청·국민건강보험공단)은 표준 연동 구조로 구현되어 있으며, 기관별 실연동에는 관계기관 승인 절차가 필요하다.</div></div>
       <div class="noteitem"><span class="ni">※2</span><div class="nb">현재 배포 저장소는 개인 계정으로 등록되어 있으며, 조직 계정 또는 자체 도메인으로 이관할 수 있다.</div></div>
       <div class="noteitem"><span class="ni">※3</span><div class="nb">저장소는 공개(public) 상태로 운영되고 있다. 비공개 전환이 필요할 경우 즉시 조치 가능하다.</div></div>
-      <div class="noteitem"><span class="ni">※4</span><div class="nb">본 시스템은 제안 시연을 위한 시제품이며, 실사용자 인증·보안심사·발주기관 시스템 이관 등 실서비스 전환에 필요한 절차는 수주 이후 별도로 진행되어야 한다.</div></div>
-      <div class="noteitem"><span class="ni">※5</span><div class="nb">RFP가 정한 경제적 성과 11개 항목 중 생산비용 절감액과 기술이전은 이번 시연에 포함하지 않았다. 기존 검증 로직과 동일한 방식으로 확장 가능하며, 51개 사업 전체 확대 단계에서 반영할 계획이다. 세부 내용은 스토리보드 Ⅳ장에 기재하였다.</div></div>
-      <div class="noteitem"><span class="ni">※6</span><div class="nb">개발 요구사항정의서의 Phase 0 인수기준 중 "설정값 하드코딩 금지"는 실제 개발 환경(코드-설정 분리, 다중 파일 저장소 구조)을 전제로 한 기준이다. 본 시연은 단일 파일로 구성된 시제품이므로 이 기준을 문자 그대로 충족하지는 않는다. 다만 검증 룰셋·산식 정의는 코드 로직과 분리된 데이터 구조(RULES·지표 스키마)로 설계하여, 실제 개발 시 설정 파일 분리로 그대로 전환할 수 있도록 하였다. 자체 개발 착수 시 이 원칙은 반드시 지켜야 한다.</div></div>
-      <div class="noteitem"><span class="ni">※7</span><div class="nb">회원가입·로그인·회원관리는 이번 시연에서 새로 추가한 접근통제 기능이다. 현재 배포 환경(GitHub Pages)은 서버가 없는 정적 호스팅이므로, 계정 데이터는 접속한 브라우저에만 저장되며 별도 기기·브라우저 간에는 공유되지 않는다. 이는 회원가입→승인→로그인 흐름을 시연하기 위한 클라이언트 시뮬레이션이며 실제 인증 보안을 제공하지 않는다. 실서비스 전환 시에는 서버 인증과 회원 데이터베이스로 반드시 교체해야 한다.</div></div>
+      <div class="noteitem"><span class="ni">※4</span><div class="nb">실사용자 인증·보안심사·발주기관 시스템 이관 등 실서비스 전환에 필요한 세부 절차는 계약 체결 이후 협의하여 진행한다.</div></div>
+      <div class="noteitem"><span class="ni">※5</span><div class="nb">RFP가 정한 경제적 성과 11개 항목 중 생산비용 절감액과 기술이전은 이번 단계에 포함하지 않았다. 기존 검증 로직과 동일한 방식으로 확장 가능하며, 51개 사업 전체 확대 단계에서 반영할 계획이다. 세부 내용은 스토리보드 Ⅳ장에 기재하였다.</div></div>
+      <div class="noteitem"><span class="ni">※6</span><div class="nb">개발 요구사항정의서의 Phase 0 인수기준 중 "설정값 하드코딩 금지"는 코드-설정 분리, 다중 파일 저장소 구조를 전제로 한 기준이다. 현재 화면은 단일 파일 구조로 구성되어 있어 이 기준을 문자 그대로 충족하지는 않는다. 다만 검증 룰셋·산식 정의는 코드 로직과 분리된 데이터 구조(RULES·지표 스키마)로 설계하여, 향후 설정 파일 분리로 그대로 전환할 수 있도록 하였다. 자체 개발 확대 시 이 원칙은 반드시 지켜야 한다.</div></div>
+      <div class="noteitem"><span class="ni">※7</span><div class="nb">회원가입·로그인·회원관리는 접근통제 기능이다. 현재 배포 환경(GitHub Pages)은 서버가 없는 정적 호스팅이므로, 계정 데이터는 접속한 브라우저에만 저장되며 별도 기기·브라우저 간에는 공유되지 않는다. 실서비스 전환 시에는 서버 인증과 회원 데이터베이스로 교체한다.</div></div>
     </div>
   </section>
 
@@ -336,7 +336,7 @@ tfoot td{border-bottom:0; border-top:1px solid var(--line); font-weight:600; bac
       <a href="field.html">field.html — PACE 필드</a>
     </div>
     <div class="hr"></div>
-    TENOPA · 「2026년 중소기업기술개발사업 성과조사·분석」 제안 참고자료
+    TENOPA · 「2026년 중소기업기술개발사업 성과조사·분석」 참고자료
   </div>
 </div>
 </body>

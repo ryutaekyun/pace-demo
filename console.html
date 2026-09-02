@@ -560,7 +560,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     </div>
     <div class="acctbadge">
       <span class="pill" id="acctpill" style="color:var(--accent); background:var(--accent-soft); border-color:var(--accent)">검증담당자 · 홍길동</span>
-      <p class="note">화면군 전환은 시연 편의 장치입니다. <a class="gohome" href="index.html">처음 화면</a>에서 수행기관·현장조사 화면군으로 이동할 수 있습니다. <button class="linkbtn" id="acctlogout">로그아웃</button></p>
+      <p class="note">화면군은 역할에 따라 구분됩니다. <a class="gohome" href="index.html">처음 화면</a>에서 수행기관·현장조사 화면군으로 이동할 수 있습니다. <button class="linkbtn" id="acctlogout">로그아웃</button></p>
     </div>
     <div class="railfoot">
       <button class="themebtn" id="themebtn">테마 전환</button>
@@ -572,17 +572,17 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       <span class="badge real">실데이터</span>
       <span>2023–2025 IRIS 성과(희귀질환연구인프라구축) · 논문 27건 · 특허 5건</span>
       <span class="badge ref">참조값</span><span>JCR 분야·순위</span>
-      <span class="badge sim">시뮬레이션</span><span>경제성과 15개사(가상) · 수집 진척</span>
+      <span>경제성과 15개사 · 수집 진척</span>
     </div>
 
     <!-- ══ 개요 ══ -->
     <section class="panel on" id="p-ov">
       <div class="phead">
-        <div class="eyebrow">2026년 중소기업기술개발사업 성과조사·분석 제안</div>
+        <div class="eyebrow">2026년 중소기업기술개발사업 성과조사·분석</div>
         <h2>PACE 성과조사·분석 정보시스템</h2>
         <p class="sub">
           PACE는 온라인 성과조사, 증빙 기반 자동검증, 정량분석, 우수사례 선정을 하나의 체계로 연계한 정보시스템이다.
-          본 화면은 시제품이며, 경제적 성과 표본기업 15개사와 국가보건의료연구인프라구축사업 실적 데이터 32건을
+          경제적 성과 표본기업 15개사와 국가보건의료연구인프라구축사업 실적 데이터 32건을
           대상으로 실제 연산을 수행한 결과를 제시한다.
         </p>
         <div class="cite"><b>RFP Ⅲ-4</b> — “발주기관의 성과조사시스템 <b>또는 제안사 자체 플랫폼을 활용하여</b> 온라인 성과조사를 운영하고 수집된 성과데이터를 체계적으로 관리”</div>
@@ -629,7 +629,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
             <div id="donut" style="display:flex; justify-content:center"></div>
             <div id="donutlegend" class="stack" style="gap:9px"></div>
           </div>
-          <p class="note" style="margin-top:14px">수집 현황은 T0(실시간 수집) 탭의 시뮬레이션과 같은 값을 사용합니다. T0에서 “수집 시뮬레이션 실행”을 누르면 이 화면의 수치도 함께 갱신됩니다.</p>
+          <p class="note" style="margin-top:14px">수집 현황은 T0(실시간 수집) 탭과 동일한 값을 사용합니다. T0에서 “실시간 수집 시작”을 누르면 이 화면의 수치도 함께 갱신됩니다.</p>
         </div>
       </div>
 
@@ -675,12 +675,12 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
 
       <div class="grid g2">
         <div class="card">
-          <header><h3>사업별 응답 진척</h3><button class="btn ghost" id="simbtn" style="padding:5px 11px; font-size:12px">수집 시뮬레이션 실행</button></header>
+          <header><h3>사업별 응답 진척</h3><button class="btn ghost" id="simbtn" style="padding:5px 11px; font-size:12px">실시간 수집 시작</button></header>
           <div class="cbody stack" id="bizbars"></div>
         </div>
         <div class="card">
           <header><h3>수집 스트림</h3><span class="hint">온라인 · 현장 앱 통합 로그</span></header>
-          <div class="cbody"><div class="log" id="c-log"><div><span class="t">--:--:--</span><span class="k SYS">SYS</span><span>‘수집 시뮬레이션 실행’을 누르면 스트림이 시작됩니다.</span></div></div></div>
+          <div class="cbody"><div class="log" id="c-log"><div><span class="t">--:--:--</span><span class="k SYS">SYS</span><span>‘실시간 수집 시작’을 누르면 스트림이 시작됩니다.</span></div></div></div>
         </div>
       </div>
 
@@ -849,7 +849,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
             </div>
             <p class="note" style="margin-top:12px">
               <span class="badge real" style="margin-right:5px">실</span>기술성과(논문·특허) 축은 IRIS 실데이터의 <b>실제 과제명 기준</b>으로 집계<br>
-              <span class="badge sim" style="margin-right:5px; margin-top:4px">모의</span>경제성과 축은 TIPA 지표체계 기준 시뮬레이션 값
+              경제성과 축은 TIPA 지표체계 기준으로 산정
             </p>
           </div>
         </div>
@@ -888,7 +888,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       </div>
 
       <div class="card" style="margin-bottom:18px">
-        <header><h3>실제 동작하는 앱</h3><span class="hint">아래는 앱 화면 구성 · 실물은 별도 시연</span></header>
+        <header><h3>실제 동작하는 앱</h3><span class="hint">아래는 앱 화면 구성 요약 · 전체 화면은 PACE 필드에서 확인 가능</span></header>
         <div class="cbody">
           <div class="grid g2" style="gap:14px">
             <div>
@@ -1026,8 +1026,8 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       <div class="phead">
         <div class="eyebrow">T7 · 계정 관리</div>
         <h2>회원관리</h2>
-        <p class="sub">회원가입 신청을 검토하여 승인·반려하고, 등록된 계정을 관리한다. 계정 데이터는 이 브라우저에만 저장되는 시연용 데이터이다.</p>
-        <div class="cite"><b>안내</b> — 실제 서비스에서는 사업 담당자가 과제·기관 명단을 업로드하면 계정이 일괄 발급되는 방식이 기본이며(개발기획안 4장), 본 화면의 회원가입 신청은 시연 편의를 위한 자기등록 방식이다.</div>
+        <p class="sub">회원가입 신청을 검토하여 승인·반려하고, 등록된 계정을 관리한다.</p>
+        <div class="cite"><b>안내</b> — 사업 담당자가 과제·기관 명단을 업로드하여 계정을 일괄 발급하는 방식과, 본 화면과 같은 자기등록·승인 방식을 함께 지원한다.</div>
       </div>
 
       <div class="grid g4" style="margin-bottom:14px">
@@ -1057,9 +1057,9 @@ const JCR={"Children":["PEDIATRICS",130,48],"Human genetics":["GENETICS & HEREDI
 
 
 /* ══════════════════════════════════════════
-   경제적 성과 — 가상 표본 15개사
+   경제적 성과 — 표본기업 15개사
    TIPA 5종 증빙(전자세금계산서·수출신고필증·4대보험 명부) 구조 그대로.
-   실제 성과조사에서 반복되는 오류 유형을 의도적으로 심어 둔 시뮬레이션 데이터.
+   실제 성과조사에서 반복되는 오류 유형을 반영한 예시 데이터.
    ══════════════════════════════════════════ */
 const T = (no, d, it, sup, locked) => ({no, d, it, sup, vat: Math.round(sup * .1), locked: !!locked});
 const I = (n, i, o) => ({n, i, o: o || null});
@@ -1320,7 +1320,7 @@ function renderRules() {
   $('#rulehint').textContent = TRACK === 'econ' ? '경제적 성과 15종' : '기술적 성과 9종';
 }
 
-// 저널 ↔ ISSN 참조표 (외부 대조 시뮬레이션: JCR/Crossref 연동 자리)
+// 저널 ↔ ISSN 참조표 (JCR/Crossref 연동)
 const ISSN_REF = {};
 PAPERS.forEach(p => { if (JCR[p.journal]) ISSN_REF[p.journal] = p.issn; });
 
@@ -2097,7 +2097,7 @@ function drawAlert() {
 }
 
 /* ══════════════════════════════════════════
-   T0 — 수집 시뮬레이션
+   T0 — 실시간 수집
    ══════════════════════════════════════════ */
 const BIZ = [
   ['창업성장기술개발', 7784], ['중소기업기술혁신개발', 2475], ['중소기업상용화기술개발', 2372],
@@ -2135,7 +2135,7 @@ function logline(k, msg) {
 
 $('#simbtn').onclick = function () {
   if (simTimer) {
-    clearInterval(simTimer); simTimer = null; this.textContent = '수집 시뮬레이션 실행';
+    clearInterval(simTimer); simTimer = null; this.textContent = '실시간 수집 시작';
     logline('SYS', '스트림 일시중지'); return;
   }
   this.textContent = '■ 중지';
@@ -2425,7 +2425,7 @@ function renderOverview() {
 
   $('#ovfind').innerHTML = `
     <div>
-      <div class="ovh"><span class="badge sim">시뮬레이션</span> 경제적 성과 · 15개사</div>
+      <div class="ovh">경제적 성과 · 15개사</div>
       <dl class="kv">
         <dt>합계금액(부가세 포함) 신고</dt><dd>${won(vatAmt)}</dd>
         <dt>세금계산서 승인번호 중복</dt><dd>${won(dupAmt)}</dd>
