@@ -585,12 +585,11 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
           경제적 성과 표본기업 15개사와 국가보건의료연구인프라구축사업 실적 데이터 32건을
           대상으로 실제 연산을 수행한 결과를 제시한다.
         </p>
-        <div class="cite"><b>RFP Ⅲ-4</b> — “발주기관의 성과조사시스템 <b>또는 제안사 자체 플랫폼을 활용하여</b> 온라인 성과조사를 운영하고 수집된 성과데이터를 체계적으로 관리”</div>
       </div>
 
       <div class="grid g4" style="margin-bottom:16px">
         <div class="tile acc"><span class="lab">조사 대상 과제</span><span class="val">30,309</span><span class="note">51개 사업 · ’26.4 기준</span></div>
-        <div class="tile"><span class="lab">응답률 목표</span><span class="val">90<small>%</small></span><span class="note">RFP 명시 목표</span></div>
+        <div class="tile"><span class="lab">응답률 목표</span><span class="val">90<small>%</small></span><span class="note">사업 목표치</span></div>
         <div class="tile"><span class="lab">현장검증 대상</span><span class="val">33<small>%</small></span><span class="note">온라인 응답기업 1/3</span></div>
         <div class="tile"><span class="lab">검증 룰</span><span class="val">24<small>종</small></span><span class="note">증빙 5종 · 경제15 + 기술9</span></div>
       </div>
@@ -617,7 +616,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       </div>
 
       <div class="card" style="margin-bottom:16px">
-        <header><h3>운영현황 대시보드</h3><span class="hint">S-05 · 수집 현황 + 판정 분포 통합</span></header>
+        <header><h3>운영현황 대시보드</h3><span class="hint">수집 현황 + 판정 분포 통합</span></header>
         <div class="cbody">
           <div class="grid g3" style="margin-bottom:16px">
             <div class="tile acc"><span class="lab">누적 응답</span><span class="val" id="ov-resp">0</span><span class="note">/ 30,309 과제 · T0 연동</span></div>
@@ -633,28 +632,6 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         </div>
       </div>
 
-      <div class="grid" style="grid-template-columns:1fr">
-        <div class="card">
-          <header><h3>기술능력평가 대응 현황</h3><span class="hint">정성평가 90점 중 해당 배점</span></header>
-          <div class="cbody">
-            <div class="stack" style="gap:10px">
-              <div class="rowmeter"><span class="nm">본 용역 추진의 적합성 및 지원 역량 <b class="mono">10</b></span><span class="pc">T0–T3</span></div>
-              <div class="rowmeter"><span class="nm">제안내용의 논리성 및 체계성 <b class="mono">10</b></span><span class="pc">플랫폼 구성</span></div>
-              <div class="rowmeter"><span class="nm">연구결과의 정책 활용 가능성 <b class="mono">10</b></span><span class="pc">T2·T3</span></div>
-              <div class="rowmeter"><span class="nm">성과목표 개발능력(조사지 개편) <b class="mono">5</b></span><span class="pc">T0</span></div>
-              <div class="rowmeter"><span class="nm">정보·자료의 확보 용이성 <b class="mono">5</b></span><span class="pc">T0</span></div>
-              <div class="rowmeter"><span class="nm">심층분석 결과의 활용 가능성 <b class="mono">5</b></span><span class="pc">T2</span></div>
-              <div class="rowmeter"><span class="nm">수행방법과 절차의 구체성 <b class="mono">5</b></span><span class="pc">T1</span></div>
-              <div class="rowmeter"><span class="nm">위험요소 해소 능력 <b class="mono">5</b></span><span class="pc">T0</span></div>
-              <div class="rowmeter"><span class="nm">연구종료 후 사후지원 능력 <b class="mono">5</b></span><span class="pc">DB 이관</span></div>
-            </div>
-            <div class="hr" style="margin:14px 0"></div>
-            <div class="ftotal" style="margin:0; border-top:0; padding:0">
-              <span class="lb">플랫폼이 직접 대응하는 배점</span><span class="vl">60<small style="font-size:13px">점</small></span>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ══ T0 수집 ══ -->
@@ -663,7 +640,6 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         <div class="eyebrow">T0 · Collect</div>
         <h2>실시간 수집</h2>
         <p class="sub">온라인 전수조사와 현장방문조사가 같은 파이프라인으로 들어옵니다. 조사원이 현장에서 올린 증빙은 업로드 즉시 T1 검증 큐에 걸립니다.</p>
-        <div class="cite"><b>RFP Ⅲ-1</b> — “조사 데이터의 신뢰성 확보를 위해 <b>응답률 90% 이상 확보</b>” · <b>Ⅲ-4</b> — “최근 6년간 성과조사 응답 이력을 시스템에 탑재”</div>
       </div>
 
       <div class="grid g4" style="margin-bottom:14px">
@@ -699,8 +675,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       <div class="phead">
         <div class="eyebrow">T1 · Audit — 핵심 차별화</div>
         <h2>AI 성과검증</h2>
-        <p class="sub">응답값·증빙 추출값·외부 참조DB 세 축을 대조해 항목 단위로 일치·보류·불일치를 판정합니다. 판정을 미리 적어둔 것이 아니라, 세금계산서·수출신고필증·4대보험 명부에서 값을 직접 계산해 신고값과 맞춰봅니다.</p>
-        <div class="cite"><b>RFP Ⅲ-1</b> — “(1차) 증빙자료 검토를 통해 제출된 기업 성과의 <b>사실 여부 확인</b> / (2차) <b>공신력 있는 외부 데이터와 대조하여 논리적 일관성 검증</b>”</div>
+        <p class="sub">응답값·증빙 추출값·외부 참조DB를 대조해 항목 단위로 🟢자동확인·🟡확인필요·🔴재제출로 판정합니다. 세금계산서·수출신고필증·4대보험 명부에서 값을 직접 계산해 신고값과 맞춰봅니다.</p>
       </div>
 
       <div class="tracks">
@@ -751,7 +726,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
 
       <div class="hr"></div>
       <div class="card" id="fieldcard" style="margin-bottom:14px">
-        <header><h3>현장조사 대상 자동 분류</h3><span class="hint">RFP Ⅲ-1 분류기준 5개 그룹</span></header>
+        <header><h3>현장조사 대상 자동 분류</h3><span class="hint">5개 그룹 분류 기준</span></header>
         <div class="cbody" id="fieldbody"></div>
       </div>
 
@@ -779,7 +754,6 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         <div class="eyebrow">T2 · Analyze</div>
         <h2>정량분석 · mrnIF</h2>
         <p class="sub">검증이 끝난 데이터가 그래프와 지표로 바로 떨어집니다. 논문 질적지표(mrnIF)는 산식 전개까지 화면에서 확인할 수 있습니다.</p>
-        <div class="cite"><b>RFP Ⅲ-2</b> — “사업별 기술적 성과(논문, 특허) <b>질적 분석</b> — (논문) IF 평균점수, <b>MrnIF 평균점수</b> / (특허) 특허 SMART 평가점수”</div>
       </div>
 
       <div class="grid g4" style="margin-bottom:14px">
@@ -835,7 +809,6 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         <div class="eyebrow">T3 · Evaluate</div>
         <h2>우수사례 스코어링</h2>
         <p class="sub">가중치를 옮기면 랭킹이 그 자리에서 다시 정렬됩니다. 우수사례 선정 회의에서 “왜 이 과제가 1순위인가”를 화면으로 설명할 수 있습니다.</p>
-        <div class="cite"><b>RFP Ⅲ-2</b> — “성과 확산 및 파급효과가 높은 <b>사업화 성공 사례 발굴</b> 및 정부 R&D투자 필요성 제시 — 매출·수출·고용 등 사업화 성과가 우수한 사례를 발굴하고 R&D지원 전후 변화와 성공 요인을 중심으로 정리”</div>
       </div>
 
       <div class="grid" style="grid-template-columns:290px 1fr; gap:14px" id="scoregrid">
@@ -867,7 +840,6 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         <div class="eyebrow">T4 · Field</div>
         <h2>현장조사 앱</h2>
         <p class="sub">온라인 응답기업의 33%, 약 1만 과제를 조사원이 직접 방문합니다. 증빙을 현장에서 촬영해 올리면 그 자리에서 응답값과 대조되고, 불일치가 뜨면 조사원이 현장을 떠나기 전에 재확인합니다.</p>
-        <div class="cite"><b>RFP Ⅲ-1</b> — “온라인조사와 현장방문조사의 특성을 반영한 맞춤형 매뉴얼을 작성하고… <b>조사원 교육 진행</b>” · “응답자 편의 중심의 성과조사 프로세스 제안 및 적용”</div>
       </div>
 
       <div class="card" style="margin-bottom:18px">
@@ -978,19 +950,19 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       <div class="hr"></div>
       <div class="grid g2">
         <div class="card">
-          <header><h3>보안</h3><span class="hint">RFP Ⅳ-2</span></header>
+          <header><h3>보안</h3></header>
           <div class="cbody">
             <p class="note">조사원 단말은 폐쇄망 VPN을 경유하며, 촬영된 증빙 원본은 단말에 잔류하지 않고 서버로만 전송됩니다.
             판독은 폐쇄망 내부에서 수행하며 외부 모델로 데이터를 보내지 않습니다.
-            “별도 시스템 활용 시 DB를 발주기관 시스템에 이관” 조항에 맞춰, 조사 종료 시 전체 DB를 발주기관으로 이관합니다.</p>
+            조사 종료 시 전체 데이터베이스를 발주기관 시스템으로 이관합니다.</p>
           </div>
         </div>
         <div class="card">
-          <header><h3>자체 개발</h3><span class="hint">RFP Ⅵ-2 하도급 불허</span></header>
+          <header><h3>자체 개발</h3></header>
           <div class="cbody">
-            <p class="note">본 용역은 하도급이 불허됩니다. 세 화면 모두 당사가 직접 설계·개발하며, 외주 개발사를 두지 않습니다.
-            그래서 조사 운영 중 발생하는 설문지 개편·검증룰 변경·긴급 오류 대응이 협의 없이 당일 반영됩니다.
-            검증 룰셋은 코드와 분리되어 있어, TIPA 51개 사업의 특화 문항이 추가되어도 룰 교체만으로 대응합니다.</p>
+            <p class="note">세 화면 모두 TENOPA가 직접 설계·개발하여 운영합니다.
+            그래서 운영 중 발생하는 설문지 개편·검증룰 변경·긴급 오류 대응이 신속하게 반영됩니다.
+            검증 룰셋은 코드와 분리되어 있어, 사업별 특화 문항이 추가되어도 룰 교체만으로 대응합니다.</p>
           </div>
         </div>
       </div>
@@ -999,10 +971,9 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     <!-- ══ T5 성과지표 달성도 ══ -->
     <section class="panel" id="p-t5">
       <div class="phead">
-        <div class="eyebrow">T5 · S-09</div>
+        <div class="eyebrow">T5 · Insight</div>
         <h2>성과지표 달성도</h2>
-        <p class="sub">전략계획서의 지표는 사업마다 달라 코드에 고정하지 않고 산식을 데이터로 등록한다. 아래는 1개 사업 기준 샘플 지표이며, 지표를 클릭하면 산식 정의와 원천 성과건을 확인할 수 있다.</p>
-        <div class="cite"><b>기획안 §10.3–10.4</b> — “지표 1개 = 산식 정의 1세트” · 달성률 100%↑ 🟢 달성 · 80~100% 🟡 근접 · 80%미만 🔴 미달</div>
+        <p class="sub">사업별 성과지표의 목표·실적·달성률을 확인한다. 지표를 클릭하면 산식 정의와 원천 성과건을 볼 수 있다. 달성률 100% 이상은 🟢 달성, 80~100%는 🟡 근접, 80% 미만은 🔴 미달로 표시한다.</p>
       </div>
       <div class="grid g2" id="indgrid" style="margin-bottom:14px"></div>
       <div id="inddetail"></div>
@@ -1011,7 +982,7 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     <!-- ══ T6 사업별 진단서 ══ -->
     <section class="panel" id="p-t6">
       <div class="phead">
-        <div class="eyebrow">T6 · F7-08</div>
+        <div class="eyebrow">T6 · Report</div>
         <h2>사업별 진단서</h2>
         <p class="sub">목표 대비 미달 지표와 원인 후보, 개선 제언을 1페이지로 자동 생성한다. 인쇄 시 보고서 형태로 그대로 출력된다.</p>
       </div>
@@ -1024,10 +995,9 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
     <!-- ══ T7 회원관리 ══ -->
     <section class="panel" id="p-t7">
       <div class="phead">
-        <div class="eyebrow">T7 · 계정 관리</div>
+        <div class="eyebrow">T7 · Access</div>
         <h2>회원관리</h2>
         <p class="sub">회원가입 신청을 검토하여 승인·반려하고, 등록된 계정을 관리한다.</p>
-        <div class="cite"><b>안내</b> — 사업 담당자가 과제·기관 명단을 업로드하여 계정을 일괄 발급하는 방식과, 본 화면과 같은 자기등록·승인 방식을 함께 지원한다.</div>
       </div>
 
       <div class="grid g4" style="margin-bottom:14px">
@@ -1394,7 +1364,7 @@ function verify() {
    T1-A — 경제적 성과 검증 엔진
    모든 값은 증빙에서 계산한다. 판정을 미리 적어두지 않는다.
    ══════════════════════════════════════════ */
-const PERIOD = {from:'2026-01-01', to:'2026-12-31'};       // RFP: 대상성과 발생기간
+const PERIOD = {from:'2026-01-01', to:'2026-12-31'};       // 대상성과 발생기간
 const ASOF = '2026-12-31';                                  // 조사 기준일
 const won = n => nf(Math.round(n)) + '원';
 
@@ -1434,7 +1404,7 @@ function verifyEcon() {
     if (e.tax.length && Math.abs(d.sales - grossAll) < 1 && Math.abs(d.sales - supplyAll) > 1)
       f.push({r:'E2', s:'bad',
         m:`합계금액(부가세 포함)을 과제매출액으로 신고 — 신고 ${won(d.sales)} = 공급가액 ${won(supplyAll)} + 세액 ${won(grossAll - supplyAll)}`,
-        a:`RFP 검토항목은 공급가액 기준입니다. ${won(grossAll - supplyAll)} 과대계상 — 공급가액으로 정정.`});
+        a:`검토 항목은 공급가액 기준입니다. ${won(grossAll - supplyAll)} 과대계상 — 공급가액으로 정정.`});
     else if (e.tax.length && Math.abs(d.sales - verifiedSales) > 1)
       f.push({r:'E3', s:'bad',
         m:`신고액과 증빙 합계 불일치 — 신고 ${won(d.sales)} / 유효 증빙 ${won(verifiedSales)}`,
@@ -1501,7 +1471,7 @@ function verifyEcon() {
         m:`전년 누적 과제매출 ${won(e.prevSales)} 발생 과제인데 당해연도 매출 미발생`,
         a:'현장조사 2그룹 분류 대상. 매출 중단 사유 현장 확인 필요.'});
 
-    /* ── 현장조사 그룹 자동 분류 (RFP Ⅲ-1 분류기준) ── */
+    /* ── 현장조사 그룹 자동 분류(5개 분류기준) ── */
     const roiD = e.fund ? (d.sales + d.exportKrw) / e.fund : 0;
     const vExport = expU.length ? krwSum : d.exportKrw;
     const roiV = e.fund ? (verifiedSales + vExport) / e.fund : 0;
@@ -1651,7 +1621,7 @@ function renderField() {
   R.forEach(r => by[r.calc.gV].push(r));
   const moved = R.filter(r => r.calc.gD !== r.calc.gV);
   $('#fieldbody').innerHTML = `
-    <p class="note" style="margin-bottom:12px">온라인 응답기업의 33%를 현장검증 대상으로 뽑는 작업입니다. RFP가 정한 5개 분류기준을 규칙으로 옮겨, 검증이 끝난 값 기준으로 자동 배정합니다.</p>
+    <p class="note" style="margin-bottom:12px">온라인 응답기업의 33%를 현장검증 대상으로 뽑는 작업입니다. 5개 분류기준을 규칙으로 옮겨, 검증이 끝난 값 기준으로 자동 배정합니다.</p>
     <div class="grid g3" style="gap:10px">
       ${[1, 2, 3, 4, 5].map(g => `
         <div class="gcard">
@@ -2187,7 +2157,7 @@ paintCollect();
    T3 — 우수사례 스코어링
    ══════════════════════════════════════════ */
 const WDEF = [
-  {k:'sales', n:'과제매출액', d:'RFP 경제적 성과 11개 항목', w:25, sim:true},
+  {k:'sales', n:'과제매출액', d:'경제적 성과 검증분', w:25, sim:true},
   {k:'export', n:'과제수출액', d:'수출실적명세서 검증분', w:15, sim:true},
   {k:'jobs', n:'신규고용', d:'4대보험 명부 검증분', w:15, sim:true},
   {k:'roi', n:'ROI', d:'투입 대비 성과 배수', w:15, sim:true},
