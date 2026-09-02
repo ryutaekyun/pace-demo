@@ -259,9 +259,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
 }
 .toast.on{display:block}
 
-/* ── 로그인 게이트 ──────────────────────── */
-.acctcard{cursor:pointer; transition:border-color .12s}
-.acctcard:hover{border-color:var(--accent)}
+/* ── 잠금 배지 ──────────────────────── */
 .lockpill{margin-left:4px}
 
 /* ── 5대 유형 탭 ─────────────────────────── */
@@ -286,25 +284,13 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
 
 <div class="top"><div class="topin">
   <div class="brand"><a class="gohome" href="index.html" title="처음 화면으로 이동"><img class="tenopa-mark" src="data:image/png;base64,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" alt="TENOPA"><span class="div"></span><b>PACE</b><span>2026년 중소기업기술개발사업 성과조사</span></a></div>
-  <div class="who" id="who-guest"><span class="pill p-idle">로그인이 필요합니다</span></div>
-  <div class="who" id="who-user" style="display:none">
-    <span><b>㈜퓨처센싱</b> · 사업자 <span class="mono">312-81-••••8</span></span>
+  <div class="who" id="who-user">
+    <span><b id="who-org">㈜퓨처센싱</b> · 사업자 <span class="mono" id="who-bizno">312-81-••••8</span></span>
     <span class="dday" id="dday">제출마감 D-12</span>
     <span class="savedot" id="savedot">자동저장 대기</span>
     <button class="btn grey sm" id="logoutbtn">로그아웃</button>
   </div>
 </div></div>
-
-<div class="wrap" id="loginwrap" style="display:none">
-  <main style="grid-column:1/-1; max-width:640px; margin:0 auto; width:100%">
-    <div class="phead">
-      <div class="eyebrow">Step 0 · 로그인</div>
-      <h2>기업 계정을 선택해 주세요</h2>
-      <p class="sub">국세청·관세청·건강보험공단 연동 시연을 위해 표본 기업 계정으로 로그인합니다. 실제 서비스에서는 사업자 인증서 기반 개별 계정으로 대체됩니다.</p>
-    </div>
-    <div class="stack" id="loginlist"></div>
-  </main>
-</div>
 
 <div class="pstrip" id="pstrip"><div class="pin"><div class="steps" id="steps"></div></div></div>
 
@@ -414,6 +400,17 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
                   <button class="btn sm" id="pull-tax">발행 내역 불러오기</button>
                 </div>
                 <div class="pulse" id="pulse-tax" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+              </div>
+              <div class="conn">
+                <div class="cr">
+                  <div>
+                    <div class="ct">전자세금계산서 파일 업로드 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="cd">국세청 연동이 어려운 경우 세금계산서 파일(PDF·이미지)을 올리면 공급가액이 자동 추출되고, 합계금액과의 차액이 표시됩니다.</div>
+                  </div>
+                  <div class="filerow"><input type="file" id="taxfile" accept="application/pdf,image/*"><button class="btn sm ghost" id="taxfilebtn">세금계산서 파일 선택</button></div>
+                </div>
+                <div class="pulse" id="pulse-taxfile" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+                <div id="taxupresult"></div>
               </div>
               <div id="taxarea"></div>
             </div>
@@ -525,7 +522,9 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
 
 <div class="toast" id="toast"></div>
 
+<script src="auth.js"></script>
 <script>
+PaceAuth.requireAuth('index.html');
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const nf = n => Number(n).toLocaleString('ko-KR');
@@ -584,18 +583,13 @@ const PATDB = {
 };
 
 const STEPS = [['01', '과제 확인'], ['02', '성과입력'], ['03', '검토·제출']];
-const ACCOUNTS = [
-  {id:'A1', name:'㈜퓨처센싱', biz:'312-81-••••8', active:true},
-  {id:'A2', name:'㈜대한소재과학', biz:'214-86-••••2', active:false},
-  {id:'A3', name:'㈜그린파워텍', biz:'128-81-••••5', active:false},
-];
 const TYPES = [
   ['sci', '과학적'], ['tech', '기술적'], ['econ', '경제적'], ['infra', '인프라적'], ['social', '사회적'],
 ];
 
 /* ══════════ 상태 ══════════ */
 const KEY = 'pace-report-v1';
-let S = {step:0, loggedIn:false, acct:null, perfTab:'econ',
+let S = {step:0, perfTab:'econ',
          biz:{registered:false, type:'', date:''},
          tax:{pulled:false, sel:[]}, exp:{pulled:false, sel:[]}, ins:{pulled:false},
          papers:[], patents:[], patUploadAttempt:0, submitted:false};
@@ -612,35 +606,16 @@ function toast(m) {
   clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2400);
 }
 
-/* ══════════ 로그인 게이트 ══════════ */
-function renderLogin() {
-  $('#loginlist').innerHTML = ACCOUNTS.map(a => `
-    <div class="card acctcard" data-acct="${a.id}">
-      <div class="cb" style="display:flex; align-items:center; justify-content:space-between; gap:12px">
-        <div>
-          <div style="font-size:15px; font-weight:600">${esc(a.name)}</div>
-          <div class="mono" style="font-size:11px; color:var(--ink-3); margin-top:2px">사업자 ${esc(a.biz)}</div>
-        </div>
-        <span class="pill ${a.active ? 'p-ok' : 'p-idle'}">${a.active ? '시연 데이터 구성됨' : '표본 미구성'}</span>
-      </div>
-    </div>`).join('');
-  $$('#loginlist [data-acct]').forEach(el => el.onclick = () => {
-    const a = ACCOUNTS.find(x => x.id === el.dataset.acct);
-    if (!a.active) return toast('이 시연에는 ㈜퓨처센싱 표본 데이터만 구성되어 있습니다.');
-    S.loggedIn = true; S.acct = a.id; save(); gate();
-    toast('로그인되었습니다.');
-  });
-}
-$('#logoutbtn').onclick = () => { S.loggedIn = false; save(); gate(); };
+/* ══════════ 로그인(사이트 공통 인증) ══════════ */
+// 회원가입·로그인은 index.html(PaceAuth)에서 이미 처리되었다. 이 화면은 그 세션을 표시만 한다.
+const CURUSER = PaceAuth.currentUser() || {org:'', bizno:'', name:'', role:'guest'};
 function gate() {
-  $('#who-guest').style.display = S.loggedIn ? 'none' : 'flex';
-  $('#who-user').style.display = S.loggedIn ? 'flex' : 'none';
-  $('#loginwrap').style.display = S.loggedIn ? 'none' : 'grid';
-  $('#pstrip').style.display = S.loggedIn ? '' : 'none';
-  $('#mainwrap').style.display = S.loggedIn ? '' : 'none';
-  $('#footbar').style.display = S.loggedIn ? '' : 'none';
-  if (!S.loggedIn) renderLogin();
+  const isFuture = CURUSER.org === '㈜퓨처센싱';
+  $('#who-org').textContent = CURUSER.org;
+  $('#who-bizno').textContent = CURUSER.bizno || '—';
+  if (!isFuture) toast('이 시연에는 ㈜퓨처센싱 표본 데이터만 구성되어 있습니다. 화면은 해당 표본으로 진행됩니다.');
 }
+$('#logoutbtn').onclick = () => { PaceAuth.logout(); location.href = 'index.html'; };
 
 /* ══════════ 5대 유형 탭 ══════════ */
 function renderTypeTabs() {
@@ -780,6 +755,7 @@ function syncBizGate() {
     const btn = $('#pull-' + k); if (btn) btn.disabled = !on || S[k].pulled;
   });
   const insfile = $('#insfilebtn'); if (insfile) insfile.disabled = !on;
+  const taxfile = $('#taxfilebtn'); if (taxfile) taxfile.disabled = !on;
 }
 
 /* ══════════ Step 2 — 매출 ══════════ */
@@ -788,6 +764,21 @@ $('#pull-tax').onclick = async () => {
   await pulse('tax', ['국세청 홈택스 인증', '2026.1.1~12.31 발행분 조회', `전자세금계산서 ${TAXDB.length}건 수신`, '공급가액·세액 분리']);
   S.tax.pulled = true; save(); renderTax();
   toast('발행 내역을 불러왔습니다. 과제 관련 건을 선택하세요.');
+};
+$('#taxfilebtn').onclick = () => $('#taxfile').click();
+$('#taxfile').onchange = async (e) => {
+  if (!e.target.files.length) return;
+  await pulse('taxfile', ['파일 형식 확인', 'OCR 판독', '공급가액·세액 자동 추출']);
+  const t = TAXDB.find(x => !S.tax.sel.includes(x.no)) || TAXDB[0];
+  const gross = Math.round(t.sup * 1.1);
+  $('#taxupresult').innerHTML = `<div class="flag f-ok" style="margin-top:10px"><span class="fi">✓</span>
+    <div>업로드한 세금계산서(<span class="mono">${esc(t.no)}</span>)에서 공급가액 <b>${won(t.sup)}</b>을 자동 추출했습니다.
+    <span class="sub">합계금액(부가세 포함) ${won(gross)}과의 차액은 <b>${won(gross - t.sup)}</b>(부가가치세)입니다. 과제매출액에는 공급가액만 반영됩니다.</span></div></div>`;
+  S.tax.pulled = true;
+  if (!S.tax.sel.includes(t.no)) S.tax.sel.push(t.no);
+  save(); renderTax(); renderSide(); renderReview();
+  toast('세금계산서 파일에서 공급가액을 자동 추출했습니다.');
+  e.target.value = '';
 };
 function renderTax() {
   if (!S.tax.pulled) { $('#taxarea').innerHTML = ''; return; }

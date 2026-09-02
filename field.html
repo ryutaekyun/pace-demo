@@ -397,7 +397,9 @@ input:focus,textarea:focus{border-color:var(--accent); outline:none}
   데스크톱에서는 파일 선택으로 대체됩니다. 촬영 없이 흐름만 보려면 <b>샘플 증빙으로 시연</b>을 사용하세요.
 </p>
 
+<script src="auth.js"></script>
 <script>
+PaceAuth.requireAuth('index.html');
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const nf = n => Number(n).toLocaleString('ko-KR');

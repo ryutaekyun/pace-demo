@@ -13,22 +13,39 @@
   --ink:#0B1719; --ink-2:#3B5054; --ink-3:#6B8085; --ink-4:#93A7AB;
   --line:#D2DDDF; --line-2:#E4ECED;
   --accent:#0E5866; --accent-2:#0A414C; --accent-soft:#DBEAED; --accent-on:#FFFFFF;
+  --ok:#1A6B44; --ok-soft:#DCF0E5; --ok-line:#8FCFAF;
+  --hold:#8A5806; --hold-soft:#F9EDD5; --hold-line:#DFBC74;
+  --bad:#A02218; --bad-soft:#F9E2E0; --bad-line:#E09B93;
   --fs:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
   --fm:"IBM Plex Mono","Consolas",ui-monospace,monospace;
 }
 @media (prefers-color-scheme:dark){
-  :root{
+  :root:not([data-theme="light"]){
     --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326;
     --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
     --line:#22383C; --line-2:#1A2B2E;
     --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+    --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+    --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+    --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
   }
+}
+:root[data-theme="dark"]{
+  --ground:#08110F; --surface:#0F1B1E; --surface-2:#152326;
+  --ink:#E3EDEE; --ink-2:#9DB3B7; --ink-3:#748C91; --ink-4:#5A7176;
+  --line:#22383C; --line-2:#1A2B2E;
+  --accent:#57B8CA; --accent-2:#8AD5E2; --accent-soft:#123138; --accent-on:#04191E;
+  --ok:#4FC98C; --ok-soft:#0E2E1E; --ok-line:#26694A;
+  --hold:#E2B155; --hold-soft:#2E2208; --hold-line:#6B5216;
+  --bad:#F0897E; --bad-soft:#331311; --bad-line:#6E2A24;
 }
 *{box-sizing:border-box}
 body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--fs); line-height:1.65; -webkit-font-smoothing:antialiased}
 .tenopa-mark{height:16px; width:auto; display:block}
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .tenopa-mark{filter:brightness(0) invert(1)} }
 :root[data-theme="dark"] .tenopa-mark{filter:brightness(0) invert(1)}
+button{font-family:inherit; cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 
 .wrap{max-width:880px; margin:0 auto; padding:56px 24px 80px}
 .brandrow{display:flex; align-items:center; gap:12px; margin-bottom:32px}
@@ -39,7 +56,7 @@ body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--fs)
 h1{font-size:28px; letter-spacing:-.02em; margin:0 0 12px; text-wrap:balance; font-weight:600}
 .sub{color:var(--ink-2); font-size:14.5px; max-width:62ch; line-height:1.75; margin:0}
 
-.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:36px}
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:24px}
 @media (max-width:760px){ .grid{grid-template-columns:1fr} }
 a.card{
   display:flex; flex-direction:column; gap:9px; text-decoration:none; color:inherit;
@@ -52,17 +69,50 @@ a.card:hover{border-color:var(--accent); transform:translateY(-2px)}
 .cd{font-size:12px; color:var(--ink-3); line-height:1.65}
 .go{margin-top:auto; font-family:var(--fm); font-size:11px; color:var(--accent); padding-top:6px}
 
-.brief{
-  margin-top:16px; display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding:13px 16px; border:1px solid var(--line); border-radius:6px; background:var(--surface);
-  text-decoration:none; color:inherit; transition:border-color .15s;
-}
-.brief:hover{border-color:var(--accent)}
-.brief .bt{font-size:13px; color:var(--ink-2)}
-.brief .bg{font-family:var(--fm); font-size:11px; color:var(--accent); flex:none}
-
 .foot{margin-top:48px; padding-top:18px; border-top:1px solid var(--line-2); font-size:11.5px; color:var(--ink-4); line-height:1.7}
 .foot b{color:var(--ink-3)}
+
+/* ── 인증 게이트 ─────────────────────────── */
+.authwrap{max-width:420px; margin-top:28px}
+.authcard{background:var(--surface); border:1px solid var(--line); border-radius:8px; overflow:hidden}
+.atabs{display:flex; border-bottom:1px solid var(--line-2)}
+.atab{flex:1; background:none; border:0; padding:13px; font-size:13.5px; font-weight:500; color:var(--ink-3); border-bottom:2px solid transparent}
+.atab.on{color:var(--accent-2); border-bottom-color:var(--accent); font-weight:600}
+.apane{padding:20px 22px}
+.field{display:flex; flex-direction:column; gap:5px; margin-bottom:13px}
+.field label{font-size:12.5px; font-weight:500; color:var(--ink-2)}
+.field .req{color:var(--bad); margin-left:2px}
+input[type=text],input[type=password]{
+  width:100%; font-family:var(--fs); font-size:14px; padding:9px 11px;
+  border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink);
+}
+input:focus{border-color:var(--accent); outline:none}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px; width:100%;
+  background:var(--accent); color:var(--accent-on); border:1px solid var(--accent); border-radius:6px;
+  padding:11px 16px; font-size:13.5px; font-weight:600; transition:filter .12s;
+}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent; color:var(--accent)}
+.btn.sm{width:auto; padding:7px 13px; font-size:12.5px}
+.msgbox{margin-top:11px; padding:9px 12px; border-radius:6px; font-size:12.5px; line-height:1.55; display:none}
+.msgbox.err{display:block; background:var(--bad-soft); color:var(--bad); border:1px solid var(--bad-line)}
+.msgbox.ok{display:block; background:var(--ok-soft); color:var(--ok); border:1px solid var(--ok-line)}
+.switchline{text-align:center; font-size:12px; color:var(--ink-3); margin-top:13px}
+.switchline button{background:none; border:0; color:var(--accent); font-size:12px; font-weight:600; padding:0}
+.demoacct{
+  margin-top:14px; padding:11px 14px; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:6px; font-size:11.5px; color:var(--ink-3); line-height:1.7;
+}
+.demoacct b{color:var(--ink-2); font-family:var(--fm); font-weight:600}
+
+/* ── 로그인 후 화면 ───────────────────────── */
+.whobar{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  padding:12px 16px; background:var(--surface); border:1px solid var(--line); border-radius:6px;
+  font-size:13px; margin-top:10px;
+}
+.whobar .wpill{font-family:var(--fm); font-size:10.5px; padding:2px 8px; border-radius:10px; background:var(--accent-soft); color:var(--accent-2); margin-left:6px}
 </style>
 </head>
 <body>
@@ -71,43 +121,124 @@ a.card:hover{border-color:var(--accent); transform:translateY(-2px)}
 
   <div class="doctype">2026년 중소기업기술개발사업 성과조사·분석 제안</div>
   <h1>PACE 성과조사·분석 플랫폼</h1>
-  <p class="sub">PACE(Performance Audit·Collection·Evaluation)는 성과조사의 수집·검증·분석·선정 절차를 하나의 체계로 연계한 자체 개발 정보시스템이다. 아래 화면에서 PC 및 모바일로 직접 확인할 수 있다.</p>
+  <p class="sub">PACE(Performance Audit·Collection·Evaluation)는 성과조사의 수집·검증·분석·선정 절차를 하나의 체계로 연계한 자체 개발 정보시스템이다. 회원가입 승인을 받은 계정만 접속할 수 있다.</p>
 
-  <div class="grid">
-    <a class="card" href="console.html">
-      <span class="tag">PC · 관리자</span>
-      <span class="ct">PACE 콘솔</span>
-      <span class="cd">발주처·사업단 관리자용. 자동검증, 정량분석, 우수사례 선정.</span>
-      <span class="go">이동 →</span>
-    </a>
-    <a class="card" href="report.html">
-      <span class="tag">PC · 모바일</span>
-      <span class="ct">PACE 리포트</span>
-      <span class="cd">응답기업 성과입력 화면. 근거자료에서 금액을 자동 산출한다.</span>
-      <span class="go">이동 →</span>
-    </a>
-    <a class="card" href="field.html">
-      <span class="tag">모바일 앱</span>
-      <span class="ct">PACE 필드</span>
-      <span class="cd">현장조사원용. 증빙 촬영 즉시 대조 및 현장 확인·종결.</span>
-      <span class="go">이동 →</span>
-    </a>
+  <!-- ══ 로그인/회원가입 게이트 ══ -->
+  <div id="gateview" class="authwrap">
+    <div class="authcard">
+      <div class="atabs">
+        <button class="atab on" data-t="login">로그인</button>
+        <button class="atab" data-t="signup">회원가입</button>
+      </div>
+      <div class="apane" id="loginpane">
+        <div class="field"><label for="li-id">아이디</label><input type="text" id="li-id" autocomplete="username"></div>
+        <div class="field"><label for="li-pw">비밀번호</label><input type="password" id="li-pw" autocomplete="current-password"></div>
+        <button class="btn" id="loginbtn">로그인</button>
+        <div class="msgbox" id="loginmsg"></div>
+        <div class="switchline">계정이 없으신가요? <button id="togosignup">회원가입</button></div>
+      </div>
+      <div class="apane" id="signuppane" style="display:none">
+        <div class="field"><label>기관명(회사명)<span class="req">*</span></label><input type="text" id="su-org" placeholder="㈜예시기업"></div>
+        <div class="field"><label>사업자등록번호</label><input type="text" id="su-bizno" placeholder="123-45-67890"></div>
+        <div class="field"><label>담당자명<span class="req">*</span></label><input type="text" id="su-name"></div>
+        <div class="field"><label>이메일</label><input type="text" id="su-email" placeholder="name@company.com"></div>
+        <div class="field"><label>아이디<span class="req">*</span></label><input type="text" id="su-id" autocomplete="username"></div>
+        <div class="field"><label>비밀번호<span class="req">*</span></label><input type="password" id="su-pw" autocomplete="new-password"></div>
+        <button class="btn" id="signupbtn">가입 신청</button>
+        <div class="msgbox" id="signupmsg"></div>
+        <div class="switchline">이미 계정이 있으신가요? <button id="togologin">로그인</button></div>
+      </div>
+    </div>
+    <div class="demoacct">
+      <b>시연용 계정</b> — 관리자 <b>admin</b> / admin123 · 응답기업(㈜퓨처센싱) <b>futuresensing</b> / demo1234<br>
+      신규로 가입 신청하면 <b>관리자 승인 대기</b> 상태가 되며, 관리자 계정으로 로그인 후 PACE 콘솔의 “회원관리” 화면에서 승인할 수 있다.
+    </div>
   </div>
 
-  <a class="brief" href="brief.html">
-    <span class="bt">플랫폼 개발 배경, 구성, 평가기준 대응 현황을 정리한 개요 자료</span>
-    <span class="bg">개요 확인 →</span>
-  </a>
-  <a class="brief" href="storyboard.html" style="margin-top:10px">
-    <span class="bt">시스템 구성도와 화면별 스토리보드, IRIS 표준 정합성을 정리한 자료</span>
-    <span class="bg">스토리보드 확인 →</span>
-  </a>
+  <!-- ══ 로그인 후 화면 ══ -->
+  <div id="appview" style="display:none">
+    <div class="whobar">
+      <span><b id="whoname"></b>님 · <span id="whoorg"></span><span class="wpill" id="whorole"></span></span>
+      <button class="btn ghost sm" id="logoutbtn">로그아웃</button>
+    </div>
+    <div class="grid">
+      <a class="card" href="console.html">
+        <span class="tag">PC · 관리자</span>
+        <span class="ct">PACE 콘솔</span>
+        <span class="cd">검증담당자·관리자용. 자동검증, 정량분석, 우수사례 선정, 회원관리.</span>
+        <span class="go">이동 →</span>
+      </a>
+      <a class="card" href="report.html">
+        <span class="tag">PC · 모바일</span>
+        <span class="ct">PACE 리포트</span>
+        <span class="cd">응답기업 성과입력 화면. 근거자료에서 금액을 자동 산출한다.</span>
+        <span class="go">이동 →</span>
+      </a>
+      <a class="card" href="field.html">
+        <span class="tag">모바일 앱</span>
+        <span class="ct">PACE 필드</span>
+        <span class="cd">현장조사원용. 증빙 촬영 즉시 대조 및 현장 확인·종결.</span>
+        <span class="go">이동 →</span>
+      </a>
+    </div>
 
-  <div class="foot">
-    본 화면에 사용된 데이터는 제안 시연을 위한 자료이다.
-    <b>경제적 성과</b> 항목은 표본데이터, <b>기술적 성과(논문·특허)</b> 항목은 실적데이터를 사용하였다.
-    상세 내역은 개요 자료에 기재되어 있다.
+    <div class="foot">
+      본 화면에 사용된 데이터는 제안 시연을 위한 자료이다.
+      <b>경제적 성과</b> 항목은 표본데이터, <b>기술적 성과(논문·특허)</b> 항목은 실적데이터를 사용하였다.
+      회원가입·로그인은 서버 없이 이 브라우저에만 저장되는 시연용 기능이며, 실제 서비스에는 별도의 인증 서버가 필요하다.
+    </div>
   </div>
 </div>
+
+<script src="auth.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+
+function showTab(t) {
+  $$('.atab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  $('#loginpane').style.display = t === 'login' ? 'block' : 'none';
+  $('#signuppane').style.display = t === 'signup' ? 'block' : 'none';
+}
+function $$(s) { return [...document.querySelectorAll(s)]; }
+$$('.atab').forEach(b => b.onclick = () => showTab(b.dataset.t));
+$('#togosignup').onclick = () => showTab('signup');
+$('#togologin').onclick = () => showTab('login');
+
+function msg(id, text, ok) {
+  const el = $(id); el.textContent = text; el.className = 'msgbox ' + (ok ? 'ok' : 'err');
+}
+
+$('#loginbtn').onclick = async () => {
+  const r = await PaceAuth.login($('#li-id').value, $('#li-pw').value);
+  if (!r.ok) return msg('#loginmsg', r.error, false);
+  renderGate();
+};
+$('#signupbtn').onclick = async () => {
+  const r = await PaceAuth.signup({
+    org: $('#su-org').value, bizno: $('#su-bizno').value, name: $('#su-name').value,
+    email: $('#su-email').value, username: $('#su-id').value, password: $('#su-pw').value,
+  });
+  if (!r.ok) return msg('#signupmsg', r.error, false);
+  msg('#signupmsg', '가입 신청이 접수되었습니다. 관리자 승인 후 로그인할 수 있습니다.', true);
+  ['su-org', 'su-bizno', 'su-name', 'su-email', 'su-id', 'su-pw'].forEach(id => $('#' + id).value = '');
+};
+$('#logoutbtn').onclick = () => { PaceAuth.logout(); renderGate(); };
+
+function renderGate() {
+  const u = PaceAuth.currentUser();
+  if (!u) {
+    $('#gateview').style.display = 'block';
+    $('#appview').style.display = 'none';
+    showTab('login');
+    return;
+  }
+  $('#gateview').style.display = 'none';
+  $('#appview').style.display = 'block';
+  $('#whoname').textContent = u.name;
+  $('#whoorg').textContent = u.org;
+  $('#whorole').textContent = PaceAuth.ROLE_NM[u.role] || u.role;
+}
+renderGate();
+</script>
 </body>
 </html>

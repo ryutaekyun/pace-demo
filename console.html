@@ -101,6 +101,12 @@ button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer}
 .acctbadge{margin-top:auto; padding:14px 18px 0; display:flex; flex-direction:column; gap:8px}
 .acctbadge .pill{align-self:flex-start}
 .acctbadge .note{margin:0}
+.linkbtn{background:none; border:0; color:var(--accent); font-size:11px; font-weight:600; padding:0; font-family:var(--fs); cursor:pointer}
+.badge.pend{color:var(--hold); border-color:var(--hold-line); background:var(--hold-soft)}
+.navcount{
+  display:inline-flex; align-items:center; justify-content:center; min-width:16px; height:16px; padding:0 4px;
+  border-radius:8px; background:var(--bad); color:#fff; font-size:9.5px; font-weight:700; margin-left:6px;
+}
 .railfoot{padding:14px 18px; border-top:1px solid var(--line-2)}
 .themebtn{
   width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r);
@@ -549,11 +555,12 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
         <button role="tab" data-p="t4"><span class="tag">T4</span><span class="nm">현장조사 앱</span></button>
         <button role="tab" data-p="t5"><span class="tag">T5</span><span class="nm">성과지표 달성도</span></button>
         <button role="tab" data-p="t6"><span class="tag">T6</span><span class="nm">사업별 진단서</span></button>
+        <button role="tab" data-p="t7" id="navt7"><span class="tag">T7</span><span class="nm">회원관리<span class="navcount" id="pendcount" style="display:none">0</span></span></button>
       </div>
     </div>
     <div class="acctbadge">
-      <span class="pill" style="color:var(--accent); background:var(--accent-soft); border-color:var(--accent)">검증담당자 · 홍길동</span>
-      <p class="note">화면군 전환은 시연 편의 장치입니다. <a class="gohome" href="index.html">처음 화면</a>에서 수행기관·현장조사 화면군으로 이동할 수 있습니다.</p>
+      <span class="pill" id="acctpill" style="color:var(--accent); background:var(--accent-soft); border-color:var(--accent)">검증담당자 · 홍길동</span>
+      <p class="note">화면군 전환은 시연 편의 장치입니다. <a class="gohome" href="index.html">처음 화면</a>에서 수행기관·현장조사 화면군으로 이동할 수 있습니다. <button class="linkbtn" id="acctlogout">로그아웃</button></p>
     </div>
     <div class="railfoot">
       <button class="themebtn" id="themebtn">테마 전환</button>
@@ -610,12 +617,19 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       </div>
 
       <div class="card" style="margin-bottom:16px">
-        <header><h3>판정 분포</h3><span class="hint">경제 15개사 + 기술 32건 · T1 자동검증 기준</span></header>
+        <header><h3>운영현황 대시보드</h3><span class="hint">S-05 · 수집 현황 + 판정 분포 통합</span></header>
         <div class="cbody">
+          <div class="grid g3" style="margin-bottom:16px">
+            <div class="tile acc"><span class="lab">누적 응답</span><span class="val" id="ov-resp">0</span><span class="note">/ 30,309 과제 · T0 연동</span></div>
+            <div class="tile ok" id="ov-rate-tile"><span class="lab">응답률</span><span class="val" id="ov-rate">0<small>%</small></span><span class="note">목표 90%</span></div>
+            <div class="tile"><span class="lab">현장조사 완료</span><span class="val" id="ov-field">0</span><span class="note">앱 실시간 전송</span></div>
+          </div>
+          <div class="hr" style="margin-bottom:16px"></div>
           <div class="grid g2" style="align-items:center; gap:20px">
             <div id="donut" style="display:flex; justify-content:center"></div>
             <div id="donutlegend" class="stack" style="gap:9px"></div>
           </div>
+          <p class="note" style="margin-top:14px">수집 현황은 T0(실시간 수집) 탭의 시뮬레이션과 같은 값을 사용합니다. T0에서 “수집 시뮬레이션 실행”을 누르면 이 화면의 수치도 함께 갱신됩니다.</p>
         </div>
       </div>
 
@@ -1000,10 +1014,37 @@ pre.jsonbox{background:var(--surface-2); border:1px solid var(--line); border-ra
       </div>
       <div id="diagcard"></div>
     </section>
+
+    <!-- ══ T7 회원관리 ══ -->
+    <section class="panel" id="p-t7">
+      <div class="phead">
+        <div class="eyebrow">T7 · 계정 관리</div>
+        <h2>회원관리</h2>
+        <p class="sub">회원가입 신청을 검토하여 승인·반려하고, 등록된 계정을 관리한다. 계정 데이터는 이 브라우저에만 저장되는 시연용 데이터이다.</p>
+        <div class="cite"><b>안내</b> — 실제 서비스에서는 사업 담당자가 과제·기관 명단을 업로드하면 계정이 일괄 발급되는 방식이 기본이며(개발기획안 4장), 본 화면의 회원가입 신청은 시연 편의를 위한 자기등록 방식이다.</div>
+      </div>
+
+      <div class="grid g4" style="margin-bottom:14px">
+        <div class="tile hold"><span class="lab">승인 대기</span><span class="val" id="u-pending">0</span><span class="note">신규 가입 신청</span></div>
+        <div class="tile ok"><span class="lab">승인됨</span><span class="val" id="u-approved">0</span><span class="note">로그인 가능</span></div>
+        <div class="tile bad"><span class="lab">반려됨</span><span class="val" id="u-rejected">0</span><span class="note">로그인 불가</span></div>
+        <div class="tile"><span class="lab">전체 계정</span><span class="val" id="u-total">0</span><span class="note">관리자 포함</span></div>
+      </div>
+
+      <div class="card">
+        <header><h3>계정 목록</h3><span class="hint">아이디순</span></header>
+        <div class="tw"><table>
+          <thead><tr><th>기관명</th><th>담당자</th><th>아이디</th><th>사업자번호</th><th>역할</th><th>상태</th><th>가입일</th><th>처리</th></tr></thead>
+          <tbody id="userbody"></tbody>
+        </table></div>
+      </div>
+    </section>
   </div>
 </div>
 
+<script src="auth.js"></script>
 <script>
+PaceAuth.requireAuth('index.html');
 const PAPERS=[{"id":"P01","row":5,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"선천성기형 예방관리를 위한 임상 및 유전체정보 수집","pi":"박원순","ntis":"1776000056","instno":"2021-ER0706-00","perfno":"NIH-PAPER-0009","ptype":"01","journal":"Children","title":"A Preterm Infant with Feeding Aspiration Diagnosed with BOR Syndrome, Confirmed Case by Whole-Genome Sequencing and Structural Variant Calling","issn":"2227-9067","doi":"10.3390/children10010076","contrib":100.0,"first":"Da Hyeon Kim","co":"Misun Yang; Heui Seung Jo; JongHo Park; JaHyun Jang; Sunghwan Shin; SeHyung Son","vol":"10(1)","sci":"01","ps":"76","pe":null,"IF":2.4,"pub":"20230101","regno":""},{"id":"P02","row":6,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH-PAPER-0197","ptype":"01","journal":"Human genetics","title":"Frequency of actionable secondary findings in 7472 Korean genomes derived from the National Project of Bio Big Data pilot study","issn":"0340-6717","doi":"10.1007/s00439-023-02592-8","contrib":100.0,"first":"Youngjun Kim","co":"Jeong-Min Kim;Hye-Won Cho;Hyun-Young Park;Mi-Hyun Park","vol":"142(11)","sci":"01","ps":"1561","pe":"1569","IF":5.3,"pub":"20231101","regno":""},{"id":"P03","row":7,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"선천성기형 임상 및 유전체정보 수집을 통한 진단연구 기반 구축","pi":"장윤실","ntis":"1776000307","instno":"2023-ER0703-00","perfno":"NIH-PAPER-0305","ptype":"01","journal":"Children","title":"Optimal Protocols and Management of Clinical and Genomic Data Collection to Assist in the Early Diagnosis and Treatment of Multiple Congenital Anomalies","issn":"2227-9067","doi":"10.3390/children10101673","contrib":50.0,"first":"Heui Seung Jo","co":"Misun Yang; So Yoon Ahn; Se In Sung; Won Soon Park; Ja-Hyun Jang; Yun Sil Chang","vol":"10(10)","sci":"01","ps":"1673","pe":null,"IF":2.4,"pub":"20231010","regno":""},{"id":"P04","row":8,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","pi":"조진환","ntis":"1776000139","instno":"2020-ER6904-02","perfno":"NIH-PAPER-0374","ptype":"01","journal":"ANNALS OF LABORATORY MEDICINE","title":"The First Korean Case of VEXAS Syndrome Caused by a UBA1 Somatic Variant","issn":"2234-3806","doi":"10.3343/alm.2023.43.2.217","contrib":50.0,"first":"Jihoon G Youn","co":"Seungbok Lee; Sheehyun Kim; Man Jin Kim; Yoon Hwan Chang; Jin Kyun Park; Dong-Yeop Shin; Jangsup Moon","vol":"43(2)","sci":"01","ps":"217","pe":"220","IF":4.9,"pub":"20230301","regno":""},{"id":"P05","row":9,"year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"선천성기형 예방관리를 위한 임상 및 유전체정보 수집","pi":"박원순","ntis":"1776000056","instno":"2021-ER0706-00","perfno":"NIH-PAPER-0458","ptype":"01","journal":"Children","title":"Optimal Protocols and Management of Clinical and Genomic Data Collection to Assist in the Early Diagnosis and Treatment of Multiple Congenital Anomalies","issn":"2227-9067","doi":"10.3390/children10101673","contrib":50.0,"first":"Heui Seung Jo","co":"Misun Yang; So Yoon Ahn; Se In Sung; Won Soon Park; Ja-Hyun Jang; Yun Sil Chang","vol":"10(10)","sci":"01","ps":"1673","pe":null,"IF":2.4,"pub":"20231010","regno":""},{"id":"P06","row":10,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","task":"유전체연구기술개발과","pi":"조진환","ntis":"1776000030","instno":"2020-ER6904-01","perfno":"NIH-PAPER-366","ptype":"01","journal":"NEUROLOGY-GENETICS","title":"Late-Onset Ataxia-Telangiectasia Presenting With Dystonia and Tremor","issn":"2376-7839","doi":"10.1212/NXG.0000000000200141","contrib":100.0,"first":"Bora Jin","co":"Aryun Kim; Han-Joon Kim; Jangsup Moon; Jihoon G Yoon","vol":"10(2)","sci":"01","ps":"0","pe":null,"IF":3.6,"pub":"20240401","regno":null},{"id":"P07","row":11,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환자 진단 프로그램 운영 및 연구기반 구축","task":"유전체연구기술개발과","pi":"채종희","ntis":"1776000135","instno":"2021-ER0701-01","perfno":"NIH-PAPER-337","ptype":"01","journal":"NPJ GENOMIC MEDICINE","title":"Implementing genomic medicine in clinical practice for adults with undiagnosed rare diseases","issn":"2056-7944","doi":"10.1038/s41525-024-00449-1","contrib":50.0,"first":"Jong Hyeon Ahn","co":"Han-Joon Kim; Ja-Hyun Jang; Jaeso Cho; Jangsup Moon; Jihoon G Yoon; Jin Whan Cho; Jinyoung Youn; Jong-Hee Chae; Kon Chu; Man Jin Kim; Sang Kun Lee; Seungbok Lee; Sheehyun Kim; Soo Yeon Kim; Soon-Tae Lee","vol":"9(1)","sci":"01","ps":"0","pe":null,"IF":4.7,"pub":"20241128","regno":null},{"id":"P08","row":12,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","task":"유전체연구기술개발과","pi":"조진환","ntis":"1776000030","instno":"2020-ER6904-01","perfno":"NIH-PAPER-336","ptype":"01","journal":"NPJ GENOMIC MEDICINE","title":"Implementing genomic medicine in clinical practice for adults with undiagnosed rare diseases","issn":"2056-7944","doi":"10.1038/s41525-024-00449-1","contrib":50.0,"first":"Jong Hyeon Ahn","co":"Han-Joon Kim; Ja-Hyun Jang; Jaeso Cho; Jangsup Moon; Jihoon G Yoon; Jin Whan Cho; Jinyoung Youn; Jong-Hee Chae; Kon Chu; Man Jin Kim; Sang Kun Lee; Seungbok Lee; Sheehyun Kim; Soo Yeon Kim; Soon-Tae Lee","vol":"9(1)","sci":"01","ps":"0","pe":null,"IF":4.7,"pub":"20241128","regno":null},{"id":"P09","row":13,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH-PAPER-257","ptype":"01","journal":"BMC MEDICAL GENOMICS","title":"Exploring novel MYH7 gene variants using in silico analyses in Korean patients with cardiomyopathy","issn":"1755-8794","doi":"10.1186/s12920-024-02000-8","contrib":100.0,"first":"Oc-Hee Kim","co":"Beom Hee Lee; Bong-Jo Kim; Hyun-Young Park; Jihyun Kim; Mi-Hyun Park; Soyoung Lee; Youngjun Kim","vol":"17(1)","sci":"01","ps":"225","pe":null,"IF":2.1,"pub":"20240905","regno":null},{"id":"P10","row":14,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH-PAPER-168","ptype":"03","journal":"Journal of Korean Medical Science","title":"Diagnostic Utility of Whole Genome Sequencing After Negative Karyotyping/Chromosomal Microarray in Infants Born With Multiple Congenital Anomalies","issn":"1011-8934","doi":"10.3346/jkms.2024.39.e250","contrib":10.0,"first":"Misun Yang","co":"Heui Seung Jo; Hye-Won Cho; Hyun-Young Park; Ja-Hyun Jang; Jee Ah Kim; Jeong-Min Kim; Jong-Ho Park; Mi-Hyun Park; Se In Sung; So Yoon Ahn; Won Soon Park; Yun Sil Chang","vol":"39(36)","sci":"01","ps":"e250","pe":null,"IF":3.0,"pub":"20240923","regno":null},{"id":"P11","row":15,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"미진단 희귀질환 유전적 특성 규명을 통한 진단 및 치료기술 기반 확립","task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000156","instno":"2022-NI-060-00","perfno":"NIH-PAPER-167","ptype":"03","journal":"Journal of Korean Medical Science","title":"Diagnostic Utility of Whole Genome Sequencing After Negative Karyotyping/Chromosomal Microarray in Infants Born With Multiple Congenital Anomalies","issn":"1011-8934","doi":"10.3346/jkms.2024.39.e250","contrib":10.0,"first":"Misun Yang","co":"Heui Seung Jo; Hye-Won Cho; Hyun-Young Park; Ja-Hyun Jang; Jee Ah Kim; Jeong-Min Kim; Jong-Ho Park; Mi-Hyun Park; Se In Sung; So Yoon Ahn; Won Soon Park; Yun Sil Chang","vol":"39(36)","sci":"01","ps":"e250","pe":null,"IF":3.0,"pub":"20240923","regno":null},{"id":"P12","row":16,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"선천성기형 예방관리를 위한 임상 및 유전체정보 수집","task":"유전체연구기술개발과","pi":"박원순","ntis":"1776000056","instno":"2021-ER0706-00","perfno":"NIH-PAPER-164","ptype":"03","journal":"Journal of Korean Medical Science","title":"Diagnostic Utility of Whole Genome Sequencing After Negative Karyotyping/Chromosomal Microarray in Infants Born With Multiple Congenital Anomalies","issn":"1011-8934","doi":"10.3346/jkms.2024.39.e250","contrib":40.0,"first":"Misun Yang","co":"Heui Seung Jo; Hye-Won Cho; Hyun-Young Park; Ja-Hyun Jang; Jee Ah Kim; Jeong-Min Kim; Jong-Ho Park; Mi-Hyun Park; Se In Sung; So Yoon Ahn; Won Soon Park; Yun Sil Chang","vol":"39(36)","sci":"01","ps":"e250","pe":null,"IF":3.0,"pub":"20240923","regno":null},{"id":"P13","row":17,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"한국인 유전성망막질환의 돌연변이 영향지도 구축 연구","task":"유전체연구기술개발과","pi":"한진우","ntis":"1465030653","instno":"2018-ER6902-02","perfno":"NIH-PAPER-119","ptype":"01","journal":"JAMA NETWORK OPEN","title":"Clinician-Driven Reanalysis of Exome Sequencing Data From Patients With Inherited Retinal Diseases","issn":"2574-3805","doi":"10.1001/jamanetworkopen.2024.14198","contrib":100.0,"first":"Dongheon Surl","co":"Christopher Seungkyu Lee; Dongju Won; Hyun Taek Lim; Jinu Han; Jong Rak Choi; Junwon Lee; Kinga M Bujakowska; Min Kim; Riccardo Sangermano; Saeam Shin; Seung Ah Chung; Seung-Tae Lee; Suk Ho Byeon; Sung Soo Kim; Won Kyung Song","vol":"7(5)","sci":"01","ps":"0","pe":null,"IF":10.5,"pub":"20240531","regno":null},{"id":"P14","row":18,"year":2024,"biz":"국가보건의료연구인프라구축","sub":"성인의 미진단 희귀질환 진단연구를 위한 임상협력연구 체계 구축 및 운영","task":"유전체연구기술개발과","pi":"조진환","ntis":"1776000030","instno":"2020-ER6904-01","perfno":"NIH-PAPER-079","ptype":"01","journal":"EPILEPSIA OPEN","title":"Broadening the scope of multigene panel analysis for adult epilepsy patients","issn":"2470-9239","doi":"10.1002/epi4.12993","contrib":100.0,"first":"Seungbok Lee","co":"Byung Chan Lim; Jangsup Moon; Jihoon G. Yoon; Ki Hurn So; Ki Joong Kim; Kon Chu; Manjin Kim; Mi-Kyoung Kang; Riyul Jang; Sang Kun Lee; Se Song Jang; Seung Tae Baek; Sheehyun Kim; Yong Woo Shin","vol":"9(4)","sci":"01","ps":"1538","pe":"1549","IF":2.8,"pub":"20240801","regno":null},{"id":"P15","row":19,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"2770000508","instno":"2025-ER0701-00","perfno":"NIH2025-PAPER-024","ptype":"01","journal":"FRONTIERS IN GENETICS","title":"Advancing artificial intelligence ethics in health and genomics: lessons from a public survey in South Korea","issn":"1664-8021","doi":"10.3389/fgene.2025.1563544","contrib":100.0,"first":"Jungim Lee","co":"Hannah Kim; Wonhoo Yoo","vol":"16","sci":"01","ps":"1","pe":null,"IF":2.8,"pub":"20250709","regno":null},{"id":"P16","row":20,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000511","instno":"2025-NI-003-00","perfno":"NIH2025-PAPER-117","ptype":"01","journal":"CLINICAL AND TRANSLATIONAL MEDICINE","title":"Clinical implementation of a multidisciplinary pipeline for genome sequencing in rare diseases: A prospective, multicenter, observational cohort study","issn":"2001-1326","doi":"10.1002/ctm2.70401","contrib":50.0,"first":"Soojin Hwang","co":"Baik-Lin Eun; Beom Hee Lee; Dohyung Kim; Dongseok Moon; Eugu Kang; Go Hun Seo; Gu-Hwan Kim; Han Wool Kim; Hoon Seok Kim; Hyun-Young Park; In Hee Choi; Ji Young Oh; Jihye Kim; Jun Hong Park; Jung Hye Byeon; Kyoung Bo Kim; Mi-Hyun Park; Myungshin Kim; Oc-Hee Kim; Rin Khang; Seo Yeon Yang; Seokhui Jang; Seung-Woo Ryue; Soyoung Lee; Su Min Ji; Yongjun Song; Yoo Kyoung Choi; Yoo-Mi Kim","vol":"15(7)","sci":"01","ps":"1","pe":null,"IF":6.8,"pub":"20250710","regno":null},{"id":"P17","row":21,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"1776000548","instno":"2023-ER0705-00","perfno":"NIH2025-PAPER-118","ptype":"01","journal":"CLINICAL AND TRANSLATIONAL MEDICINE","title":"Clinical implementation of a multidisciplinary pipeline for genome sequencing in rare diseases: A prospective, multicenter, observational cohort study","issn":"2001-1326","doi":"10.1002/ctm2.70401","contrib":50.0,"first":"Soojin Hwang","co":"Baik-Lin Eun; Beom Hee Lee; Dohyung Kim; Dongseok Moon; Eugu Kang; Go Hun Seo; Gu-Hwan Kim; Han Wool Kim; Hoon Seok Kim; Hyun-Young Park; In Hee Choi; Ji Young Oh; Jihye Kim; Jun Hong Park; Jung Hye Byeon; Kyoung Bo Kim; Mi-Hyun Park; Myungshin Kim; Oc-Hee Kim; Rin Khang; Seo Yeon Yang; Seokhui Jang; Seung-Woo Ryue; Soyoung Lee; Su Min Ji; Yongjun Song; Yoo Kyoung Choi; Yoo-Mi Kim","vol":"15(7)","sci":"01","ps":"1","pe":null,"IF":6.8,"pub":"20250710","regno":null},{"id":"P18","row":22,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000214","instno":"2022-NI-060-02","perfno":"NIH2025-PAPER-401","ptype":"01","journal":"ORPHANET JOURNAL OF RARE DISEASES","title":"Identification of novel MYO19 variants in neonatal hypertrophic cardiomyopathy: a familial analysis revealing oligogenic contributors to disease severity","issn":"1750-1172","doi":"10.1186/s13023-025-03871-5","contrib":60.0,"first":"Hye？Won Cho","co":"Dong Mun Shin; Heui \nSeung Jo; Hyeseon Kim†; Hyun？Young Park; Ja？Hyun Jang; Jeong？Min Kim; Misun Yang; Mi？Ae Jang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"20(1)","sci":"01","ps":"1","pe":null,"IF":3.5,"pub":"20250709","regno":null},{"id":"P19","row":23,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000511","instno":"2025-NI-003-00","perfno":"NIH2025-PAPER-402","ptype":"01","journal":"ORPHANET JOURNAL OF RARE DISEASES","title":"Identification of novel MYO19 variants in neonatal hypertrophic cardiomyopathy: a familial analysis revealing oligogenic contributors to disease severity","issn":"1750-1172","doi":"10.1186/s13023-025-03871-5","contrib":20.0,"first":"Hye？Won Cho","co":"Dong Mun Shin; Heui \nSeung Jo; Hyeseon Kim†; Hyun？Young Park; Ja？Hyun Jang; Jeong？Min Kim; Misun Yang; Mi？Ae Jang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"20(1)","sci":"01","ps":"1","pe":null,"IF":3.5,"pub":"20250709","regno":null},{"id":"P20","row":24,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"장윤실","ntis":"2770000510","instno":"2025-ER0705-00","perfno":"NIH2025-PAPER-764","ptype":"03","journal":"Neonatal Medicine","title":"Timely Diagnosis of PAX2-Related Disorder by Rapid Whole-Genome Sequencing in a Critically Ill Neonate with Bilateral Renal Hypoplasia: A Three-Generation Case Report","issn":"2287-9803","doi":"10.5385/nm.2025.32.2.97","contrib":100.0,"first":"Jinhee Kim","co":"Go Hun Seo; Hyeseon Kim; Mi-Ae Jang; Misun Yang; Se In Sung; So Yoon Ahn; Sohyun Lee; Yun Sil Chang","vol":"32(2)","sci":"02","ps":"97","pe":"101","IF":null,"pub":"20251130","regno":null},{"id":"P21","row":25,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000214","instno":"2022-NI-060-02","perfno":"NIH2025-PAPER-774","ptype":"01","journal":"RESPIRATORY RESEARCH","title":"Two novel genetic variants in the WFDC2 gene from patients with bronchiectasis","issn":"1465-9921","doi":"10.1186/s12931-025-03183-z","contrib":40.0,"first":"Jeong-Min Kim","co":"Beom Hee Lee; Cheonghwa Lee; Dong Mun Shin; Eun Lee; Hye-Won Cho; Hyun-Young Park; Jong-Won Kim; Mi-Hyun Park; Myungshin Kim; Soojin Hwang; Youngjun Kim","vol":"26(1)","sci":"01","ps":"1","pe":null,"IF":5.0,"pub":"20250320","regno":null},{"id":"P22","row":26,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"2770000511","instno":"2025-NI-003-00","perfno":"NIH2025-PAPER-775","ptype":"01","journal":"RESPIRATORY RESEARCH","title":"Two novel genetic variants in the WFDC2 gene from patients with bronchiectasis","issn":"1465-9921","doi":"10.1186/s12931-025-03183-z","contrib":50.0,"first":"Jeong-Min Kim","co":"Beom Hee Lee; Cheonghwa Lee; Dong Mun Shin; Eun Lee; Hye-Won Cho; Hyun-Young Park; Jong-Won Kim; Mi-Hyun Park; Myungshin Kim; Soojin Hwang; Youngjun Kim","vol":"26(1)","sci":"01","ps":"1","pe":null,"IF":5.0,"pub":"20250320","regno":null},{"id":"P23","row":27,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000156","instno":"2022-NI-060-00","perfno":"NIH2025-PAPER-776","ptype":"01","journal":"HUMAN GENOMICS","title":"Uncovering potential causal genes for undiagnosed congenital anomalies using an in-house pipeline for trio-based whole-genome sequencing","issn":"1473-9542","doi":"10.1186/s40246-024-00709-2","contrib":50.0,"first":"Jeong？Min Kim","co":"Dong Mun Shin; Gang？Hee Lee; Heui Seung Jo; Hyeji Lee; Hye？Won Cho; Hyun？Young Park; Ja？Hyun Jang; Jihyun Kim; Joon？Yong An; Misun Yang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"19(1)","sci":"01","ps":"1","pe":null,"IF":3.8,"pub":"20250106","regno":null},{"id":"P24","row":28,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"박미현","ntis":"1776000306","instno":"2022-NI-060-01","perfno":"NIH2025-PAPER-777","ptype":"01","journal":"HUMAN GENOMICS","title":"Uncovering potential causal genes for undiagnosed congenital anomalies using an in-house pipeline for trio-based whole-genome sequencing","issn":"1473-9542","doi":"10.1186/s40246-024-00709-2","contrib":50.0,"first":"Jeong？Min Kim","co":"Dong Mun Shin; Gang？Hee Lee; Heui Seung Jo; Hyeji Lee; Hye？Won Cho; Hyun？Young Park; Ja？Hyun Jang; Jihyun Kim; Joon？Yong An; Misun Yang; Mi？Hyun Park; Oc？Hee Kim; Yun Sil Chang","vol":"19(1)","sci":"01","ps":"1","pe":null,"IF":3.8,"pub":"20250106","regno":null},{"id":"P25","row":29,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"서을주","ntis":"2770000027","instno":"2024-ER0701-00","perfno":"NIH2025-PAPER-812","ptype":"03","journal":"한국의료법학회지","title":"임상 전장유전체 분석 이차발견 결과 반환: 법·윤리적 제언","issn":"1598-9178","doi":"10.17215/kaml.2025.6.33.1.265","contrib":50.0,"first":"Lee Junghyun","co":"Cha Hyunjae; Kim Hannah; Seo Eul Ju","vol":"33(1)","sci":"02","ps":"265","pe":"290","IF":1.27,"pub":"20250601","regno":null},{"id":"P26","row":30,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"2770000508","instno":"2025-ER0701-00","perfno":"NIH2025-PAPER-813","ptype":"03","journal":"한국의료법학회지","title":"임상 전장유전체 분석 이차발견 결과 반환: 법·윤리적 제언","issn":"1598-9178","doi":"10.17215/kaml.2025.6.33.1.265","contrib":50.0,"first":"Lee Junghyun","co":"Cha Hyunjae; Kim Hannah; Seo Eul Ju","vol":"33(1)","sci":"02","ps":"265","pe":"290","IF":1.27,"pub":"20250601","regno":null},{"id":"P27","row":31,"year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":"유전체연구기술개발과","pi":"이범희","ntis":"2770000508","instno":"2025-ER0701-00","perfno":"NIH2025-PAPER-814","ptype":"03","journal":"Korean J Med Ethics","title":"전장유전체 분석(Whole Genome Sequencing, WGS) 기반 신생아 선별검사 동의 체계 개발을 위한 체계적 문헌고찰","issn":"2005-8284","doi":"10.35301/ksme.2025.28.3.207","contrib":100.0,"first":"박현정","co":"김소윤; 김준혁; 김한나; 유원후; 차현재","vol":"28(3)","sci":"02","ps":"207","pe":"228","IF":1.15,"pub":"20250930","regno":null}];
 const PATENTS=[{"id":"T01","year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"성인의 미진단 희귀질환 진단 연구를 위한 임상협력연구 체계 구축 및 운영","pi":"조진환","kind":"01","no":"10-2023-0197358","name":"운동실조증의 진단을 위한 정보 제공 방법","date":"20231229","note":null},{"id":"T02","year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"미진단 희귀질환 기능연구 코어 구축 및 운영","pi":null,"kind":"02","no":"10-2548371-0000","name":"제브라피쉬 치어 행동실험 및 라이브 이미징용 베드 툴","date":20230622,"note":"IRIS 미등록"},{"id":"T03","year":2023,"biz":"국가보건의료연구인프라구축(R&D)","sub":"희귀질환연구인프라구축","task":"미진단 희귀질환 기능연구 코어 구축 및 운영","pi":null,"kind":"02","no":"10-2580852-0000","name":"발리다마이신 A를 포함하는 뇌전증 완화 및 치료용 조성물","date":20230915,"note":"IRIS 미등록"},{"id":"T04","year":2024,"biz":"국가보건의료연구인프라구축","sub":"유전질환 임상-유전체 연구자원 수집 및 분석을 통한 진단기술 고도화","task":null,"pi":"이범희","kind":"01","no":"10-2024-0054665","name":"대규모 언어 모델과 자기 지도 학습을 이용한 증상 유사도 측정 시스템","date":"20240424","note":null},{"id":"T05","year":2025,"biz":"국가보건의료연구인프라구축","sub":null,"task":null,"pi":"이범희","kind":"02","no":"10-2807673","name":"대규모 언어 모델과 자기 지도 학습을 이용한 증상 유사도 측정 시스템","date":"20250509","note":"IRIS 미등록"}];
 const JCR={"Children":["PEDIATRICS",130,48],"Human genetics":["GENETICS & HEREDITY",191,28],"ANNALS OF LABORATORY MEDICINE":["MEDICAL LABORATORY TECHNOLOGY",30,4],"NEUROLOGY-GENETICS":["CLINICAL NEUROLOGY",279,74],"NPJ GENOMIC MEDICINE":["GENETICS & HEREDITY",191,32],"BMC MEDICAL GENOMICS":["GENETICS & HEREDITY",191,96],"Journal of Korean Medical Science":["MEDICINE, GENERAL & INTERNAL",325,92],"JAMA NETWORK OPEN":["MEDICINE, GENERAL & INTERNAL",325,9],"EPILEPSIA OPEN":["CLINICAL NEUROLOGY",279,104],"FRONTIERS IN GENETICS":["GENETICS & HEREDITY",191,66],"CLINICAL AND TRANSLATIONAL MEDICINE":["MEDICINE, RESEARCH & EXPERIMENTAL",182,11],"ORPHANET JOURNAL OF RARE DISEASES":["MEDICINE, RESEARCH & EXPERIMENTAL",182,48],"RESPIRATORY RESEARCH":["RESPIRATORY SYSTEM",68,8],"HUMAN GENOMICS":["GENETICS & HEREDITY",191,44]};
@@ -1175,8 +1216,55 @@ const SEVNM = {ok:'🟢 자동확인', hold:'🟡 확인필요', bad:'🟡 확�
 $$('.nav button').forEach(b => b.onclick = () => {
   $$('.nav button').forEach(x => x.setAttribute('aria-selected', x === b));
   $$('.panel').forEach(p => p.classList.toggle('on', p.id === 'p-' + b.dataset.p));
+  if (b.dataset.p === 't7') renderUsers();
   window.scrollTo(0, 0);
 });
+
+/* ══════════ 로그인 계정 표시 · 회원관리(T7) ══════════ */
+const CURUSER = PaceAuth.currentUser() || {org:'', bizno:'', name:'', role:'guest'};
+(function initAccount() {
+  const roleNm = PaceAuth.ROLE_NM[CURUSER.role] || CURUSER.role;
+  $('#acctpill').textContent = `${roleNm} · ${CURUSER.name}`;
+  if (CURUSER.role !== 'admin') $('#navt7').style.display = 'none';
+  $('#acctlogout').onclick = () => { PaceAuth.logout(); location.href = 'index.html'; };
+  updatePendingBadge();
+})();
+function updatePendingBadge() {
+  const n = PaceAuth.listUsers().filter(u => u.status === 'pending').length;
+  const el = $('#pendcount');
+  el.textContent = n; el.style.display = n ? 'inline-flex' : 'none';
+}
+function renderUsers() {
+  const users = PaceAuth.listUsers().slice().sort((a, b) => a.username.localeCompare(b.username));
+  $('#u-pending').textContent = users.filter(u => u.status === 'pending').length;
+  $('#u-approved').textContent = users.filter(u => u.status === 'approved').length;
+  $('#u-rejected').textContent = users.filter(u => u.status === 'rejected').length;
+  $('#u-total').textContent = users.length;
+  const stNm = {pending:'대기', approved:'승인됨', rejected:'반려됨'};
+  const stCls = {pending:'v-hold', approved:'v-ok', rejected:'v-bad'};
+  $('#userbody').innerHTML = users.map(u => `
+    <tr style="cursor:default">
+      <td>${esc(u.org)}</td>
+      <td>${esc(u.name)}</td>
+      <td class="mono">${esc(u.username)}</td>
+      <td class="mono" style="font-size:11px">${esc(u.bizno || '—')}</td>
+      <td>${esc(PaceAuth.ROLE_NM[u.role] || u.role)}</td>
+      <td><span class="pill ${stCls[u.status]}">${stNm[u.status]}</span></td>
+      <td class="mono" style="font-size:11px">${esc(u.createdAt)}</td>
+      <td>${u.role === 'admin' ? '<span style="color:var(--ink-4); font-size:11.5px">관리자</span>' : `
+        <div style="display:flex; gap:6px; flex-wrap:wrap">
+          ${u.status !== 'approved' ? `<button class="btn sm" data-approve="${u.id}">승인</button>` : ''}
+          ${u.status !== 'rejected' ? `<button class="btn sm ghost" data-reject="${u.id}">반려</button>` : ''}
+          <button class="btn sm grey" data-deluser="${u.id}">삭제</button>
+        </div>`}</td>
+    </tr>`).join('');
+  $$('[data-approve]').forEach(b => b.onclick = () => { PaceAuth.setStatus(b.dataset.approve, 'approved'); renderUsers(); updatePendingBadge(); });
+  $$('[data-reject]').forEach(b => b.onclick = () => { PaceAuth.setStatus(b.dataset.reject, 'rejected'); renderUsers(); updatePendingBadge(); });
+  $$('[data-deluser]').forEach(b => b.onclick = () => {
+    if (!confirm('이 계정을 삭제하시겠습니까?')) return;
+    PaceAuth.removeUser(b.dataset.deluser); renderUsers(); updatePendingBadge();
+  });
+}
 
 /* ══════════ 테마 ══════════ */
 $('#themebtn').onclick = () => {
@@ -2047,6 +2135,11 @@ function paintCollect() {
   $('#c-queue').textContent = nf(Math.max(0, simQueue));
   $('#c-field').textContent = nf(simField);
   renderBiz();
+  // 개요(S-05 운영현황 대시보드)에도 같은 값을 반영 — 대시보드 통합
+  $('#ov-resp').textContent = nf(r);
+  $('#ov-rate').innerHTML = pc.toFixed(1) + '<small>%</small>';
+  $('#ov-rate-tile').className = 'tile ' + (pc >= 90 ? 'ok' : 'hold');
+  $('#ov-field').textContent = nf(simField);
 }
 paintCollect();
 
