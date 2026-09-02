@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PACE 성과입력 포털</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -258,21 +258,57 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
   font-size:12.5px; box-shadow:0 10px 30px -12px rgba(0,0,0,.5); display:none; max-width:90vw;
 }
 .toast.on{display:block}
+
+/* ── 로그인 게이트 ──────────────────────── */
+.acctcard{cursor:pointer; transition:border-color .12s}
+.acctcard:hover{border-color:var(--accent)}
+.lockpill{margin-left:4px}
+
+/* ── 5대 유형 탭 ─────────────────────────── */
+.typetabs{display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; scrollbar-width:none}
+.typetabs::-webkit-scrollbar{display:none}
+.typetab{
+  flex:none; padding:8px 15px; border:1px solid var(--line); border-radius:999px;
+  font-size:12.5px; color:var(--ink-2); background:var(--surface); white-space:nowrap;
+}
+.typetab.on{background:var(--accent); color:var(--accent-on); border-color:var(--accent); font-weight:600}
+.typepanel{display:none}
+.typepanel.on{display:block}
+
+/* ── 파일 업로드 ─────────────────────────── */
+.filerow{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.filerow input[type=file]{display:none}
+.masknote{display:flex; gap:7px; align-items:flex-start; font-size:11.5px; color:var(--ink-3); padding:8px 10px; background:var(--surface-2); border-radius:var(--r); margin-bottom:10px}
 </style>
 </head>
 <body>
+
+
 <div class="top"><div class="topin">
   <div class="brand"><a class="gohome" href="index.html" title="처음 화면으로 이동"><img class="tenopa-mark" src="data:image/png;base64,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" alt="TENOPA"><span class="div"></span><b>PACE</b><span>2026년 중소기업기술개발사업 성과조사</span></a></div>
-  <div class="who">
+  <div class="who" id="who-guest"><span class="pill p-idle">로그인이 필요합니다</span></div>
+  <div class="who" id="who-user" style="display:none">
     <span><b>㈜퓨처센싱</b> · 사업자 <span class="mono">312-81-••••8</span></span>
     <span class="dday" id="dday">제출마감 D-12</span>
     <span class="savedot" id="savedot">자동저장 대기</span>
+    <button class="btn grey sm" id="logoutbtn">로그아웃</button>
   </div>
 </div></div>
 
-<div class="pstrip"><div class="pin"><div class="steps" id="steps"></div></div></div>
+<div class="wrap" id="loginwrap" style="display:none">
+  <main style="grid-column:1/-1; max-width:640px; margin:0 auto; width:100%">
+    <div class="phead">
+      <div class="eyebrow">Step 0 · 로그인</div>
+      <h2>기업 계정을 선택해 주세요</h2>
+      <p class="sub">국세청·관세청·건강보험공단 연동 시연을 위해 표본 기업 계정으로 로그인합니다. 실제 서비스에서는 사업자 인증서 기반 개별 계정으로 대체됩니다.</p>
+    </div>
+    <div class="stack" id="loginlist"></div>
+  </main>
+</div>
 
-<div class="wrap">
+<div class="pstrip" id="pstrip"><div class="pin"><div class="steps" id="steps"></div></div></div>
+
+<div class="wrap" id="mainwrap">
   <main>
     <!-- ══ 1 과제확인 ══ -->
     <section class="view on" id="v-0">
@@ -292,114 +328,169 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
       </div>
     </section>
 
-    <!-- ══ 2 경제적 성과 ══ -->
+    <!-- ══ 2 성과입력(5대 유형) ══ -->
     <section class="view" id="v-1">
       <div class="phead">
-        <div class="eyebrow">Step 2 · 경제적 성과</div>
-        <h2>금액은 직접 입력하지 않습니다</h2>
-        <p class="sub">국세청·관세청·건강보험공단 자료를 불러와 해당 건만 고르시면 금액이 자동으로 계산됩니다. 공급가액과 합계금액을 혼동하거나 환율을 잘못 적용할 일이 없습니다.</p>
+        <div class="eyebrow">Step 2 · 성과입력</div>
+        <h2>5대 유형별로 성과를 입력합니다</h2>
+        <p class="sub">경제적·기술적 성과는 외부기관 자료와 자동으로 대조됩니다. 나머지 유형은 사업 확대 단계에서 순차 지원됩니다.</p>
       </div>
 
-      <div class="stack">
-        <!-- 매출 -->
-        <div class="card">
-          <div class="ch"><h3>과제매출액</h3><span class="hint">전자세금계산서 · 공급가액 기준</span></div>
-          <div class="cb stack">
-            <div class="conn">
-              <div class="cr">
-                <div>
-                  <div class="ct">국세청 전자세금계산서 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
-                  <div class="cd">2026.1.1~12.31 발행분을 불러옵니다. 과제로 개발한 제품·서비스의 매출 건만 선택하세요.</div>
-                </div>
-                <button class="btn sm" id="pull-tax">발행 내역 불러오기</button>
-              </div>
-              <div class="pulse" id="pulse-tax" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
-            </div>
-            <div id="taxarea"></div>
-          </div>
-        </div>
+      <div class="typetabs" id="typetabs" role="tablist"></div>
 
-        <!-- 수출 -->
-        <div class="card">
-          <div class="ch"><h3>과제수출액</h3><span class="hint">수출신고필증 · 신고일 기준환율</span></div>
-          <div class="cb stack">
-            <div class="conn">
-              <div class="cr">
-                <div>
-                  <div class="ct">관세청 UNI-PASS 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
-                  <div class="cd">원화 환산은 각 필증의 <b>신고일 기준환율</b>로 건별 자동 계산됩니다.</div>
-                </div>
-                <button class="btn sm" id="pull-exp">필증 불러오기</button>
-              </div>
-              <div class="pulse" id="pulse-exp" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
-            </div>
-            <div id="exparea"></div>
+      <!-- 과학적 (스텁) -->
+      <div class="typepanel" data-type="sci">
+        <div class="card"><div class="cb">
+          <div class="flag f-info"><span class="fi">i</span>
+            <div><b>이번 단계 미포함</b>
+            <span class="sub">생명자원·화합물 등록, 비SCI 논문, 기술요약정보·보고서 원문 항목은 이번 단계에 포함되지 않습니다. SCI 논문은 <b>기술적 성과</b> 탭에서 입력합니다.</span></div>
           </div>
-        </div>
+        </div></div>
+      </div>
 
-        <!-- 고용 -->
-        <div class="card">
-          <div class="ch"><h3>신규고용</h3><span class="hint">4대 사회보험 가입자 명부 · 순증 기준</span></div>
-          <div class="cb stack">
-            <div class="conn">
-              <div class="cr">
-                <div>
-                  <div class="ct">국민건강보험공단 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
-                  <div class="cd">신규고용은 <b>순증(자격취득 − 자격상실)</b> 기준입니다. 퇴사자가 자동 반영됩니다.</div>
+      <!-- 기술적 -->
+      <div class="typepanel" data-type="tech">
+        <div class="stack">
+          <div class="card">
+            <div class="ch"><h3>논문</h3><span class="hint">DOI 자동 조회 · 기여율 합계 검증</span></div>
+            <div class="cb stack">
+              <div class="field">
+                <label for="doi">DOI</label>
+                <div style="display:flex; gap:8px">
+                  <input type="text" id="doi" placeholder="10.3390/children10101673" autocomplete="off">
+                  <button class="btn sm" id="doilookup" style="flex:none">조회</button>
                 </div>
-                <button class="btn sm" id="pull-ins">가입자 명부 불러오기</button>
+                <span class="fh">Crossref에서 학술지명·ISSN·SCI(E) 구분·임팩트팩터를 가져옵니다. <span class="badge sim">시뮬레이션</span></span>
               </div>
-              <div class="pulse" id="pulse-ins" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+              <div id="doiresult"></div>
             </div>
-            <div id="insarea"></div>
+          </div>
+          <div class="card">
+            <div class="ch"><h3>특허</h3><span class="hint">KIPRIS 대조 · 번호 형식 검증</span></div>
+            <div class="cb stack">
+              <div class="field">
+                <label for="pat">출원·등록번호</label>
+                <div style="display:flex; gap:8px">
+                  <input type="text" id="pat" placeholder="10-2026-0197358" autocomplete="off">
+                  <button class="btn sm" id="patlookup" style="flex:none">조회</button>
+                </div>
+                <span class="fh">출원번호는 <span class="mono">10-YYYY-NNNNNNN</span>, 등록번호는 <span class="mono">10-NNNNNNN-NNNN</span> 형식입니다.</span>
+              </div>
+              <div id="patresult"></div>
+              <div class="hr" style="margin:2px 0"></div>
+              <div class="field">
+                <label for="patfile">특허등록증 업로드 (선택)</label>
+                <div class="filerow">
+                  <input type="file" id="patfile" accept="application/pdf,image/*">
+                  <button class="btn sm ghost" id="patfilebtn">등록증 파일 선택</button>
+                  <span class="fh" style="flex:1 1 260px">등록증 PDF를 올리면 OCR로 등록번호를 자동 추출한 뒤 <b>KIPRIS</b> 조회까지 이어서 진행합니다. <span class="badge sim">시뮬레이션</span></span>
+                </div>
+                <div class="pulse" id="pulse-patocr" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+                <div id="patupresult"></div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+
+      <!-- 경제적 -->
+      <div class="typepanel" data-type="econ">
+        <div class="stack">
+          <div class="card" id="bizcard">
+            <div class="ch"><h3>사업화현황</h3><span class="hint">F2-08 · 경제적 성과 상위 레코드</span></div>
+            <div class="cb" id="bizbody"></div>
+          </div>
+
+          <!-- 매출 -->
+          <div class="card">
+            <div class="ch"><h3>과제매출액</h3><span class="hint">전자세금계산서 · 공급가액 기준</span><span class="pill p-hold lockpill" id="lockpill-tax" style="display:none">🔒 잠김</span></div>
+            <div class="cb stack">
+              <div class="conn">
+                <div class="cr">
+                  <div>
+                    <div class="ct">국세청 전자세금계산서 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="cd">2026.1.1~12.31 발행분을 불러옵니다. 과제로 개발한 제품·서비스의 매출 건만 선택하세요.</div>
+                  </div>
+                  <button class="btn sm" id="pull-tax">발행 내역 불러오기</button>
+                </div>
+                <div class="pulse" id="pulse-tax" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+              </div>
+              <div id="taxarea"></div>
+            </div>
+          </div>
+
+          <!-- 수출 -->
+          <div class="card">
+            <div class="ch"><h3>과제수출액</h3><span class="hint">수출신고필증 · 신고일 기준환율</span><span class="pill p-hold lockpill" id="lockpill-exp" style="display:none">🔒 잠김</span></div>
+            <div class="cb stack">
+              <div class="conn">
+                <div class="cr">
+                  <div>
+                    <div class="ct">관세청 UNI-PASS 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="cd">원화 환산은 각 필증의 <b>신고일 기준환율</b>로 건별 자동 계산됩니다.</div>
+                  </div>
+                  <button class="btn sm" id="pull-exp">필증 불러오기</button>
+                </div>
+                <div class="pulse" id="pulse-exp" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+              </div>
+              <div id="exparea"></div>
+            </div>
+          </div>
+
+          <!-- 고용 -->
+          <div class="card">
+            <div class="ch"><h3>신규고용</h3><span class="hint">4대 사회보험 가입자 명부 · 순증 기준</span><span class="pill p-hold lockpill" id="lockpill-ins" style="display:none">🔒 잠김</span></div>
+            <div class="cb stack">
+              <div class="conn">
+                <div class="cr">
+                  <div>
+                    <div class="ct">국민건강보험공단 연동 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="cd">신규고용은 <b>순증(자격취득 − 자격상실)</b> 기준입니다. 퇴사자가 자동 반영됩니다.</div>
+                  </div>
+                  <button class="btn sm" id="pull-ins">가입자 명부 불러오기</button>
+                </div>
+                <div class="pulse" id="pulse-ins" style="display:none"><div class="pbar"><i></i></div><div class="plog"></div></div>
+              </div>
+              <div class="conn">
+                <div class="cr">
+                  <div>
+                    <div class="ct">가입자 명부 파일 업로드 <span class="badge sim" style="margin-left:4px">시뮬레이션</span></div>
+                    <div class="cd">공단 연동이 어려운 경우 명부 파일(PDF·엑셀)을 올리면 동일하게 자동 판독됩니다. 주민등록번호는 업로드 즉시 마스킹 처리됩니다.</div>
+                  </div>
+                  <div class="filerow"><input type="file" id="insfile" accept=".pdf,.xlsx,.xls"><button class="btn sm ghost" id="insfilebtn">명부 파일 선택</button></div>
+                </div>
+              </div>
+              <div id="insarea"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 인프라적 (스텁) -->
+      <div class="typepanel" data-type="infra">
+        <div class="card"><div class="cb">
+          <div class="flag f-info"><span class="fi">i</span>
+            <div><b>이번 단계 미포함</b>
+            <span class="sub">연구시설·장비 구축, 공용장비 가동률, 연구인프라 공동활용, 성과데이터·DB 구축 항목은 사업 확대 단계에서 반영됩니다.</span></div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- 사회적 (스텁) -->
+      <div class="typepanel" data-type="social">
+        <div class="card"><div class="cb">
+          <div class="flag f-info"><span class="fi">i</span>
+            <div><b>이번 단계 미포함</b>
+            <span class="sub">정책활용, 홍보실적, 수상·포상, 학술회의 발표, 인력양성, 국제협력 항목은 사업 확대 단계에서 반영됩니다.</span></div>
+          </div>
+        </div></div>
       </div>
     </section>
 
-    <!-- ══ 3 기술적 성과 ══ -->
+    <!-- ══ 3 검토·제출 ══ -->
     <section class="view" id="v-2">
       <div class="phead">
-        <div class="eyebrow">Step 3 · 기술적 성과</div>
-        <h2>논문·특허</h2>
-        <p class="sub">DOI 또는 출원번호만 넣으면 서지정보가 자동으로 채워집니다. 참여기관이 여럿이면 기여율 합계가 100%인지 그 자리에서 확인해 드립니다.</p>
-      </div>
-      <div class="stack">
-        <div class="card">
-          <div class="ch"><h3>논문</h3><span class="hint">DOI 자동 조회 · 기여율 합계 검증</span></div>
-          <div class="cb stack">
-            <div class="field">
-              <label for="doi">DOI</label>
-              <div style="display:flex; gap:8px">
-                <input type="text" id="doi" placeholder="10.3390/children10101673" autocomplete="off">
-                <button class="btn sm" id="doilookup" style="flex:none">조회</button>
-              </div>
-              <span class="fh">Crossref에서 학술지명·ISSN·SCI(E) 구분·임팩트팩터를 가져옵니다. <span class="badge sim">시뮬레이션</span></span>
-            </div>
-            <div id="doiresult"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="ch"><h3>특허</h3><span class="hint">KIPRIS 대조 · 번호 형식 검증</span></div>
-          <div class="cb stack">
-            <div class="field">
-              <label for="pat">출원·등록번호</label>
-              <div style="display:flex; gap:8px">
-                <input type="text" id="pat" placeholder="10-2026-0197358" autocomplete="off">
-                <button class="btn sm" id="patlookup" style="flex:none">조회</button>
-              </div>
-              <span class="fh">출원번호는 <span class="mono">10-YYYY-NNNNNNN</span>, 등록번호는 <span class="mono">10-NNNNNNN-NNNN</span> 형식입니다.</span>
-            </div>
-            <div id="patresult"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ 4 검토·제출 ══ -->
-    <section class="view" id="v-3">
-      <div class="phead">
-        <div class="eyebrow">Step 4 · 검토 및 제출</div>
+        <div class="eyebrow">Step 3 · 검토 및 제출</div>
         <h2>제출 전 마지막 확인</h2>
         <p class="sub">입력값과 근거 자료를 나란히 놓고 확인하세요. 제출 후에는 조사원 현장방문 시에만 수정이 가능합니다.</p>
       </div>
@@ -426,7 +517,7 @@ input:disabled{background:var(--surface-3); color:var(--ink-3); cursor:not-allow
   </aside>
 </div>
 
-<div class="foot"><div class="footin">
+<div class="foot" id="footbar"><div class="footin">
   <button class="btn grey sm" id="prev">이전</button>
   <span class="fs" id="footnote">Step 1 / 4</span>
   <button class="btn sm" id="next">다음</button>
@@ -467,9 +558,9 @@ const EXPDB = [
 EXPDB[1].no = '43102-26-0044931';
 // 건강보험공단 가입자 명부
 const INSDB = [
-  {n:'서O영', i:'2026-03-16', o:null}, {n:'오O탁', i:'2026-05-04', o:null},
-  {n:'류O경', i:'2026-07-19', o:null}, {n:'문O아', i:'2026-09-01', o:'2026-12-20'},
-  {n:'배O훈', i:'2025-08-11', o:null},
+  {n:'서O영', i:'2026-03-16', o:null, rrn:'930215-2••••••'}, {n:'오O탁', i:'2026-05-04', o:null, rrn:'880604-1••••••'},
+  {n:'류O경', i:'2026-07-19', o:null, rrn:'950911-2••••••'}, {n:'문O아', i:'2026-09-01', o:'2026-12-20', rrn:'970322-2••••••'},
+  {n:'배O훈', i:'2025-08-11', o:null, rrn:'910108-1••••••'},
 ];
 // 직전 조사 응답 이력
 const HIST = {
@@ -492,12 +583,22 @@ const PATDB = {
     date:'2026-09-22', applicant:'㈜퓨처센싱', tri:false, joint:true},
 };
 
-const STEPS = [['01', '과제 확인'], ['02', '경제적 성과'], ['03', '기술적 성과'], ['04', '검토·제출']];
+const STEPS = [['01', '과제 확인'], ['02', '성과입력'], ['03', '검토·제출']];
+const ACCOUNTS = [
+  {id:'A1', name:'㈜퓨처센싱', biz:'312-81-••••8', active:true},
+  {id:'A2', name:'㈜대한소재과학', biz:'214-86-••••2', active:false},
+  {id:'A3', name:'㈜그린파워텍', biz:'128-81-••••5', active:false},
+];
+const TYPES = [
+  ['sci', '과학적'], ['tech', '기술적'], ['econ', '경제적'], ['infra', '인프라적'], ['social', '사회적'],
+];
 
 /* ══════════ 상태 ══════════ */
 const KEY = 'pace-report-v1';
-let S = {step:0, tax:{pulled:false, sel:[]}, exp:{pulled:false, sel:[]}, ins:{pulled:false},
-         papers:[], patents:[], submitted:false};
+let S = {step:0, loggedIn:false, acct:null, perfTab:'econ',
+         biz:{registered:false, type:'', date:''},
+         tax:{pulled:false, sel:[]}, exp:{pulled:false, sel:[]}, ins:{pulled:false},
+         papers:[], patents:[], patUploadAttempt:0, submitted:false};
 try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch (e) {}
 let saveT;
 function save() {
@@ -509,6 +610,47 @@ function save() {
 function toast(m) {
   const t = $('#toast'); t.textContent = m; t.classList.add('on');
   clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+/* ══════════ 로그인 게이트 ══════════ */
+function renderLogin() {
+  $('#loginlist').innerHTML = ACCOUNTS.map(a => `
+    <div class="card acctcard" data-acct="${a.id}">
+      <div class="cb" style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+        <div>
+          <div style="font-size:15px; font-weight:600">${esc(a.name)}</div>
+          <div class="mono" style="font-size:11px; color:var(--ink-3); margin-top:2px">사업자 ${esc(a.biz)}</div>
+        </div>
+        <span class="pill ${a.active ? 'p-ok' : 'p-idle'}">${a.active ? '시연 데이터 구성됨' : '표본 미구성'}</span>
+      </div>
+    </div>`).join('');
+  $$('#loginlist [data-acct]').forEach(el => el.onclick = () => {
+    const a = ACCOUNTS.find(x => x.id === el.dataset.acct);
+    if (!a.active) return toast('이 시연에는 ㈜퓨처센싱 표본 데이터만 구성되어 있습니다.');
+    S.loggedIn = true; S.acct = a.id; save(); gate();
+    toast('로그인되었습니다.');
+  });
+}
+$('#logoutbtn').onclick = () => { S.loggedIn = false; save(); gate(); };
+function gate() {
+  $('#who-guest').style.display = S.loggedIn ? 'none' : 'flex';
+  $('#who-user').style.display = S.loggedIn ? 'flex' : 'none';
+  $('#loginwrap').style.display = S.loggedIn ? 'none' : 'grid';
+  $('#pstrip').style.display = S.loggedIn ? '' : 'none';
+  $('#mainwrap').style.display = S.loggedIn ? '' : 'none';
+  $('#footbar').style.display = S.loggedIn ? '' : 'none';
+  if (!S.loggedIn) renderLogin();
+}
+
+/* ══════════ 5대 유형 탭 ══════════ */
+function renderTypeTabs() {
+  $('#typetabs').innerHTML = TYPES.map(([k, t]) =>
+    `<button class="typetab${S.perfTab === k ? ' on' : ''}" data-type="${k}" role="tab" aria-selected="${S.perfTab === k}">${t}</button>`).join('');
+  $$('#typetabs .typetab').forEach(b => b.onclick = () => {
+    S.perfTab = b.dataset.type; save(); renderTypeTabs();
+    $$('.typepanel').forEach(p => p.classList.toggle('on', p.dataset.type === S.perfTab));
+  });
+  $$('.typepanel').forEach(p => p.classList.toggle('on', p.dataset.type === S.perfTab));
 }
 
 /* ══════════ 계산 ══════════ */
@@ -609,6 +751,37 @@ async function pulse(id, steps) {
   log.innerHTML = `<span class="linkstate"><i></i>연동 완료</span>`;
 }
 
+/* ══════════ 사업화현황(경제적 성과 상위 레코드) ══════════ */
+function renderBiz() {
+  if (!S.biz.registered) {
+    $('#bizbody').innerHTML = `
+      <p class="note" style="margin-bottom:12px">과제 결과물의 사업화 여부를 먼저 등록해야 매출실적·과제수출액·신규고용 등 하위 성과를 입력할 수 있습니다. IRIS의 특성반영성과에서 사업화현황이 상위 레코드이고 매출실적 등이 그 하위 성과인 구조와 동일합니다.</p>
+      <div class="row2">
+        <div class="field"><label for="biztype">사업화 형태</label>
+          <select id="biztype"><option value="자체사업화">자체사업화</option><option value="기술이전">기술이전</option><option value="창업">창업</option></select></div>
+        <div class="field"><label for="bizdate">사업화 일자</label><input type="text" id="bizdate" placeholder="2026-04-01"></div>
+      </div>
+      <button class="btn full" id="bizsubmit" style="margin-top:12px">사업화현황 등록</button>`;
+    $('#bizsubmit').onclick = () => {
+      S.biz.registered = true; S.biz.type = $('#biztype').value; S.biz.date = $('#bizdate').value.trim() || '2026-04-01';
+      save(); renderBiz(); renderTax(); renderExp(); renderIns(); renderSide(); renderReview(); syncBizGate();
+      toast('사업화현황이 등록되었습니다. 하위 성과 입력이 가능합니다.');
+    };
+  } else {
+    $('#bizbody').innerHTML = `<div class="flag f-ok"><span class="fi">✓</span>
+      <div><b>${esc(S.biz.type)}</b> · ${esc(S.biz.date)} 등록
+      <span class="sub">매출실적·과제수출액·신규고용 입력이 가능합니다.</span></div></div>`;
+  }
+}
+function syncBizGate() {
+  const on = S.biz.registered;
+  ['tax', 'exp', 'ins'].forEach(k => {
+    const lp = $('#lockpill-' + k); if (lp) lp.style.display = on ? 'none' : 'inline-flex';
+    const btn = $('#pull-' + k); if (btn) btn.disabled = !on || S[k].pulled;
+  });
+  const insfile = $('#insfilebtn'); if (insfile) insfile.disabled = !on;
+}
+
 /* ══════════ Step 2 — 매출 ══════════ */
 $('#pull-tax').onclick = async () => {
   $('#pull-tax').disabled = true;
@@ -704,24 +877,34 @@ function renderExp() {
 $('#pull-ins').onclick = async () => {
   $('#pull-ins').disabled = true;
   await pulse('ins', ['국민건강보험공단 인증', '사업장 가입자 명부 조회', `가입 이력 ${INSDB.length}건 수신`, '과제기간 내 취득·상실 판정']);
-  S.ins.pulled = true; save(); renderIns();
+  S.ins.pulled = true; save(); renderIns(); syncBizGate();
   toast('명부를 불러왔습니다. 순증이 자동 계산되었습니다.');
+};
+$('#insfilebtn').onclick = () => $('#insfile').click();
+$('#insfile').onchange = async (e) => {
+  if (!e.target.files.length) return;
+  await pulse('ins', ['업로드 파일 형식 확인', '명부 판독 및 표 구조 인식', '주민등록번호 자동 마스킹 처리', '과제기간 내 취득·상실 판정']);
+  S.ins.pulled = true; save(); renderIns(); syncBizGate();
+  toast('명부 파일을 판독했습니다. 순증이 자동 계산되었습니다.');
+  e.target.value = '';
 };
 function renderIns() {
   if (!S.ins.pulled) { $('#insarea').innerHTML = ''; return; }
   const c = insCalc();
   $('#insarea').innerHTML = `
+    <div class="masknote"><span>🔒</span><div><b>자동 마스킹 처리됨</b> — 주민등록번호는 생년월일·성별 코드만 남기고 뒤 6자리는 시스템에 저장되지 않습니다.</div></div>
     <div class="tw"><table>
-      <thead><tr><th>성명</th><th>자격취득일</th><th>자격상실일</th><th>순증 반영</th></tr></thead>
+      <thead><tr><th>성명</th><th>주민등록번호</th><th>자격취득일</th><th>자격상실일</th><th>순증 반영</th></tr></thead>
       <tbody>${INSDB.map(p => {
         const pre = p.i < '2026-01-01';
         const tag = pre ? ['제외 · 기존 재직', 'p-idle'] : p.o ? ['상실 −1', 'p-hold'] : ['취득 +1', 'p-ok'];
         return `<tr><td${pre ? ' class="strike"' : ''}>${esc(p.n)}</td>
+          <td class="mono muted" style="font-size:11px">${esc(p.rrn)}</td>
           <td class="mono" style="font-size:11px">${p.i}</td>
           <td class="mono muted" style="font-size:11px">${p.o || '—'}</td>
           <td><span class="pill ${tag[1]}">${tag[0]}</span></td></tr>`;
       }).join('')}</tbody>
-      <tfoot><tr><td colspan="3">기간 내 취득 ${c.hired} − 상실 ${c.left}</td>
+      <tfoot><tr><td colspan="4">기간 내 취득 ${c.hired} − 상실 ${c.left}</td>
         <td class="num">${c.net}명</td></tr></tfoot>
     </table></div>
     <div class="calc" style="margin-top:12px">
@@ -807,29 +990,58 @@ function renderPapers() {
 }
 
 /* ══════════ Step 3 — 특허 ══════════ */
-$('#patlookup').onclick = () => {
-  const raw = $('#pat').value.trim();
-  if (!raw) return toast('출원·등록번호를 입력하세요.');
+function lookupPatent(raw, box) {
+  box = box || $('#patresult');
   const okApp = /^10-\d{4}-\d{7}$/.test(raw), okReg = /^10-\d{7}-\d{4}$/.test(raw);
   if (!okApp && !okReg) {
-    $('#patresult').innerHTML = `<div class="flag f-bad"><span class="fi">✕</span>
+    box.innerHTML = `<div class="flag f-bad"><span class="fi">✕</span>
       <div>번호 형식이 올바르지 않습니다.
       <span class="sub">출원번호 <span class="mono">10-YYYY-NNNNNNN</span> · 등록번호 <span class="mono">10-NNNNNNN-NNNN</span><br>
       예시: <span class="mono">10-2026-0197358</span> · <span class="mono">10-2807673-0000</span></span></div></div>`;
-    return;
+    return false;
   }
   const r = PATDB[raw];
   if (!r) {
-    $('#patresult').innerHTML = `<div class="flag f-hold"><span class="fi">!</span>
+    box.innerHTML = `<div class="flag f-hold"><span class="fi">!</span>
       <div>KIPRIS에서 조회되지 않습니다.
       <span class="sub">번호를 확인하시거나 아래 예시로 시연해 보세요.<br>
       <span class="mono">10-2026-0197358</span> · <span class="mono">10-2807673-0000</span></span></div></div>`;
-    return;
+    return false;
   }
-  if (S.patents.some(p => p.no === raw)) return toast('이미 등록한 특허입니다.');
+  if (S.patents.some(p => p.no === raw)) { toast('이미 등록한 특허입니다.'); return false; }
   S.patents.push({no:raw, ...r});
-  $('#pat').value = ''; save(); renderPatents(); renderSide(); renderReview();
-  toast('KIPRIS 서지정보를 가져왔습니다.');
+  save(); renderPatents(); renderSide(); renderReview();
+  return true;
+}
+$('#patlookup').onclick = () => {
+  const raw = $('#pat').value.trim();
+  if (!raw) return toast('출원·등록번호를 입력하세요.');
+  if (lookupPatent(raw)) { $('#pat').value = ''; toast('KIPRIS 서지정보를 가져왔습니다.'); }
+};
+
+/* ══════════ Step 3 — 특허등록증 업로드(🔴 재제출 시연 포함) ══════════ */
+$('#patfilebtn').onclick = () => $('#patfile').click();
+$('#patfile').onchange = async (e) => {
+  if (!e.target.files.length) return;
+  S.patUploadAttempt += 1; save();
+  const box = $('#patupresult');
+  await pulse('patocr', ['파일 형식·암호 여부 확인', '텍스트 판독(OCR)', '등록번호 자동 추출']);
+  if (S.patUploadAttempt === 1) {
+    box.innerHTML = `<div class="flag f-bad" style="margin-top:10px"><span class="fi">🔴</span>
+      <div><b>재제출 필요</b> — 판독 불가
+      <span class="sub">파일에 암호(보안)가 설정되어 있어 내용을 읽지 못했습니다. 암호를 해제한 뒤 다시 올려주세요. IRIS에도 암호가 걸린 PDF는 등록되지 않습니다.
+      <br><b>조치</b>: PDF 보안(암호)을 해제하고 재업로드 · <b>예시</b>: 한글·워드에서 "다른 이름으로 저장 → PDF → 보안 옵션 해제" 후 저장</span></div></div>
+      <button class="btn sm ghost" id="patretry" style="margin-top:8px">다시 업로드</button>`;
+    $('#patretry').onclick = () => $('#patfile').click();
+    toast('판독에 실패했습니다. 안내에 따라 다시 업로드해 주세요.');
+  } else {
+    const raw = '10-2807673-0000';
+    box.innerHTML = `<div class="flag f-ok" style="margin-top:10px"><span class="fi">✓</span>
+      <div>등록번호 <b class="mono">${raw}</b> 자동 추출 완료 · KIPRIS 조회로 이어집니다.</div></div>`;
+    $('#pat').value = raw;
+    if (lookupPatent(raw)) toast('등록증에서 추출한 번호로 KIPRIS 서지정보를 가져왔습니다.');
+  }
+  e.target.value = '';
 };
 function renderPatents() {
   const box = $('#patresult');
@@ -919,21 +1131,26 @@ function renderSide() {
 
 /* ══════════ 렌더 전체 ══════════ */
 function renderAll() {
+  renderTypeTabs(); renderBiz();
   renderTasks(); renderTax(); renderExp(); renderIns();
   renderPapers(); renderPatents(); renderReview(); renderSide();
+  syncBizGate();
   if (S.tax.pulled) { $('#pull-tax').disabled = true; $('#pulse-tax').style.display = 'flex';
     $('#pulse-tax').querySelector('i').style.width = '100%';
     $('#pulse-tax').querySelector('.plog').innerHTML = '<span class="linkstate"><i></i>연동 완료</span>'; }
   if (S.exp.pulled) { $('#pull-exp').disabled = true; $('#pulse-exp').style.display = 'flex';
     $('#pulse-exp').querySelector('i').style.width = '100%';
     $('#pulse-exp').querySelector('.plog').innerHTML = '<span class="linkstate"><i></i>연동 완료</span>'; }
-  if (S.ins.pulled) { $('#pull-ins').disabled = true; $('#pulse-ins').style.display = 'flex';
+  if (S.ins.pulled) { $('#pulse-ins').style.display = 'flex';
     $('#pulse-ins').querySelector('i').style.width = '100%';
     $('#pulse-ins').querySelector('.plog').innerHTML = '<span class="linkstate"><i></i>연동 완료</span>'; }
+  syncBizGate();
 }
 
+gate();
 goStep(S.step || 0);
 $('#savedot').textContent = '모든 변경사항 저장됨';
 </script>
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PACE 현장조사 앱</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -194,6 +194,11 @@ button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer; bo
 .item .id{font-size:10.5px; color:var(--ink-3); font-family:var(--fm); margin-top:1px}
 .item .ib{padding:0 13px 12px; display:flex; flex-direction:column; gap:9px}
 .cmpline{display:grid; grid-template-columns:1fr auto; gap:8px; font-size:12px; padding:5px 0; border-bottom:1px dashed var(--line-2)}
+.masknote{display:flex; gap:6px; align-items:flex-start; font-size:10.5px; color:var(--ink-3); background:var(--surface-2); border-radius:var(--rs); padding:7px 9px; margin:8px 0 6px}
+.emplist{display:flex; flex-direction:column; gap:0; max-height:150px; overflow-y:auto; margin-bottom:8px}
+.emprow{display:flex; justify-content:space-between; gap:8px; font-size:11px; padding:4px 0; border-bottom:1px dashed var(--line-2)}
+.emprow b{font-weight:500; color:var(--ink-2)}
+.emprow span{font-family:var(--fm); color:var(--ink-4)}
 .cmpline:last-child{border-bottom:0}
 .cmpline .ck{color:var(--ink-3)}
 .cmpline .cv{font-family:var(--fm); font-weight:600}
@@ -301,6 +306,8 @@ input:focus,textarea:focus{border-color:var(--accent); outline:none}
 </style>
 </head>
 <body>
+
+
 <div class="deskhead"><a class="gohome" href="index.html" title="처음 화면으로 이동"><img class="tenopa-mark" src="data:image/png;base64,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" alt="TENOPA"><b style="font-size:13px; color:var(--ink)">PACE 필드</b><span>현장조사원 애플리케이션</span></a></div>
 
 <div class="app" id="app">
@@ -403,7 +410,7 @@ const SEVNM = {ok:'일치', hold:'보류', bad:'불일치'};
    증빙 데이터는 가상 표본(시뮬레이션). 대조 연산은 실제 로직.
    ══════════════════════════════════════════ */
 const T = (no, d, it, sup) => ({no, d, it, sup, vat: Math.round(sup * .1)});
-const I = (n, i, o) => ({n, i, o: o || null});
+const I = (n, i, o, rrn) => ({n, i, o: o || null, rrn: rrn || '——····-·······'});
 
 const VISITS = [
 {id:'E02', firm:'㈜퓨처센싱', task:'S2026-02351', biz:'중소기업기술혁신개발', prod:'초음파 진단 프로브',
@@ -411,19 +418,21 @@ const VISITS = [
  decl:{sales:264000000, exportKrw:0, exportUsd:0, jobs:3},
  tax:[T('20260408-52011744','2026-04-08','초음파 진단 프로브',150000000),
       T('20260822-52018092','2026-08-22','초음파 진단 프로브',90000000)],
- exp:[], ins:[I('서O영','2026-03-16'),I('오O탁','2026-05-04'),I('류O경','2026-07-19'),
-      I('문O아','2026-09-01','2026-12-20')]},
+ exp:[], ins:[I('서O영','2026-03-16',null,'930215-2••••••'),I('오O탁','2026-05-04',null,'880604-1••••••'),
+      I('류O경','2026-07-19',null,'950911-2••••••'),I('문O아','2026-09-01','2026-12-20','970322-2••••••')]},
 
 {id:'E05', firm:'아이씨티랩㈜', task:'S2026-05198', biz:'산학연CollaboR&D', prod:'AI 영상분석 솔루션',
  grp:4, at:'11:00', addr:'대전 서구',
  decl:{sales:156000000, exportKrw:0, exportUsd:0, jobs:12},
  tax:[T('20260508-61003518','2026-05-08','AI 영상분석 솔루션',96000000),
       T('20260924-61009274','2026-09-24','AI 영상분석 솔루션',60000000)],
- exp:[], ins:[I('허O찬','2025-11-03'),I('노O영','2026-01-12'),I('석O빈','2026-01-26'),
-      I('표O훈','2026-02-09','2026-06-30'),I('육O정','2026-03-03'),I('반O슬','2026-03-30','2026-08-14'),
-      I('추O건','2026-04-18'),I('도O경','2026-05-22','2026-09-05'),I('변O하','2026-06-11'),
-      I('탁O윤','2026-07-08','2026-10-22'),I('설O민','2026-08-25'),I('염O기','2026-09-30','2026-12-15'),
-      I('공O래','2026-10-19')]},
+ exp:[], ins:[I('허O찬','2025-11-03',null,'851013-1••••••'),I('노O영','2026-01-12',null,'931207-2••••••'),
+      I('석O빈','2026-01-26',null,'970502-1••••••'),I('표O훈','2026-02-09','2026-06-30','890818-1••••••'),
+      I('육O정','2026-03-03',null,'960326-2••••••'),I('반O슬','2026-03-30','2026-08-14','920709-2••••••'),
+      I('추O건','2026-04-18',null,'940114-1••••••'),I('도O경','2026-05-22','2026-09-05','990228-2••••••'),
+      I('변O하','2026-06-11',null,'950630-1••••••'),I('탁O윤','2026-07-08','2026-10-22','880417-1••••••'),
+      I('설O민','2026-08-25',null,'921125-2••••••'),I('염O기','2026-09-30','2026-12-15','970903-1••••••'),
+      I('공O래','2026-10-19',null,'930512-1••••••')]},
 
 {id:'E01', firm:'㈜나노메딕스', task:'S2026-01184', biz:'창업성장기술개발', prod:'광학센서모듈',
  grp:4, at:'13:30', addr:'세종시',
@@ -432,9 +441,11 @@ const VISITS = [
       T('20260627-41014903','2026-06-27','광학센서모듈',142000000),
       T('20260905-41019338','2026-09-05','센서모듈 검사장비',96000000),
       T('20261119-41024615','2026-11-19','광학센서모듈',64000000)],
- exp:[], ins:[I('김O수','2026-02-01'),I('박O진','2026-02-15'),I('이O민','2026-03-02'),
-      I('정O호','2026-04-20'),I('최O아','2026-05-11'),I('강O우','2026-06-08'),
-      I('윤O서','2026-07-21'),I('장O현','2026-08-03','2026-11-30'),I('한O빈','2026-09-14','2026-12-05')]},
+ exp:[], ins:[I('김O수','2026-02-01',null,'910304-1••••••'),I('박O진','2026-02-15',null,'950827-2••••••'),
+      I('이O민','2026-03-02',null,'980119-1••••••'),I('정O호','2026-04-20',null,'930615-1••••••'),
+      I('최O아','2026-05-11',null,'960422-2••••••'),I('강O우','2026-06-08',null,'890926-1••••••'),
+      I('윤O서','2026-07-21',null,'970208-2••••••'),I('장O현','2026-08-03','2026-11-30','940711-1••••••'),
+      I('한O빈','2026-09-14','2026-12-05','990403-1••••••')]},
 
 {id:'E04', firm:'㈜그린셀', task:'S2026-04412', biz:'중소기업상용화기술개발', prod:'박막 태양전지 모듈',
  grp:4, at:'15:00', addr:'충남 천안',
@@ -442,8 +453,8 @@ const VISITS = [
  tax:[], exp:[{no:'43102-26-0018842', d:'2026-03-20', usd:150000, fx:1298},
       {no:'43102-26-0031157', d:'2026-07-14', usd:135000, fx:1305},
       {no:'43102-26-0049203', d:'2026-11-02', usd:100000, fx:1302}],
- ins:[I('조O연','2026-02-10'),I('임O섭','2026-04-27'),I('권O나','2026-06-15'),
-      I('송O태','2026-09-08','2026-12-11')]},
+ ins:[I('조O연','2026-02-10',null,'920616-2••••••'),I('임O섭','2026-04-27',null,'880905-1••••••'),
+      I('권O나','2026-06-15',null,'960130-2••••••'),I('송O태','2026-09-08','2026-12-11','940221-1••••••')]},
 
 {id:'E07', firm:'㈜바이오코어', task:'S2026-07264', biz:'중소기업R&D역량제고', prod:'체외진단 키트',
  grp:4, at:'16:30', addr:'충북 청주',
@@ -452,8 +463,9 @@ const VISITS = [
       T('20260618-81008715','2026-06-18','체외진단 키트',122000000),
       T('20260911-81012063','2026-09-11','사무용 소모품',18000000),
       T('20261127-81016338','2026-11-27','사무실 임대료',10000000)],
- exp:[], ins:[I('구O진','2026-02-24'),I('복O나','2026-04-06'),I('선O우','2026-07-13'),
-      I('양O림','2026-09-21'),I('차O섭','2026-10-30','2026-12-19')]},
+ exp:[], ins:[I('구O진','2026-02-24',null,'900711-1••••••'),I('복O나','2026-04-06',null,'970305-2••••••'),
+      I('선O우','2026-07-13',null,'930822-1••••••'),I('양O림','2026-09-21',null,'950417-2••••••'),
+      I('차O섭','2026-10-30','2026-12-19','890629-1••••••')]},
 
 {id:'E14', firm:'㈜하이드로젠텍', task:'S2026-14127', biz:'중소기업Net-Zero기술혁신개발', prod:'수전해 스택 모듈',
  grp:3, at:'18:00', addr:'충남 아산',
@@ -462,9 +474,10 @@ const VISITS = [
       T('20260730-13015119','2026-07-30','수전해 스택 모듈',452000000),
       T('20261114-13022806','2026-11-14','스택 모듈 부품',248000000)],
  exp:[{no:'43102-26-0038740', d:'2026-08-11', usd:128000, fx:1301}],
- ins:[I('계O훈','2026-01-27'),I('봉O아','2026-03-19'),I('음O재','2026-05-07'),
-      I('피O름','2026-06-24'),I('삼O결','2026-08-13'),I('우O담','2026-10-02'),
-      I('한O별','2026-11-18','2026-12-26'),I('오O찬','2026-12-01','2026-12-30')]},
+ ins:[I('계O훈','2026-01-27',null,'910526-1••••••'),I('봉O아','2026-03-19',null,'960913-2••••••'),
+      I('음O재','2026-05-07',null,'930208-1••••••'),I('피O름','2026-06-24',null,'970617-2••••••'),
+      I('삼O결','2026-08-13',null,'890124-1••••••'),I('우O담','2026-10-02',null,'950430-2••••••'),
+      I('한O별','2026-11-18','2026-12-26','920819-1••••••'),I('오O찬','2026-12-01','2026-12-30','990306-1••••••')]},
 ];
 
 const PERIOD = {from:'2026-01-01', to:'2026-12-31'};
@@ -724,6 +737,8 @@ function renderVisit() {
       <div class="ib">
         ${D.rows(v, x).map(([kk, vv, hl]) => `<div class="cmpline"><span class="ck">${esc(kk)}</span>
           <span class="cv${hl ? ' bad' : ''}">${esc(vv)}</span></div>`).join('')}
+        ${k === 'jobs' ? `<div class="masknote"><span>🔒</span><span>주민등록번호는 자동 마스킹 처리되어 뒤 6자리가 저장되지 않습니다.</span></div>
+          <div class="emplist">${v.ins.map(p => `<div class="emprow"><b>${esc(p.n)}</b><span>${esc(p.rrn)} · ${p.i}${p.o ? ' → ' + p.o : ''}</span></div>`).join('')}</div>` : ''}
         ${i.sev !== 'ok' ? `<div style="background:var(--${i.sev}-soft); border:1px solid var(--${i.sev}-line); border-radius:var(--rs); padding:9px 11px">
             <div style="font-size:12.5px; font-weight:600; color:var(--${i.sev})">${esc(c.why)}</div>
             <div style="font-size:11px; color:var(--ink-2); margin-top:3px; line-height:1.5">${esc(c.detail)}</div>
@@ -909,5 +924,6 @@ function renderOut() {
 /* ── 초기화 ── */
 go(S.tab || 'today');
 </script>
+
 </body>
 </html>

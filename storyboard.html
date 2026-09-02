@@ -479,6 +479,64 @@ td{padding:9px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; 
     </div>
   </section>
 
+  <!-- ===== Ⅴ ===== -->
+  <section id="s5">
+    <div class="hrow"><span class="snum">Ⅴ.</span><h2 class="h">개발 요구사항정의서 대응 현황</h2></div>
+    <p class="lead">자체 개발 담당자용 「성과조사플랫폼 요구사항정의서」와 그 기반이 된 「성과조사플랫폼 개발기획안」을 검토하여, PACE의 설계 원칙과 화면 구성을 아래와 같이 대응시켰다.</p>
+
+    <div class="sblock">
+      <div class="sh"><span class="st">IP 경계 원칙</span><span class="su">요구사항정의서 1.1</span></div>
+      <div class="sb flist">
+        <div class="fitem"><span class="ic">01</span><div><b>코어(당사 자산)</b> — PACE의 검증엔진·산식엔진·화면 프레임워크 등 재사용 가능한 플랫폼 기반 기술. 타 사업 성과조사에도 재사용한다.</div></div>
+        <div class="fitem"><span class="ic">02</span><div><b>과업 산출물(발주기관 귀속)</b> — 본 용역을 위해 구성한 51개 사업별 검증 룰·지표 산식·화면 설정값. 조사 종료 시 발주기관에 이관 가능한 형태로 제공한다.</div></div>
+        <div class="fitem"><span class="ic">03</span><div><b>조사데이터(발주기관 귀속)</b> — 수집된 성과값·증빙 원본·판정 이력. 원시데이터와 함께 발주기관 시스템으로 일괄 이관한다.</div></div>
+        <div class="fitem"><span class="ic">04</span><div>세 영역을 구분하는 이유는, 코어를 재사용 가능한 자산으로 유지하면서도 과업 산출물과 조사데이터에 대한 발주기관의 권리를 명확히 하기 위함이다.</div></div>
+      </div>
+    </div>
+
+    <div class="sblock">
+      <div class="sh"><span class="st">판정 처리량 목표 비율</span><span class="su">요구사항정의서 §8.2 · 검증담당자 업무량 통제 기준</span></div>
+      <div class="sb flist">
+        <div class="fitem"><span class="ic">🟢</span><div><b>자동확인 65~70%</b> — 모든 필드가 일치해 검증담당자 화면에 노출되지 않고 그대로 확정 가능한 비중. 목표 미달 시 검증 룰의 정밀도를 재점검한다.</div></div>
+        <div class="fitem"><span class="ic">🟡</span><div><b>확인필요 25~30%</b> — 값 불일치·경계값 등으로 소명이 필요한 비중. 검증담당자가 좌우 대조 뷰에서 승인·반려를 판단한다.</div></div>
+        <div class="fitem"><span class="ic">🔴</span><div><b>재제출 5% 이내</b> — 판독 자체가 불가능해 재업로드 전까지 제출을 진행할 수 없는 비중. 이 비율이 높으면 안내문·업로드 UX를 우선 개선한다.</div></div>
+      </div>
+    </div>
+
+    <div class="sblock">
+      <div class="sh"><span class="st">5대 유형 대응 현황</span><span class="su">개발기획안 §7.1</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>성과 유형</th><th>대표 항목</th><th>PACE 반영 현황</th></tr></thead>
+        <tbody>
+          <tr><td>과학적 성과</td><td>논문(비SCI)·생명자원·화합물·기술요약정보</td><td>SCI 논문은 기술적 성과 탭에서 실입력, 나머지는 사업 확대 단계 반영</td></tr>
+          <tr><td>기술적 성과</td><td>논문(SCI)·특허·SW저작권·표준</td><td>DOI·특허등록증 자동 검증 실입력 (실데이터 32건)</td></tr>
+          <tr><td>경제적 성과</td><td>과제매출액·과제수출액·신규고용 등 11개 항목</td><td>매출·수출·고용 실입력, 생산비용절감·기술이전 등 후속 반영</td></tr>
+          <tr><td>인프라적 성과</td><td>연구시설·장비 구축·공용장비 가동률</td><td>이번 단계 미포함 — 탭 스텁 제공</td></tr>
+          <tr><td>사회적 성과</td><td>정책활용·수상·인력양성·국제협력</td><td>이번 단계 미포함 — 탭 스텁 제공</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="sblock">
+      <div class="sh"><span class="st">화면 정의(S-01~S-10) ↔ PACE 대응표</span><span class="su">개발기획안 §6</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>화면코드</th><th>화면명</th><th>PACE 대응 화면</th><th>구현 현황</th></tr></thead>
+        <tbody>
+          <tr><td>S-01</td><td>내 현황</td><td>PACE 리포트 · 로그인 후 과제 확인(Step 1)</td><td>구현</td></tr>
+          <tr><td>S-02</td><td>내 과제 목록</td><td>PACE 리포트 · 과제 확인 목록</td><td>구현</td></tr>
+          <tr><td>S-03</td><td>성과 입력(5대 유형 탭)</td><td>PACE 리포트 · 성과입력(Step 2, 5탭 구조)</td><td>구현(경제·기술 실입력)</td></tr>
+          <tr><td>S-04</td><td>성과 상세입력 + 증빙업로드 + AI 검증결과</td><td>PACE 리포트 · 세금계산서·DOI·특허등록증 업로드 카드</td><td>구현</td></tr>
+          <tr><td>S-05</td><td>운영현황 대시보드</td><td>PACE 콘솔 · 개요(판정분포 도넛 포함)</td><td>구현</td></tr>
+          <tr><td>S-06</td><td>성과 인사이트</td><td>PACE 콘솔 · T2 정량분석·mrnIF</td><td>부분 구현(총괄 인사이트는 후속 반영)</td></tr>
+          <tr><td>S-07</td><td>검증 대기함(좌우 대조 뷰)</td><td>PACE 콘솔 · T1 AI 성과검증</td><td>구현</td></tr>
+          <tr><td>S-08</td><td>검증담당자 배정</td><td>계정 배지로 대체 시연</td><td>미구현 — Phase 1 이후</td></tr>
+          <tr><td>S-09</td><td>성과지표 달성도</td><td>PACE 콘솔 · T5 성과지표 달성도</td><td>구현</td></tr>
+          <tr><td>S-10</td><td>다운로드 센터</td><td>PACE 콘솔 · T6 사업별 진단서(부분 대응)</td><td>부분 구현 — 전체 산출물은 후속 반영</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+
   <div class="foot">
     <p>상기 화면은 아래 주소에서 직접 확인할 수 있다.</p>
     <div class="linklist">
